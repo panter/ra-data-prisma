@@ -9,8 +9,10 @@
 `yarn add @ra-data-prisma/backend`
 
 ```
-import { addCrudResolvers } = require('@ra-data-prisma/backend');
+
+import { addCrudResolvers } from '@ra-data-prisma/backend';
 import { makeSchema } from "nexus";
+import { nexusPrismaPlugin } from "nexus-prisma";
 
 type User = objectType({
   name: "User",
