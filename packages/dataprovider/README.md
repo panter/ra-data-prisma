@@ -4,6 +4,9 @@
 
 ## Usage
 
+
+`yarn add @ra-data-prisma/dataprovider`
+
 ```
 import buildGraphQLProvider from '@ra-data-prisma/dataprovider'
 
