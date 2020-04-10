@@ -4,6 +4,10 @@
 
 ## Usage
 
+
+
+`yarn add @ra-data-prisma/backend`
+
 ```
 import { addCrudResolvers } = require('@ra-data-prisma/backend');
 import { makeSchema } from "nexus";
