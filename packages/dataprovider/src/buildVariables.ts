@@ -5,7 +5,7 @@ import {
   GET_MANY_REFERENCE,
   CREATE,
   UPDATE,
-  DELETE
+  DELETE,
 } from "react-admin";
 import isObject from "lodash/isObject";
 import isEqual from "lodash/isEqual";
@@ -18,7 +18,7 @@ import {
   IntrospectionNamedTypeRef,
   IntrospectionListTypeRef,
   IntrospectionNonNullTypeRef,
-  IntrospectionInputTypeRef
+  IntrospectionInputTypeRef,
 } from "graphql";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { field } from "./utils/gqlTypes";
@@ -38,34 +38,33 @@ const getFilter = (
 ) => {
   if (fieldType.name === "StringFilter") {
     return {
-      contains: value
+      contains: value,
     };
   }
   if (fieldType.kind == "INPUT_OBJECT") {
     // we asume for the moment that this is always a relation
     const inputObjectType = introspectionResults.types.find(
-      t => t.name === fieldType.name
+      (t) => t.name === fieldType.name
     ) as IntrospectionInputObjectType;
     //console.log({ inputObjectType });
     const hasSomeFilter = inputObjectType.inputFields.some(
-      s => s.name === "some"
+      (s) => s.name === "some"
     );
 
     if (hasSomeFilter) {
       return {
         some: {
           id: {
-            equals: value
-          }
-        }
+            equals: value,
+          },
+        },
       };
     }
     return {
       id: {
-        equals: value
-      }
+        equals: value,
+      },
     };
-    console.warn("no filter for ", fieldType, inputObjectType);
   }
   console.warn("no filter for ", fieldType);
   return null;
@@ -76,11 +75,11 @@ const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
   params: GetListParams
 ) => {
   const whereType = introspectionResults.types.find(
-    t => t.name === `${resource.type.name}WhereInput`
+    (t) => t.name === `${resource.type.name}WhereInput`
   ) as IntrospectionInputObjectType;
   const where = Object.keys(params.filter).reduce((acc, key) => {
     const value = params.filter[key];
-    const fieldType = whereType.inputFields.find(f => f.name === key)
+    const fieldType = whereType.inputFields.find((f) => f.name === key)
       .type as IntrospectionInputObjectType;
     const filter = getFilter(fieldType, value, introspectionResults);
     //console.log({ key, value, filter, fieldType });
@@ -91,9 +90,9 @@ const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
     skip: (params.pagination.page - 1) * params.pagination.perPage,
     first: params.pagination.perPage,
     orderBy: {
-      [params.sort.field]: params.sort.order === "ASC" ? "asc" : "desc"
+      [params.sort.field]: params.sort.order === "ASC" ? "asc" : "desc",
     },
-    where
+    where,
   };
 };
 
@@ -115,13 +114,13 @@ const buildNewInputValue = (
     const fieldObjectType = fieldType as IntrospectionInputObjectType;
 
     const fullFieldObjectType = introspectionResults.types.find(
-      t => t.name === fieldObjectType.name
+      (t) => t.name === fieldObjectType.name
     ) as IntrospectionInputObjectType;
 
     // if it has a set modifier, it is an update array
 
     const setModifier = fullFieldObjectType?.inputFields.find(
-      i => i.name === "set" && i.type.kind === "LIST"
+      (i) => i.name === "set" && i.type.kind === "LIST"
     );
     if (setModifier) {
       // is it a relation?
@@ -131,13 +130,13 @@ const buildNewInputValue = (
 
       const listType = setModifierType.ofType.ofType;
       const fullListType = introspectionResults.types.find(
-        t => t.name === listType.name
+        (t) => t.name === listType.name
       ) as IntrospectionInputObjectType;
 
       let set;
       if (fullListType.kind === "INPUT_OBJECT") {
-        set = fieldData?.map(id => ({
-          id
+        set = fieldData?.map((id) => ({
+          id,
         }));
       } else {
         set = fieldData;
@@ -147,16 +146,16 @@ const buildNewInputValue = (
       // is it a relation, connect
       if (fieldData === null) {
         return {
-          disconnect: true
+          disconnect: true,
         };
       }
 
       return {
         connect: Array.isArray(fieldData)
-          ? fieldData.map(id => ({ id }))
+          ? fieldData.map((id) => ({ id }))
           : {
-              id: fieldData
-            }
+              id: fieldData,
+            },
       };
     }
   }
@@ -172,7 +171,7 @@ const buildData = (
     const fieldType =
       field.type.kind === "NON_NULL" ? field.type.ofType : field.type;
     const fieldData = params.data[key];
-    console.log(key, fieldData, fieldType);
+    //console.log(key, fieldData, fieldType);
     const previousFieldData = (params as UpdateParams)?.previousData?.[key];
     if (
       isEqual(fieldData, previousFieldData) ||
@@ -189,7 +188,7 @@ const buildData = (
 
     return {
       ...acc,
-      [key]: newVaue
+      [key]: newVaue,
     };
   }, {});
 };
@@ -198,14 +197,14 @@ const buildUpdateVariables = (introspectionResults: IntrospectionResult) => (
   params: UpdateParams
 ) => {
   const inputType = introspectionResults.types.find(
-    t => t.name === `${resource.type.name}UpdateInput`
+    (t) => t.name === `${resource.type.name}UpdateInput`
   ) as IntrospectionInputObjectType;
 
   return {
     where: {
-      id: params.data.id
+      id: params.data.id,
     },
-    data: buildData(inputType, params, introspectionResults)
+    data: buildData(inputType, params, introspectionResults),
   };
 };
 
@@ -217,11 +216,11 @@ const buildCreateVariables = (introspectionResults: IntrospectionResult) => (
   params: CreateParams
 ) => {
   const inputType = introspectionResults.types.find(
-    t => t.name === `${resource.type.name}CreateInput`
+    (t) => t.name === `${resource.type.name}CreateInput`
   ) as IntrospectionInputObjectType;
 
   const variables = {
-    data: buildData(inputType, params, introspectionResults)
+    data: buildData(inputType, params, introspectionResults),
   };
   return variables;
 };
@@ -242,21 +241,21 @@ export default (introspectionResults: IntrospectionResult) => (
     case GET_MANY:
       return {
         where: {
-          id: { in: params.ids.map(obj => (isObject(obj) ? obj.id : obj)) }
-        }
+          id: { in: params.ids.map((obj) => (isObject(obj) ? obj.id : obj)) },
+        },
       };
     case GET_MANY_REFERENCE: {
       return {
         where: {
           id: {
-            in: params.id
-          }
-        }
+            in: params.id,
+          },
+        },
       };
     }
     case GET_ONE:
       return {
-        where: { id: params.id }
+        where: { id: params.id },
       };
     case UPDATE: {
       return buildUpdateVariables(introspectionResults)(resource, params);
@@ -268,7 +267,7 @@ export default (introspectionResults: IntrospectionResult) => (
 
     case DELETE:
       return {
-        where: { id: params.id }
+        where: { id: params.id },
       };
   }
 };
