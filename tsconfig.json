@@ -1,0 +1,13 @@
+{
+  "include": ["packages"],
+
+  "exclude": ["packages/*/src/**/*.test.ts"],
+
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "Node",
+    "declaration": true,
+    "declarationMap": true
+  }
+}
