@@ -1,31 +1,37 @@
 {
   "name": "@ra-data-prisma/dataprovider",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "> TODO: description",
   "author": "Marco Wettstein <maw@panter.ch>",
   "homepage": "",
   "license": "ISC",
+  "main": "./lib/index.js",
   "module": "./lib-es/index.js",
+  "types": "./lib/index.d.ts",
   "directories": {
-    "lib": "lib",
+    "lib": "lib-es",
     "test": "__tests__"
   },
   "files": [
-    "lib"
+    "lib",
+    "lib-es"
   ],
   "publishConfig": {
     "access": "public"
   },
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
-    "build": "tsc --project tsconfig.json"
+    "build": "yarn build:cjs && yarn build:es",
+    "build:cjs": "rimraf ./lib && tsc --project tsconfig.json",
+    "build:es": "rimraf ./lib-es && tsc --project tsconfig.json --outDir lib-es --module es2015"
   },
   "devDependencies": {
     "react-admin": "^3.4.1",
+    "rimraf": "^3.0.2",
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "graphql": "^15.0.0",
+    "graphql": "^14.1.1",
     "lodash": "^4.17.15",
     "pluralize": "^8.0.0",
     "ra-data-graphql": "^3.2.2"

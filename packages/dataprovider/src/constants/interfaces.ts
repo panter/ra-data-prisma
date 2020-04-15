@@ -1,4 +1,4 @@
-import { IntrospectionSchema, IntrospectionType } from 'graphql';
+import { IntrospectionSchema, IntrospectionType } from "graphql";
 
 export interface Resource {
   type: IntrospectionType;

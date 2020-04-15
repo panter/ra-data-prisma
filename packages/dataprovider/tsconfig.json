@@ -1,7 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "lib-es"
+    "outDir": "lib",
+    "target": "es5",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "lib": ["es2017"],
+    "sourceMap": true
   },
   "include": ["src"]
 }
