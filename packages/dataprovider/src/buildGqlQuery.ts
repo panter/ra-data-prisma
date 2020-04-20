@@ -38,19 +38,30 @@ export const buildFields = (introspectionResults: IntrospectionResult) => (
       return [...acc, gqlTypes.field(gqlTypes.name(field.name))];
     }
 
-    const linkedResource = introspectionResults.resources.find((r) => r.type.name === type.name);
+    const linkedResource = introspectionResults.resources.find(
+      (r) => r.type.name === type.name,
+    );
     if (linkedResource) {
       return [
         ...acc,
         gqlTypes.field(gqlTypes.name(field.name), {
-          selectionSet: gqlTypes.selectionSet([gqlTypes.field(gqlTypes.name("id"))]),
+          selectionSet: gqlTypes.selectionSet([
+            gqlTypes.field(gqlTypes.name("id")),
+          ]),
         }),
       ];
     }
 
-    const linkedType = introspectionResults.types.find((t) => t.name === type.name);
+    /*
+
+    // currently disabled to fetch non resource-objects
+
+    const linkedType = introspectionResults.types.find(
+      t => t.name === type.name
+    );
 
     if (linkedType) {
+     
       return [
         ...acc,
         gqlTypes.field(gqlTypes.name(field.name), {
@@ -60,6 +71,7 @@ export const buildFields = (introspectionResults: IntrospectionResult) => (
         }),
       ];
     }
+    */
 
     // NOTE: We might have to handle linked types which are not resources but will have to be careful about
     // ending with endless circular dependencies
@@ -74,7 +86,9 @@ export const getArgType = (arg: IntrospectionField) => {
 
   if (list) {
     if (required) {
-      return gqlTypes.listType(gqlTypes.nonNullType(gqlTypes.namedType(gqlTypes.name(type.name))));
+      return gqlTypes.listType(
+        gqlTypes.nonNullType(gqlTypes.namedType(gqlTypes.name(type.name))),
+      );
     }
     return gqlTypes.listType(gqlTypes.namedType(gqlTypes.name(type.name)));
   }
@@ -86,36 +100,52 @@ export const getArgType = (arg: IntrospectionField) => {
   return gqlTypes.namedType(gqlTypes.name(type.name));
 };
 
-export const buildArgs = (query: Query, variables: { [key: string]: any } = {}) => {
+export const buildArgs = (
+  query: Query,
+  variables: { [key: string]: any } = {},
+) => {
   if (query.args.length === 0) {
     return [];
   }
 
-  const validVariables = Object.keys(variables).filter((k) => typeof variables[k] !== "undefined");
+  const validVariables = Object.keys(variables).filter(
+    (k) => typeof variables[k] !== "undefined",
+  );
   return query.args
     .filter((arg) => validVariables.includes(arg.name))
     .reduce(
       (acc: ArgumentNode[], arg) => [
         ...acc,
-        gqlTypes.argument(gqlTypes.name(arg.name), gqlTypes.variable(gqlTypes.name(arg.name))),
+        gqlTypes.argument(
+          gqlTypes.name(arg.name),
+          gqlTypes.variable(gqlTypes.name(arg.name)),
+        ),
       ],
       [] as ArgumentNode[],
     );
 };
 
-export const buildApolloArgs = (query: Query, variables: { [key: string]: any } = {}) => {
+export const buildApolloArgs = (
+  query: Query,
+  variables: { [key: string]: any } = {},
+) => {
   if (query.args.length === 0) {
     return [];
   }
 
-  const validVariables = Object.keys(variables).filter((k) => typeof variables[k] !== "undefined");
+  const validVariables = Object.keys(variables).filter(
+    (k) => typeof variables[k] !== "undefined",
+  );
 
   return query.args
     .filter((arg) => validVariables.includes(arg.name))
     .reduce(
       (acc: VariableDefinitionNode[], arg) => [
         ...acc,
-        gqlTypes.variableDefinition(gqlTypes.variable(gqlTypes.name(arg.name)), getArgType(arg)),
+        gqlTypes.variableDefinition(
+          gqlTypes.variable(gqlTypes.name(arg.name)),
+          getArgType(arg),
+        ),
       ],
       [] as VariableDefinitionNode[],
     );
@@ -129,7 +159,11 @@ const buildFieldsFromFragment = (
 ): SelectionNode[] => {
   let parsedFragment = {};
 
-  if (typeof fragment === "object" && fragment.kind && fragment.kind === "Document") {
+  if (
+    typeof fragment === "object" &&
+    fragment.kind &&
+    fragment.kind === "Document"
+  ) {
     parsedFragment = fragment;
   }
 
@@ -198,7 +232,9 @@ export default (introspectionResults: IntrospectionResult) => (
           gqlTypes.field(gqlTypes.name(queryType.name!), {
             alias: gqlTypes.name("data"),
             arguments: args,
-            selectionSet: gqlTypes.selectionSet([gqlTypes.field(gqlTypes.name("id"))]),
+            selectionSet: gqlTypes.selectionSet([
+              gqlTypes.field(gqlTypes.name("id")),
+            ]),
           }),
         ]),
         gqlTypes.name(queryType.name!),
