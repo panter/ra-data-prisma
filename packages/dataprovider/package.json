@@ -22,8 +22,8 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "build": "yarn build:cjs && yarn build:es",
-    "build:cjs": "rimraf ./lib && tsc --project tsconfig.json",
-    "build:es": "rimraf ./lib-es && tsc --project tsconfig.json --outDir lib-es --module es2015"
+    "build:cjs": "rimraf ./lib && tsc --project tsconfig.json --outDir lib --module commonjs",
+    "build:es": "rimraf ./lib-es && tsc --project tsconfig.json"
   },
   "devDependencies": {
     "react-admin": "^3.4.1",
@@ -31,7 +31,7 @@
     "typescript": "^3.8.3"
   },
   "dependencies": {
-    "graphql": "^14.1.1",
+    "graphql": ">=14.0.0",
     "lodash": "^4.17.15",
     "pluralize": "^8.0.0",
     "ra-data-graphql": "^3.2.2"

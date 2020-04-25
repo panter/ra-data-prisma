@@ -21,8 +21,8 @@
   "scripts": {
     "test": "echo \"Error: run tests from root\" && exit 1",
     "build": "yarn build:cjs && yarn build:es",
-    "build:cjs": "rimraf ./lib && tsc --project tsconfig.json",
-    "build:es": "rimraf ./lib-es && tsc --project tsconfig.json --outDir lib-es --module es2015"
+    "build:cjs": "rimraf ./lib && tsc --project tsconfig.json --outDir lib --module commonjs",
+    "build:es": "rimraf ./lib-es && tsc --project tsconfig.json"
   },
   "devDependencies": {
     "nexus": "^0.12.0",
