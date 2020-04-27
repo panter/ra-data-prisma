@@ -1,5 +1,12 @@
 import { TypeKind } from "graphql";
-import { GET_LIST, GET_MANY, GET_MANY_REFERENCE, CREATE, UPDATE, DELETE } from "react-admin";
+import {
+  GET_LIST,
+  GET_MANY,
+  GET_MANY_REFERENCE,
+  CREATE,
+  UPDATE,
+  DELETE,
+} from "react-admin";
 import getResponseParser from "./getResponseParser";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 
@@ -105,9 +112,10 @@ const testListTypes = (type: string) => {
     };
 
     expect(
-      getResponseParser(introspectionResults as IntrospectionResult)(type, resource as Resource)(
-        response,
-      ),
+      getResponseParser(introspectionResults as IntrospectionResult)(
+        type,
+        resource as Resource,
+      )(response),
     ).toEqual({
       data: [
         {
@@ -226,9 +234,10 @@ const testSingleTypes = (type: string) => {
       },
     };
     expect(
-      getResponseParser(introspectionResults as IntrospectionResult)(type, resource as Resource)(
-        response,
-      ),
+      getResponseParser(introspectionResults as IntrospectionResult)(
+        type,
+        resource as Resource,
+      )(response),
     ).toEqual({
       data: {
         id: "post1",

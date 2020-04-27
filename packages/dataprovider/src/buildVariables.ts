@@ -10,19 +10,19 @@ import {
 import isObject from "lodash/isObject";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
+import upperFirst from "lodash/upperFirst";
+import lowerCase from "lodash/lowerCase";
 
 import {
   IntrospectionInputObjectType,
-  IntrospectionObjectType,
-  IntrospectionType,
-  IntrospectionNamedTypeRef,
   IntrospectionListTypeRef,
   IntrospectionNonNullTypeRef,
   IntrospectionInputTypeRef,
   IntrospectionInputValue,
+  IntrospectionNamedTypeRef,
 } from "graphql";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { field } from "./utils/gqlTypes";
+
 import getFinalType from "./utils/getFinalType";
 import exhaust from "./utils/exhaust";
 
@@ -32,59 +32,103 @@ interface GetListParams {
   sort: { field: string; order: string };
 }
 
-//TODO: Object filter weren't tested yet
-
-const getFilter = (
-  fieldType: IntrospectionInputObjectType,
+const getStringFilter = (key: string, value: any) => ({
+  OR: [
+    {
+      [key]: {
+        contains: value,
+      },
+    },
+    {
+      [key]: {
+        contains: lowerCase(value),
+      },
+    },
+    {
+      [key]: {
+        contains: upperFirst(value),
+      },
+    },
+  ],
+});
+const getFilters = (
+  key: string,
   value: any,
+  resource: Resource,
   introspectionResults: IntrospectionResult,
 ) => {
-  if (fieldType.name === "StringFilter") {
-    return {
-      contains: value,
-    };
+  const whereType = introspectionResults.types.find(
+    (t) => t.name === `${resource.type.name}WhereInput`,
+  ) as IntrospectionInputObjectType;
+
+  const fieldType = whereType.inputFields.find((f) => f.name === key)
+    ?.type as IntrospectionInputObjectType;
+
+  if (!fieldType) {
+    if (key === "q") {
+      // special: q is universal text search
+      const OR = whereType.inputFields
+        .filter(
+          (i) =>
+            i.type.kind === "INPUT_OBJECT" &&
+            (i.type.name === "StringFilter" ||
+              i.type.name === "NullableStringFilter"),
+        )
+        .map((f) => getStringFilter(f.name, value));
+      console.log({ OR });
+      return { OR };
+    } else {
+      return {};
+    }
   }
-  if (fieldType.kind == "INPUT_OBJECT") {
+  if (
+    fieldType.name === "StringFilter" ||
+    fieldType.name === "NullableStringFilter"
+  ) {
+    return getStringFilter(key, value);
+  }
+  if (fieldType.kind === "INPUT_OBJECT") {
     // we asume for the moment that this is always a relation
     const inputObjectType = introspectionResults.types.find(
       (t) => t.name === fieldType.name,
     ) as IntrospectionInputObjectType;
     //console.log({ inputObjectType });
-    const hasSomeFilter = inputObjectType.inputFields.some((s) => s.name === "some");
+    const hasSomeFilter = inputObjectType.inputFields.some(
+      (s) => s.name === "some",
+    );
 
     if (hasSomeFilter) {
       return {
-        some: {
-          id: {
-            equals: value,
+        [key]: {
+          some: {
+            id: {
+              equals: value,
+            },
           },
         },
       };
     }
     return {
-      id: {
-        equals: value,
+      [key]: {
+        id: {
+          equals: value,
+        },
       },
     };
   }
-  console.warn("no filter for ", fieldType);
-  return null;
+  return {};
 };
 const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
   resource: Resource,
   aorFetchType: string,
   params: GetListParams,
 ) => {
-  const whereType = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}WhereInput`,
-  ) as IntrospectionInputObjectType;
   const where = Object.keys(params.filter).reduce((acc, key) => {
     const value = params.filter[key];
-    const fieldType = whereType.inputFields.find((f) => f.name === key)
-      .type as IntrospectionInputObjectType;
-    const filter = getFilter(fieldType, value, introspectionResults);
-    //console.log({ key, value, filter, fieldType });
-    return { ...acc, [key]: filter };
+
+    const filters = getFilters(key, value, resource, introspectionResults);
+
+    return { ...acc, ...filters };
   }, {});
 
   return {
@@ -136,11 +180,14 @@ const getUpdateInputDataTypeForList = (
   >;
   const updateInputFieldType = getFinalType(updateListModifierType.ofType);
   const updateListInputDataType = (introspectionResults.types.find(
-    (introdspectionType) => introdspectionType.name === updateInputFieldType.name,
-  ) as IntrospectionInputObjectType).inputFields.find((input) => input.name === "data")
-    .type as IntrospectionNonNullTypeRef<IntrospectionNamedTypeRef>;
+    (introdspectionType) =>
+      introdspectionType.name === updateInputFieldType.name,
+  ) as IntrospectionInputObjectType).inputFields.find(
+    (input) => input.name === "data",
+  ).type as IntrospectionNonNullTypeRef<IntrospectionNamedTypeRef>;
   return introspectionResults.types.find(
-    (introdspectionType) => introdspectionType.name === updateListInputDataType.ofType.name,
+    (introdspectionType) =>
+      introdspectionType.name === updateListInputDataType.ofType.name,
   ) as IntrospectionInputObjectType;
 };
 
@@ -156,7 +203,7 @@ const buildNewInputValue = (
     case "SCALAR":
     case "ENUM":
       return fieldData;
-    case "INPUT_OBJECT":
+    case "INPUT_OBJECT": {
       const fieldObjectType = fieldType as IntrospectionInputObjectType;
 
       const fullFieldObjectType = introspectionResults.types.find(
@@ -164,12 +211,20 @@ const buildNewInputValue = (
       ) as IntrospectionInputObjectType;
 
       // if it has a set modifier, it is an update array
-      const createModifier = fullFieldObjectType?.inputFields.find((i) => i.name === "create");
-      const connectModifier = fullFieldObjectType?.inputFields.find((i) => i.name === "connect");
-      const setModifier = fullFieldObjectType?.inputFields.find((i) => i.name === "set");
+      const createModifier = fullFieldObjectType?.inputFields.find(
+        (i) => i.name === "create",
+      );
+      const connectModifier = fullFieldObjectType?.inputFields.find(
+        (i) => i.name === "connect",
+      );
+      const setModifier = fullFieldObjectType?.inputFields.find(
+        (i) => i.name === "set",
+      );
       // is it a relation?
       if (createModifier && connectModifier) {
-        const updateModifier = fullFieldObjectType?.inputFields.find((i) => i.name === "update");
+        const updateModifier = fullFieldObjectType?.inputFields.find(
+          (i) => i.name === "update",
+        );
         if (createModifier.type.kind === "LIST") {
           if (Array.isArray(fieldData)) {
             const createListInputType = getCreateInputDataTypeForList(
@@ -178,80 +233,92 @@ const buildNewInputValue = (
             );
 
             const updateListInputType = updateModifier
-              ? getUpdateInputDataTypeForList(updateModifier, introspectionResults)
+              ? getUpdateInputDataTypeForList(
+                  updateModifier,
+                  introspectionResults,
+                )
               : null;
 
-            const variables = fieldData.reduce<UpdateManyInput>((inputs, referencedField) => {
-              if (isObject(referencedField)) {
-                if (!updateListInputType) {
-                  throw new Error(
-                    `Input data for "${fieldName}" is of type "Object" but graphql endpoints does not expose the "update" mutation for "${fullFieldObjectType.name}"`,
-                  );
-                }
-                // TODO: we assume "data.id" to be the id
-                if (referencedField.id) {
-                  // update
-                  const data = buildData(
-                    updateListInputType,
-                    {
-                      id: referencedField.id,
-                      data: referencedField,
-                      previousData: previousFieldData?.find((previousField) => {
-                        // TODO: we assume ".id" to be the id
-                        return previousField.id === referencedField.id;
-                      }),
-                    },
-                    introspectionResults,
-                  );
-                  inputs.update = [
-                    ...(inputs.update || []),
-                    { where: { id: referencedField.id }, data },
-                  ];
+            const variables = fieldData.reduce<UpdateManyInput>(
+              (inputs, referencedField) => {
+                if (isObject(referencedField)) {
+                  if (!updateListInputType) {
+                    throw new Error(
+                      `Input data for "${fieldName}" is of type "Object" but graphql endpoints does not expose the "update" mutation for "${fullFieldObjectType.name}"`,
+                    );
+                  }
+                  // TODO: we assume "data.id" to be the id
+                  if (referencedField.id) {
+                    // update
+                    const data = buildData(
+                      updateListInputType,
+                      {
+                        id: referencedField.id,
+                        data: referencedField,
+                        previousData: previousFieldData?.find(
+                          (previousField) => {
+                            // TODO: we assume ".id" to be the id
+                            return previousField.id === referencedField.id;
+                          },
+                        ),
+                      },
+                      introspectionResults,
+                    );
+                    inputs.update = [
+                      ...(inputs.update || []),
+                      { where: { id: referencedField.id }, data },
+                    ];
+                  } else {
+                    // create
+                    const data = buildData(
+                      createListInputType,
+                      {
+                        data: referencedField,
+                      },
+                      introspectionResults,
+                    );
+                    inputs.create = [...(inputs.create || []), data];
+                  }
                 } else {
-                  // create
-                  const data = buildData(
-                    createListInputType,
-                    {
-                      data: referencedField,
-                    },
-                    introspectionResults,
-                  );
-                  inputs.create = [...(inputs.create || []), data];
+                  // only reference id's
+                  // what about multiple id's for one reference?
+                  if (
+                    !previousFieldData?.find((p) => {
+                      // TODO: we assume "p.id" to be the id
+                      return p.id
+                        ? p.id === referencedField
+                        : p === referencedField;
+                    })
+                  ) {
+                    inputs.connect = [
+                      ...(inputs.connect || []),
+                      { id: referencedField },
+                    ];
+                  }
                 }
-              } else {
-                // only reference id's
-                // what about multiple id's for one reference?
-                if (
-                  !previousFieldData?.find((p) => {
-                    // TODO: we assume "p.id" to be the id
-                    return p.id ? p.id === referencedField : p === referencedField;
-                  })
-                ) {
-                  inputs.connect = [...(inputs.connect || []), { id: referencedField }];
-                }
-              }
-              return inputs;
-            }, {});
+                return inputs;
+              },
+              {},
+            );
 
             // disconnect the ones that are not referenced anymore
             if (Array.isArray(previousFieldData)) {
-              const disconnect = (previousFieldData as any[]).reduce<Array<{ id: any }>>(
-                (inputs, data) => {
-                  // TODO: we assume "data.id" to be the id
-                  const dataId = data.id || data;
-                  if (
-                    !fieldData.find((p) => {
-                      // TODO: we assume "p.id" to be the id
-                      const pId = p.id || p;
-                      return pId === dataId;
-                    })
-                  ) {
-                    return [...(inputs || []), { id: dataId }];
-                  }
-                  return inputs;
-                },
-                [],
-              );
+              const disconnect = (previousFieldData as any[]).reduce<
+                Array<{ id: any }>
+              >((inputs, data) => {
+                // TODO: we assume "data.id" to be the id
+                const dataId = data.id || data;
+                if (
+                  !fieldData.find((p) => {
+                    // TODO: we assume "p.id" to be the id
+                    const pId = p.id || p;
+                    return pId === dataId;
+                  })
+                ) {
+                  return [...(inputs || []), { id: dataId }];
+                }
+                return inputs;
+              }, []);
               if (disconnect.length) {
                 variables.disconnect = disconnect;
               }
@@ -269,7 +336,9 @@ const buildNewInputValue = (
           if (isObject(fieldData)) {
             // TODO: we assume ".id" to be the id
             if (!fieldData.id) {
-              const createObjectModifierType = getFinalType(createModifier.type);
+              const createObjectModifierType = getFinalType(
+                createModifier.type,
+              );
               const createObjectInputType = introspectionResults.types.find(
                 (t) => t.name === createObjectModifierType.name,
               ) as IntrospectionInputObjectType;
@@ -285,7 +354,9 @@ const buildNewInputValue = (
               return { create: data };
             } else {
               if (previousFieldData?.id === fieldData.id) {
-                const updateObjectModifierType = getFinalType(updateModifier.type);
+                const updateObjectModifierType = getFinalType(
+                  updateModifier.type,
+                );
                 const updateObjectInputType = introspectionResults.types.find(
                   (t) => t.name === updateObjectModifierType.name,
                 ) as IntrospectionInputObjectType;
@@ -313,6 +384,7 @@ const buildNewInputValue = (
         return { set: fieldData };
       }
       return;
+    }
     case "LIST":
     case "NON_NULL":
       return;
@@ -328,12 +400,17 @@ const buildData = (
 ) => {
   return inputType.inputFields.reduce((acc, field) => {
     const key = field.name;
-    const fieldType = field.type.kind === "NON_NULL" ? field.type.ofType : field.type;
+    const fieldType =
+      field.type.kind === "NON_NULL" ? field.type.ofType : field.type;
     const fieldData = params.data[key];
     //console.log(key, fieldData, fieldType);
-    const previousFieldData = (params as UpdateParams)?.previousData?.[key] || null;
+    const previousFieldData =
+      (params as UpdateParams)?.previousData?.[key] ?? null;
     // TODO in case the content of the array has changed but not the array itself?
-    if (isEqual(fieldData, previousFieldData) || (isNil(previousFieldData) && isNil(fieldData))) {
+    if (
+      isEqual(fieldData, previousFieldData) ||
+      (isNil(previousFieldData) && isNil(fieldData))
+    ) {
       return acc;
     }
 
@@ -394,11 +471,16 @@ export default (introspectionResults: IntrospectionResult) => (
 ) => {
   switch (aorFetchType) {
     case GET_LIST: {
-      return buildGetListVariables(introspectionResults)(resource, aorFetchType, params);
+      return buildGetListVariables(introspectionResults)(
+        resource,
+        aorFetchType,
+        params,
+      );
     }
     case GET_MANY:
       return {
         where: {
+          //@ts-ignore
           id: { in: params.ids.map((obj) => (isObject(obj) ? obj.id : obj)) },
         },
       };

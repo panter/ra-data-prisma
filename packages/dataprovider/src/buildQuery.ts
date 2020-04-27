@@ -4,11 +4,20 @@ import getResponseParser from "./getResponseParser";
 import { IntrospectionResult } from "./constants/interfaces";
 import { DocumentNode } from "graphql";
 
-export const buildQueryFactory = () => (introspectionResults: IntrospectionResult) => {
+export const buildQueryFactory = () => (
+  introspectionResults: IntrospectionResult,
+) => {
   const knownResources = introspectionResults.resources.map((r) => r.type.name);
 
-  return (aorFetchType: string, resourceName: string, params: any, fragment: DocumentNode) => {
-    const resource = introspectionResults.resources.find((r) => r.type.name === resourceName);
+  return (
+    aorFetchType: string,
+    resourceName: string,
+    params: any,
+    fragment: DocumentNode,
+  ) => {
+    const resource = introspectionResults.resources.find(
+      (r) => r.type.name === resourceName,
+    );
 
     if (!resource) {
       throw new Error(
@@ -26,7 +35,11 @@ export const buildQueryFactory = () => (introspectionResults: IntrospectionResul
       );
     }
 
-    const variables = buildVariables(introspectionResults)(resource, aorFetchType, params)!;
+    const variables = buildVariables(introspectionResults)(
+      resource,
+      aorFetchType,
+      params,
+    )!;
 
     const query = buildGqlQuery(introspectionResults)(
       resource,
@@ -35,7 +48,10 @@ export const buildQueryFactory = () => (introspectionResults: IntrospectionResul
       variables,
       fragment,
     );
-    const parseResponse = getResponseParser(introspectionResults)(aorFetchType, resource);
+    const parseResponse = getResponseParser(introspectionResults)(
+      aorFetchType,
+      resource,
+    );
 
     return {
       query,

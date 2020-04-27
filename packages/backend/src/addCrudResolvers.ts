@@ -1,10 +1,12 @@
-import { extendType } from "nexus";
+import { extendType } from "@nexus/schema";
 import upperFirst from "lodash/upperFirst";
 
 import lowerFirst from "lodash/lowerFirst";
+import pluralize from "pluralize";
 
 declare global {
   interface NexusGenCustomOutputProperties<TypeName extends string> {
+    //@ts-ignore
     crud: any;
   }
 }
@@ -13,8 +15,8 @@ export default (resourceName: string) => {
   const typeName = upperFirst(resourceName);
 
   const queryName = lowerFirst(resourceName);
-  const queryAllName = queryName + "s";
-  const queryCountName = queryName + "sCount";
+  const queryAllName = pluralize(queryName);
+  const queryCountName = `${pluralize(queryName)}Count`;
 
   const mutations = [
     `createOne${typeName}`,
@@ -28,14 +30,14 @@ export default (resourceName: string) => {
     const queries = [queryName, queryName, queryCountName];
     console.info("");
     console.info(
-      `☝ The following resolvers were defined for the resource '${resourceName}' to make it compatible for react-admin`
+      `☝ The following resolvers were defined for the resource '${resourceName}' to make it compatible for react-admin`,
     );
 
-    console.info("Queries:     " + queries.join(" "));
-    console.info("Mutations:   " + mutations.join(" "));
+    console.info(`Queries:     ${queries.join(" ")}`);
+    console.info(`Mutations:   ${mutations.join(" ")}`);
 
     console.info(
-      "☝ please make sure to restirct unauthorized access to these queries using graphq-shield"
+      "☝ please make sure to restirct unauthorized access to these queries using graphq-shield",
     );
     console.info("");
   }

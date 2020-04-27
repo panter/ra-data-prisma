@@ -40,12 +40,17 @@ export const operationDefinition = (
   variableDefinitions,
 });
 
-export const selectionSet = (selections: SelectionNode[]): SelectionSetNode => ({
+export const selectionSet = (
+  selections: SelectionNode[],
+): SelectionSetNode => ({
   kind: Kind.SELECTION_SET,
   selections,
 });
 
-export const field = (name: NameNode, optionalValues: Partial<FieldNode> = {}): FieldNode => ({
+export const field = (
+  name: NameNode,
+  optionalValues: Partial<FieldNode> = {},
+): FieldNode => ({
   kind: Kind.FIELD,
   name,
   ...optionalValues,
@@ -56,7 +61,9 @@ export const listType = (type: TypeNode): ListTypeNode => ({
   type,
 });
 
-export const nonNullType = (type: NamedTypeNode | ListTypeNode): NonNullTypeNode => ({
+export const nonNullType = (
+  type: NamedTypeNode | ListTypeNode,
+): NonNullTypeNode => ({
   kind: Kind.NON_NULL_TYPE,
   type,
 });

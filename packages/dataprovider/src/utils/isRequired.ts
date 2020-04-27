@@ -1,4 +1,8 @@
-import { TypeKind, IntrospectionTypeRef, IntrospectionListTypeRef } from "graphql";
+import {
+  TypeKind,
+  IntrospectionTypeRef,
+  IntrospectionListTypeRef,
+} from "graphql";
 
 const isRequired = (type: IntrospectionTypeRef): boolean => {
   if (type.kind === TypeKind.LIST) {
