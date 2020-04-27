@@ -1,4 +1,11 @@
-import { GET_LIST, GET_MANY, GET_MANY_REFERENCE, CREATE, UPDATE, DELETE } from "react-admin";
+import {
+  GET_LIST,
+  GET_MANY,
+  GET_MANY_REFERENCE,
+  CREATE,
+  UPDATE,
+  DELETE,
+} from "react-admin";
 import buildVariables from "./buildVariables";
 import { TypeKind } from "graphql/type/introspection";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
@@ -27,7 +34,7 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(introspectionResult as IntrospectionResult)(
+        buildVariables(introspectionResult as any)(
           { type: { name: "Post" } } as Resource,
           GET_LIST,
           params,

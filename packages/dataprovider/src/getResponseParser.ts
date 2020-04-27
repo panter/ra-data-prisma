@@ -3,9 +3,10 @@ import { GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import getFinalType from "./utils/getFinalType";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 
-const sanitizeResource = (introspectionResults: IntrospectionResult, resource: Resource) => (data: {
-  [key: string]: any;
-}): any => {
+const sanitizeResource = (
+  introspectionResults: IntrospectionResult,
+  resource: Resource,
+) => (data: { [key: string]: any }): any => {
   return Object.keys(data).reduce((acc, key) => {
     if (key.startsWith("_")) {
       return acc;
@@ -21,7 +22,9 @@ const sanitizeResource = (introspectionResults: IntrospectionResult, resource: R
     }
 
     // FIXME: We might have to handle linked types which are not resources but will have to be careful about endless circular dependencies
-    const linkedResource = introspectionResults.resources.find((r) => r.type.name === type.name);
+    const linkedResource = introspectionResults.resources.find(
+      (r) => r.type.name === type.name,
+    );
 
     if (linkedResource) {
       const linkedResourceData = data[field.name];

@@ -203,7 +203,7 @@ const buildNewInputValue = (
     case "SCALAR":
     case "ENUM":
       return fieldData;
-    case "INPUT_OBJECT":
+    case "INPUT_OBJECT": {
       const fieldObjectType = fieldType as IntrospectionInputObjectType;
 
       const fullFieldObjectType = introspectionResults.types.find(
@@ -384,6 +384,7 @@ const buildNewInputValue = (
         return { set: fieldData };
       }
       return;
+    }
     case "LIST":
     case "NON_NULL":
       return;

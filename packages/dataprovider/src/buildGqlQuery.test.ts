@@ -1,4 +1,10 @@
-import { TypeKind, print, IntrospectionField, FieldNode, DocumentNode } from "graphql";
+import {
+  TypeKind,
+  print,
+  IntrospectionField,
+  FieldNode,
+  DocumentNode,
+} from "graphql";
 import {
   GET_LIST,
   GET_ONE,
@@ -171,7 +177,11 @@ describe("buildFields", () => {
       },
     ];
 
-    expect(print(buildFields(introspectionResults as IntrospectionResult)(fields as any))).toEqual([
+    expect(
+      print(
+        buildFields(introspectionResults as IntrospectionResult)(fields as any),
+      ),
+    ).toEqual([
       "id",
       `linked {
   id
