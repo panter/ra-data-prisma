@@ -7,7 +7,11 @@
     "skipLibCheck": true,
     "module": "ESNext",
     "moduleResolution": "Node",
+    "target": "es5",
+    "lib": ["esnext"],
+    "esModuleInterop": true,
     "declaration": true,
-    "declarationMap": true
+    "declarationMap": true,
+    "sourceMap": true
   }
 }

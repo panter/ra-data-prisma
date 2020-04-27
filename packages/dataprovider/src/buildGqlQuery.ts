@@ -8,7 +8,7 @@ import {
   SelectionNode,
   VariableDefinitionNode,
   ArgumentNode,
-  FieldNode
+  FieldNode,
 } from "graphql";
 import { QUERY_TYPES } from "ra-data-graphql";
 import { GET_LIST, GET_MANY, GET_MANY_REFERENCE, DELETE } from "react-admin";
@@ -25,7 +25,7 @@ export interface Query {
 }
 
 export const buildFields = (introspectionResults: IntrospectionResult) => (
-  fields: IntrospectionField[]
+  fields: IntrospectionField[],
 ): FieldNode[] => {
   return fields.reduce((acc: FieldNode[], field) => {
     const type = getFinalType(field.type);
@@ -38,32 +38,26 @@ export const buildFields = (introspectionResults: IntrospectionResult) => (
       return [...acc, gqlTypes.field(gqlTypes.name(field.name))];
     }
 
-    const linkedResource = introspectionResults.resources.find(
-      r => r.type.name === type.name
-    );
+    const linkedResource = introspectionResults.resources.find((r) => r.type.name === type.name);
     if (linkedResource) {
       return [
         ...acc,
         gqlTypes.field(gqlTypes.name(field.name), {
-          selectionSet: gqlTypes.selectionSet([
-            gqlTypes.field(gqlTypes.name("id"))
-          ])
-        })
+          selectionSet: gqlTypes.selectionSet([gqlTypes.field(gqlTypes.name("id"))]),
+        }),
       ];
     }
 
-    const linkedType = introspectionResults.types.find(
-      t => t.name === type.name
-    );
+    const linkedType = introspectionResults.types.find((t) => t.name === type.name);
 
     if (linkedType) {
       return [
         ...acc,
         gqlTypes.field(gqlTypes.name(field.name), {
           selectionSet: gqlTypes.selectionSet(
-            buildFields(introspectionResults)((linkedType as any).fields)
-          )
-        })
+            buildFields(introspectionResults)((linkedType as any).fields),
+          ),
+        }),
       ];
     }
 
@@ -80,9 +74,7 @@ export const getArgType = (arg: IntrospectionField) => {
 
   if (list) {
     if (required) {
-      return gqlTypes.listType(
-        gqlTypes.nonNullType(gqlTypes.namedType(gqlTypes.name(type.name)))
-      );
+      return gqlTypes.listType(gqlTypes.nonNullType(gqlTypes.namedType(gqlTypes.name(type.name))));
     }
     return gqlTypes.listType(gqlTypes.namedType(gqlTypes.name(type.name)));
   }
@@ -94,54 +86,38 @@ export const getArgType = (arg: IntrospectionField) => {
   return gqlTypes.namedType(gqlTypes.name(type.name));
 };
 
-export const buildArgs = (
-  query: Query,
-  variables: { [key: string]: any } = {}
-) => {
+export const buildArgs = (query: Query, variables: { [key: string]: any } = {}) => {
   if (query.args.length === 0) {
     return [];
   }
 
-  const validVariables = Object.keys(variables).filter(
-    k => typeof variables[k] !== "undefined"
-  );
+  const validVariables = Object.keys(variables).filter((k) => typeof variables[k] !== "undefined");
   return query.args
-    .filter(arg => validVariables.includes(arg.name))
+    .filter((arg) => validVariables.includes(arg.name))
     .reduce(
       (acc: ArgumentNode[], arg) => [
         ...acc,
-        gqlTypes.argument(
-          gqlTypes.name(arg.name),
-          gqlTypes.variable(gqlTypes.name(arg.name))
-        )
+        gqlTypes.argument(gqlTypes.name(arg.name), gqlTypes.variable(gqlTypes.name(arg.name))),
       ],
-      [] as ArgumentNode[]
+      [] as ArgumentNode[],
     );
 };
 
-export const buildApolloArgs = (
-  query: Query,
-  variables: { [key: string]: any } = {}
-) => {
+export const buildApolloArgs = (query: Query, variables: { [key: string]: any } = {}) => {
   if (query.args.length === 0) {
     return [];
   }
 
-  const validVariables = Object.keys(variables).filter(
-    k => typeof variables[k] !== "undefined"
-  );
+  const validVariables = Object.keys(variables).filter((k) => typeof variables[k] !== "undefined");
 
   return query.args
-    .filter(arg => validVariables.includes(arg.name))
+    .filter((arg) => validVariables.includes(arg.name))
     .reduce(
       (acc: VariableDefinitionNode[], arg) => [
         ...acc,
-        gqlTypes.variableDefinition(
-          gqlTypes.variable(gqlTypes.name(arg.name)),
-          getArgType(arg)
-        )
+        gqlTypes.variableDefinition(gqlTypes.variable(gqlTypes.name(arg.name)), getArgType(arg)),
       ],
-      [] as VariableDefinitionNode[]
+      [] as VariableDefinitionNode[],
     );
 };
 
@@ -149,15 +125,11 @@ export const buildApolloArgs = (
 const buildFieldsFromFragment = (
   fragment: DocumentNode | string,
   resourceName: string,
-  fetchType: string
+  fetchType: string,
 ): SelectionNode[] => {
   let parsedFragment = {};
 
-  if (
-    typeof fragment === "object" &&
-    fragment.kind &&
-    fragment.kind === "Document"
-  ) {
+  if (typeof fragment === "object" && fragment.kind && fragment.kind === "Document") {
     parsedFragment = fragment;
   }
 
@@ -170,7 +142,7 @@ const buildFieldsFromFragment = (
       parsedFragment = parse(fragment);
     } catch (e) {
       throw new Error(
-        `Invalid fragment given for resource '${resourceName}' and fetchType '${fetchType}' (${e.message}).`
+        `Invalid fragment given for resource '${resourceName}' and fetchType '${fetchType}' (${e.message}).`,
       );
     }
   }
@@ -183,13 +155,13 @@ export default (introspectionResults: IntrospectionResult) => (
   aorFetchType: string,
   queryType: Query,
   variables: { [key: string]: any },
-  fragment: DocumentNode
+  fragment: DocumentNode,
 ) => {
   const { orderBy, skip, first, ...countVariables } = variables;
   const apolloArgs = buildApolloArgs(queryType, variables);
   const args = buildArgs(queryType, variables);
   const countArgs = buildArgs(queryType, countVariables);
-  const fields = !!fragment
+  const fields = fragment
     ? buildFieldsFromFragment(fragment, resource.type.name, aorFetchType)
     : buildFields(introspectionResults)((resource.type as any).fields);
 
@@ -205,16 +177,16 @@ export default (introspectionResults: IntrospectionResult) => (
           gqlTypes.field(gqlTypes.name(queryType.name!), {
             alias: gqlTypes.name("items"),
             arguments: args,
-            selectionSet: gqlTypes.selectionSet(fields)
+            selectionSet: gqlTypes.selectionSet(fields),
           }),
           gqlTypes.field(gqlTypes.name(`${queryType.name}Count`), {
-            alias: gqlTypes.name("total")
+            alias: gqlTypes.name("total"),
             // arguments: countArgs, until we have https://github.com/prisma/prisma-client-js/issues/252
-          })
+          }),
         ]),
         gqlTypes.name(queryType.name!),
-        apolloArgs
-      )
+        apolloArgs,
+      ),
     ]);
   }
 
@@ -226,14 +198,12 @@ export default (introspectionResults: IntrospectionResult) => (
           gqlTypes.field(gqlTypes.name(queryType.name!), {
             alias: gqlTypes.name("data"),
             arguments: args,
-            selectionSet: gqlTypes.selectionSet([
-              gqlTypes.field(gqlTypes.name("id"))
-            ])
-          })
+            selectionSet: gqlTypes.selectionSet([gqlTypes.field(gqlTypes.name("id"))]),
+          }),
         ]),
         gqlTypes.name(queryType.name!),
-        apolloArgs
-      )
+        apolloArgs,
+      ),
     ]);
   }
 
@@ -244,11 +214,11 @@ export default (introspectionResults: IntrospectionResult) => (
         gqlTypes.field(gqlTypes.name(queryType.name!), {
           alias: gqlTypes.name("data"),
           arguments: args,
-          selectionSet: gqlTypes.selectionSet(fields)
-        })
+          selectionSet: gqlTypes.selectionSet(fields),
+        }),
       ]),
       gqlTypes.name(queryType.name!),
-      apolloArgs
-    )
+      apolloArgs,
+    ),
   ]);
 };

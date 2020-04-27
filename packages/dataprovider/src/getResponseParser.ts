@@ -3,17 +3,16 @@ import { GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import getFinalType from "./utils/getFinalType";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 
-const sanitizeResource = (
-  introspectionResults: IntrospectionResult,
-  resource: Resource
-) => (data: { [key: string]: any }): any => {
+const sanitizeResource = (introspectionResults: IntrospectionResult, resource: Resource) => (data: {
+  [key: string]: any;
+}): any => {
   return Object.keys(data).reduce((acc, key) => {
     if (key.startsWith("_")) {
       return acc;
     }
 
     const field = (resource.type as IntrospectionObjectType).fields.find(
-      (f: any) => f.name === key
+      (f: any) => f.name === key,
     )!;
     const type = getFinalType(field.type);
 
@@ -22,9 +21,7 @@ const sanitizeResource = (
     }
 
     // FIXME: We might have to handle linked types which are not resources but will have to be careful about endless circular dependencies
-    const linkedResource = introspectionResults.resources.find(
-      r => r.type.name === type.name
-    );
+    const linkedResource = introspectionResults.resources.find((r) => r.type.name === type.name);
 
     if (linkedResource) {
       const linkedResourceData = data[field.name];
@@ -32,13 +29,13 @@ const sanitizeResource = (
       if (Array.isArray(linkedResourceData)) {
         return {
           ...acc,
-          [field.name]: data[field.name].map(obj => obj.id)
+          [field.name]: data[field.name].map((obj) => obj.id),
         };
       }
 
       return {
         ...acc,
-        [field.name]: data[field.name]?.id
+        [field.name]: data[field.name]?.id,
       };
     }
 
@@ -48,7 +45,7 @@ const sanitizeResource = (
 
 export default (introspectionResults: IntrospectionResult) => (
   aorFetchType: string,
-  resource: Resource
+  resource: Resource,
 ) => (response: { [key: string]: any }) => {
   const sanitize = sanitizeResource(introspectionResults, resource);
   const data = response.data;
@@ -60,7 +57,7 @@ export default (introspectionResults: IntrospectionResult) => (
   ) {
     return {
       data: response.data.items.map(sanitize),
-      total: response.data.total
+      total: response.data.total,
     };
   }
 

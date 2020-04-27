@@ -1,10 +1,4 @@
-import {
-  TypeKind,
-  print,
-  IntrospectionField,
-  FieldNode,
-  DocumentNode,
-} from "graphql";
+import { TypeKind, print, IntrospectionField, FieldNode, DocumentNode } from "graphql";
 import {
   GET_LIST,
   GET_ONE,
@@ -29,8 +23,8 @@ describe("getArgType", () => {
       print(
         getArgType({
           type: { kind: TypeKind.SCALAR, name: "foo" },
-        } as IntrospectionField)
-      )
+        } as IntrospectionField),
+      ),
     ).toEqual("foo");
   });
 
@@ -42,8 +36,8 @@ describe("getArgType", () => {
             kind: TypeKind.NON_NULL,
             ofType: { name: "ID", kind: TypeKind.SCALAR },
           },
-        } as IntrospectionField)
-      )
+        } as IntrospectionField),
+      ),
     ).toEqual("ID!");
   });
 
@@ -55,8 +49,8 @@ describe("getArgType", () => {
             kind: TypeKind.LIST,
             ofType: { name: "ID", kind: TypeKind.SCALAR },
           },
-        } as IntrospectionField)
-      )
+        } as IntrospectionField),
+      ),
     ).toEqual("[ID]");
   });
 
@@ -74,8 +68,8 @@ describe("getArgType", () => {
               },
             },
           },
-        } as IntrospectionField)
-      )
+        } as IntrospectionField),
+      ),
     ).toEqual("[ID!]");
   });
 });
@@ -90,8 +84,8 @@ describe("buildArgs", () => {
       print(
         buildArgs({ args: [{ name: "foo" }, { name: "bar" }] } as Query, {
           foo: "foo_value",
-        })
-      )
+        }),
+      ),
     ).toEqual(["foo: $foo"]);
   });
 });
@@ -137,9 +131,9 @@ describe("buildApolloArgs", () => {
               { name: "bar" },
             ],
           } as Query,
-          { foo: "foo_value", barId: 100, barIds: [101, 102] }
-        )
-      )
+          { foo: "foo_value", barId: 100, barIds: [101, 102] },
+        ),
+      ),
     ).toEqual(["$foo: Int!", "$barId: ID", "$barIds: [ID!]"]);
   });
 });
@@ -177,11 +171,7 @@ describe("buildFields", () => {
       },
     ];
 
-    expect(
-      print(
-        buildFields(introspectionResults as IntrospectionResult)(fields as any)
-      )
-    ).toEqual([
+    expect(print(buildFields(introspectionResults as IntrospectionResult)(fields as any))).toEqual([
       "id",
       `linked {
   id
@@ -257,9 +247,9 @@ describe("buildGqlQuery", () => {
           GET_LIST,
           queryType as Query,
           params,
-          {} as DocumentNode
-        )
-      )
+          {} as DocumentNode,
+        ),
+      ),
     ).toEqual(
       `query commands($foo: Int!) {
   items: commands(foo: $foo) {
@@ -277,7 +267,7 @@ describe("buildGqlQuery", () => {
     }
   }
 }
-`
+`,
     );
   });
   it("returns the correct query for GET_MANY", () => {
@@ -288,9 +278,9 @@ describe("buildGqlQuery", () => {
           GET_MANY,
           queryType as Query,
           params,
-          {} as DocumentNode
-        )
-      )
+          {} as DocumentNode,
+        ),
+      ),
     ).toEqual(
       `query commands($foo: Int!) {
   items: commands(foo: $foo) {
@@ -308,7 +298,7 @@ describe("buildGqlQuery", () => {
     }
   }
 }
-`
+`,
     );
   });
   it("returns the correct query for GET_MANY_REFERENCE", () => {
@@ -319,9 +309,9 @@ describe("buildGqlQuery", () => {
           GET_MANY_REFERENCE,
           queryType as Query,
           params,
-          {} as DocumentNode
-        )
-      )
+          {} as DocumentNode,
+        ),
+      ),
     ).toEqual(
       `query commands($foo: Int!) {
   items: commands(foo: $foo) {
@@ -339,7 +329,7 @@ describe("buildGqlQuery", () => {
     }
   }
 }
-`
+`,
     );
   });
   it("returns the correct query for GET_ONE", () => {
@@ -350,9 +340,9 @@ describe("buildGqlQuery", () => {
           GET_ONE,
           { ...queryType, name: "getCommand" } as Query,
           params,
-          {} as DocumentNode
-        )
-      )
+          {} as DocumentNode,
+        ),
+      ),
     ).toEqual(
       `query getCommand($foo: Int!) {
   data: getCommand(foo: $foo) {
@@ -365,7 +355,7 @@ describe("buildGqlQuery", () => {
     }
   }
 }
-`
+`,
     );
   });
   it("returns the correct query for UPDATE", () => {
@@ -376,9 +366,9 @@ describe("buildGqlQuery", () => {
           UPDATE,
           { ...queryType, name: "updateCommand" } as Query,
           params,
-          {} as DocumentNode
-        )
-      )
+          {} as DocumentNode,
+        ),
+      ),
     ).toEqual(
       `mutation updateCommand($foo: Int!) {
   data: updateCommand(foo: $foo) {
@@ -391,7 +381,7 @@ describe("buildGqlQuery", () => {
     }
   }
 }
-`
+`,
     );
   });
   it("returns the correct query for CREATE", () => {
@@ -402,9 +392,9 @@ describe("buildGqlQuery", () => {
           CREATE,
           { ...queryType, name: "createCommand" } as Query,
           params,
-          {} as DocumentNode
-        )
-      )
+          {} as DocumentNode,
+        ),
+      ),
     ).toEqual(
       `mutation createCommand($foo: Int!) {
   data: createCommand(foo: $foo) {
@@ -417,7 +407,7 @@ describe("buildGqlQuery", () => {
     }
   }
 }
-`
+`,
     );
   });
   it("returns the correct query for DELETE", () => {
@@ -428,16 +418,16 @@ describe("buildGqlQuery", () => {
           DELETE,
           { ...queryType, name: "deleteCommand" } as Query,
           params,
-          {} as DocumentNode
-        )
-      )
+          {} as DocumentNode,
+        ),
+      ),
     ).toEqual(
       `mutation deleteCommand($foo: Int!) {
   data: deleteCommand(foo: $foo) {
     id
   }
 }
-`
+`,
     );
   });
 });

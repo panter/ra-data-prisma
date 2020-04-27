@@ -1,261 +1,252 @@
-import { TypeKind } from 'graphql';
-import {
-  GET_LIST,
-  GET_MANY,
-  GET_MANY_REFERENCE,
-  CREATE,
-  UPDATE,
-  DELETE
-} from 'react-admin';
-import getResponseParser from './getResponseParser';
-import { IntrospectionResult, Resource } from './constants/interfaces';
+import { TypeKind } from "graphql";
+import { GET_LIST, GET_MANY, GET_MANY_REFERENCE, CREATE, UPDATE, DELETE } from "react-admin";
+import getResponseParser from "./getResponseParser";
+import { IntrospectionResult, Resource } from "./constants/interfaces";
 
 const testListTypes = (type: string) => {
-  it('returns the response expected by RA for GET_LIST', () => {
+  it("returns the response expected by RA for GET_LIST", () => {
     const resource = {
       type: {
-        name: 'Post',
+        name: "Post",
         fields: [
           {
-            name: 'id',
+            name: "id",
             type: {
               kind: TypeKind.NON_NULL,
-              ofType: { kind: TypeKind.SCALAR }
-            }
+              ofType: { kind: TypeKind.SCALAR },
+            },
           },
           {
-            name: 'title',
+            name: "title",
             type: {
               kind: TypeKind.NON_NULL,
-              ofType: { kind: TypeKind.SCALAR }
-            }
+              ofType: { kind: TypeKind.SCALAR },
+            },
           },
           {
-            name: 'tags',
+            name: "tags",
             type: {
               kind: TypeKind.LIST,
-              ofType: { kind: TypeKind.OBJECT, name: 'Tag' }
-            }
+              ofType: { kind: TypeKind.OBJECT, name: "Tag" },
+            },
           },
-          { name: 'embeddedJson', type: { kind: TypeKind.OBJECT } },
+          { name: "embeddedJson", type: { kind: TypeKind.OBJECT } },
           {
-            name: 'author',
+            name: "author",
             type: {
               kind: TypeKind.NON_NULL,
-              ofType: { kind: TypeKind.OBJECT, name: 'User' }
-            }
+              ofType: { kind: TypeKind.OBJECT, name: "User" },
+            },
           },
           {
-            name: 'coauthor',
-            type: { kind: TypeKind.OBJECT, name: 'User' }
-          }
-        ]
-      }
+            name: "coauthor",
+            type: { kind: TypeKind.OBJECT, name: "User" },
+          },
+        ],
+      },
     };
 
     const introspectionResults = {
       resources: [
         {
           type: {
-            name: 'User',
+            name: "User",
             fields: [
-              { name: 'id', type: { kind: TypeKind.SCALAR } },
+              { name: "id", type: { kind: TypeKind.SCALAR } },
               {
-                name: 'firstName',
-                type: { kind: TypeKind.SCALAR }
-              }
-            ]
-          }
+                name: "firstName",
+                type: { kind: TypeKind.SCALAR },
+              },
+            ],
+          },
         },
         {
           type: {
-            name: 'Tag',
+            name: "Tag",
             fields: [
-              { name: 'id', type: { kind: TypeKind.SCALAR } },
-              { name: 'name', type: { kind: TypeKind.SCALAR } }
-            ]
-          }
-        }
+              { name: "id", type: { kind: TypeKind.SCALAR } },
+              { name: "name", type: { kind: TypeKind.SCALAR } },
+            ],
+          },
+        },
       ],
-      types: [{ name: 'User' }, { name: 'Tag' }]
+      types: [{ name: "User" }, { name: "Tag" }],
     };
     const response = {
       data: {
         items: [
           {
-            _typeName: 'Post',
-            id: 'post1',
-            title: 'title1',
-            author: { id: 'author1', firstName: 'Toto' },
+            _typeName: "Post",
+            id: "post1",
+            title: "title1",
+            author: { id: "author1", firstName: "Toto" },
             coauthor: null,
             tags: [
-              { id: 'tag1', name: 'tag1 name' },
-              { id: 'tag2', name: 'tag2 name' }
+              { id: "tag1", name: "tag1 name" },
+              { id: "tag2", name: "tag2 name" },
             ],
-            embeddedJson: { foo: 'bar' }
+            embeddedJson: { foo: "bar" },
           },
           {
-            _typeName: 'Post',
-            id: 'post2',
-            title: 'title2',
-            author: { id: 'author1', firstName: 'Toto' },
+            _typeName: "Post",
+            id: "post2",
+            title: "title2",
+            author: { id: "author1", firstName: "Toto" },
             coauthor: null,
             tags: [
-              { id: 'tag1', name: 'tag1 name' },
-              { id: 'tag3', name: 'tag3 name' }
+              { id: "tag1", name: "tag1 name" },
+              { id: "tag3", name: "tag3 name" },
             ],
-            embeddedJson: { foo: 'bar' }
-          }
+            embeddedJson: { foo: "bar" },
+          },
         ],
-        total: { aggregate: { count: 100 } }
-      }
+        total: { aggregate: { count: 100 } },
+      },
     };
 
     expect(
-      getResponseParser(introspectionResults as IntrospectionResult)(
-        type,
-        resource as Resource
-      )(response)
+      getResponseParser(introspectionResults as IntrospectionResult)(type, resource as Resource)(
+        response,
+      ),
     ).toEqual({
       data: [
         {
-          id: 'post1',
-          title: 'title1',
-          'author.id': 'author1',
-          author: { id: 'author1', firstName: 'Toto' },
+          id: "post1",
+          title: "title1",
+          "author.id": "author1",
+          author: { id: "author1", firstName: "Toto" },
           tags: [
-            { id: 'tag1', name: 'tag1 name' },
-            { id: 'tag2', name: 'tag2 name' }
+            { id: "tag1", name: "tag1 name" },
+            { id: "tag2", name: "tag2 name" },
           ],
-          tagsIds: ['tag1', 'tag2'],
-          embeddedJson: { foo: 'bar' }
+          tagsIds: ["tag1", "tag2"],
+          embeddedJson: { foo: "bar" },
         },
         {
-          id: 'post2',
-          title: 'title2',
-          'author.id': 'author1',
-          author: { id: 'author1', firstName: 'Toto' },
+          id: "post2",
+          title: "title2",
+          "author.id": "author1",
+          author: { id: "author1", firstName: "Toto" },
           tags: [
-            { id: 'tag1', name: 'tag1 name' },
-            { id: 'tag3', name: 'tag3 name' }
+            { id: "tag1", name: "tag1 name" },
+            { id: "tag3", name: "tag3 name" },
           ],
-          tagsIds: ['tag1', 'tag3'],
-          embeddedJson: { foo: 'bar' }
-        }
+          tagsIds: ["tag1", "tag3"],
+          embeddedJson: { foo: "bar" },
+        },
       ],
-      total: 100
+      total: 100,
     });
   });
 };
 
 const testSingleTypes = (type: string) => {
-  it('returns the response expected by RA for GET_LIST', () => {
+  it("returns the response expected by RA for GET_LIST", () => {
     const resource = {
       type: {
-        name: 'Post',
+        name: "Post",
         fields: [
           {
-            name: 'id',
+            name: "id",
             type: {
               kind: TypeKind.NON_NULL,
-              ofType: { kind: TypeKind.SCALAR }
-            }
+              ofType: { kind: TypeKind.SCALAR },
+            },
           },
           {
-            name: 'title',
+            name: "title",
             type: {
               kind: TypeKind.NON_NULL,
-              ofType: { kind: TypeKind.SCALAR }
-            }
+              ofType: { kind: TypeKind.SCALAR },
+            },
           },
           {
-            name: 'tags',
+            name: "tags",
             type: {
               kind: TypeKind.LIST,
-              ofType: { kind: TypeKind.OBJECT, name: 'Tag' }
-            }
+              ofType: { kind: TypeKind.OBJECT, name: "Tag" },
+            },
           },
-          { name: 'embeddedJson', type: { kind: TypeKind.OBJECT } },
+          { name: "embeddedJson", type: { kind: TypeKind.OBJECT } },
           {
-            name: 'author',
+            name: "author",
             type: {
               kind: TypeKind.NON_NULL,
-              ofType: { kind: TypeKind.OBJECT, name: 'User' }
-            }
+              ofType: { kind: TypeKind.OBJECT, name: "User" },
+            },
           },
           {
-            name: 'coauthor',
-            type: { kind: TypeKind.OBJECT, name: 'User' }
-          }
-        ]
-      }
+            name: "coauthor",
+            type: { kind: TypeKind.OBJECT, name: "User" },
+          },
+        ],
+      },
     };
 
     const introspectionResults = {
       resources: [
         {
           type: {
-            name: 'User',
+            name: "User",
             fields: [
-              { name: 'id', type: { kind: TypeKind.SCALAR } },
+              { name: "id", type: { kind: TypeKind.SCALAR } },
               {
-                name: 'firstName',
-                type: { kind: TypeKind.SCALAR }
-              }
-            ]
-          }
+                name: "firstName",
+                type: { kind: TypeKind.SCALAR },
+              },
+            ],
+          },
         },
         {
           type: {
-            name: 'Tag',
+            name: "Tag",
             fields: [
-              { name: 'id', type: { kind: TypeKind.SCALAR } },
-              { name: 'name', type: { kind: TypeKind.SCALAR } }
-            ]
-          }
-        }
+              { name: "id", type: { kind: TypeKind.SCALAR } },
+              { name: "name", type: { kind: TypeKind.SCALAR } },
+            ],
+          },
+        },
       ],
-      types: [{ name: 'User' }, { name: 'Tag' }]
+      types: [{ name: "User" }, { name: "Tag" }],
     };
     const response = {
       data: {
         data: {
-          _typeName: 'Post',
-          id: 'post1',
-          title: 'title1',
-          author: { id: 'author1', firstName: 'Toto' },
+          _typeName: "Post",
+          id: "post1",
+          title: "title1",
+          author: { id: "author1", firstName: "Toto" },
           coauthor: null,
           tags: [
-            { id: 'tag1', name: 'tag1 name' },
-            { id: 'tag2', name: 'tag2 name' }
+            { id: "tag1", name: "tag1 name" },
+            { id: "tag2", name: "tag2 name" },
           ],
-          embeddedJson: { foo: 'bar' }
-        }
-      }
+          embeddedJson: { foo: "bar" },
+        },
+      },
     };
     expect(
-      getResponseParser(introspectionResults as IntrospectionResult)(
-        type,
-        resource as Resource
-      )(response)
+      getResponseParser(introspectionResults as IntrospectionResult)(type, resource as Resource)(
+        response,
+      ),
     ).toEqual({
       data: {
-        id: 'post1',
-        title: 'title1',
-        'author.id': 'author1',
-        author: { id: 'author1', firstName: 'Toto' },
+        id: "post1",
+        title: "title1",
+        "author.id": "author1",
+        author: { id: "author1", firstName: "Toto" },
         tags: [
-          { id: 'tag1', name: 'tag1 name' },
-          { id: 'tag2', name: 'tag2 name' }
+          { id: "tag1", name: "tag1 name" },
+          { id: "tag2", name: "tag2 name" },
         ],
-        tagsIds: ['tag1', 'tag2'],
-        embeddedJson: { foo: 'bar' }
-      }
+        tagsIds: ["tag1", "tag2"],
+        embeddedJson: { foo: "bar" },
+      },
     });
   });
 };
 
-describe('getResponseParser', () => {
+describe("getResponseParser", () => {
   testListTypes(GET_LIST);
   testListTypes(GET_MANY);
   testListTypes(GET_MANY_REFERENCE);
