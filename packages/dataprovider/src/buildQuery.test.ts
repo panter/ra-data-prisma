@@ -9,6 +9,7 @@ describe("buildQuery", () => {
   };
   const introspectionResults = {
     resources: [resource],
+    types: [],
   };
 
   it("throws an error if resource is unknown", () => {

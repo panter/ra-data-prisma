@@ -52,16 +52,13 @@ export const buildFields = (introspectionResults: IntrospectionResult) => (
       ];
     }
 
-    /*
-
     // currently disabled to fetch non resource-objects
 
     const linkedType = introspectionResults.types.find(
-      t => t.name === type.name
+      (t) => t.name === type.name,
     );
 
     if (linkedType) {
-     
       return [
         ...acc,
         gqlTypes.field(gqlTypes.name(field.name), {
@@ -71,7 +68,6 @@ export const buildFields = (introspectionResults: IntrospectionResult) => (
         }),
       ];
     }
-    */
 
     // NOTE: We might have to handle linked types which are not resources but will have to be careful about
     // ending with endless circular dependencies
@@ -181,20 +177,28 @@ const buildFieldsFromFragment = (
     }
   }
 
-  return (parsedFragment as any).definitions[0].selectionSet.selections;
+  return (parsedFragment as any).definitions?.[0].selectionSet.selections;
 };
 
 export default (introspectionResults: IntrospectionResult) => (
   resource: Resource,
   aorFetchType: string,
-  queryType: Query,
   variables: { [key: string]: any },
   fragment: DocumentNode,
 ) => {
+  const queryType = resource[aorFetchType];
+
+  if (!queryType) {
+    throw new Error(
+      `No query or mutation matching aor fetch type ${aorFetchType} could be found for resource ${resource.type.name}`,
+    );
+  }
+
   const { orderBy, skip, first, ...countVariables } = variables;
   const apolloArgs = buildApolloArgs(queryType, variables);
   const args = buildArgs(queryType, variables);
   const countArgs = buildArgs(queryType, countVariables);
+
   const fields = fragment
     ? buildFieldsFromFragment(fragment, resource.type.name, aorFetchType)
     : buildFields(introspectionResults)((resource.type as any).fields);

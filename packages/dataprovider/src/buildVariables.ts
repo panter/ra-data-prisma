@@ -11,7 +11,6 @@ import isObject from "lodash/isObject";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
 import upperFirst from "lodash/upperFirst";
-import lowerCase from "lodash/lowerCase";
 
 import {
   IntrospectionInputObjectType,
@@ -41,7 +40,7 @@ const getStringFilter = (key: string, value: any) => ({
     },
     {
       [key]: {
-        contains: lowerCase(value),
+        contains: value.toLowerCase(),
       },
     },
     {
@@ -75,7 +74,7 @@ const getFilters = (
               i.type.name === "NullableStringFilter"),
         )
         .map((f) => getStringFilter(f.name, value));
-      console.log({ OR });
+
       return { OR };
     } else {
       return {};
@@ -86,6 +85,16 @@ const getFilters = (
     fieldType.name === "NullableStringFilter"
   ) {
     return getStringFilter(key, value);
+  }
+  if (
+    fieldType.name === "IntFilter" ||
+    fieldType.name === "NullableIntFilter"
+  ) {
+    return {
+      [key]: {
+        equals: parseInt(value, 10),
+      },
+    };
   }
   if (fieldType.kind === "INPUT_OBJECT") {
     // we asume for the moment that this is always a relation
@@ -123,7 +132,7 @@ const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
   aorFetchType: string,
   params: GetListParams,
 ) => {
-  const where = Object.keys(params.filter).reduce((acc, key) => {
+  const where = Object.keys(params.filter ?? {}).reduce((acc, key) => {
     const value = params.filter[key];
 
     const filters = getFilters(key, value, resource, introspectionResults);
@@ -404,6 +413,9 @@ const buildData = (
   params: UpdateParams | CreateParams,
   introspectionResults: IntrospectionResult,
 ) => {
+  if (!inputType) {
+    return {};
+  }
   return inputType.inputFields.reduce((acc, field) => {
     const key = field.name;
     const fieldType =
@@ -442,11 +454,12 @@ const buildUpdateVariables = (introspectionResults: IntrospectionResult) => (
   const inputType = introspectionResults.types.find(
     (t) => t.name === `${resource.type.name}UpdateInput`,
   ) as IntrospectionInputObjectType;
-
+  // TODO: we assume "data.id" to be the id
+  const id = params.data.id;
+  delete params.data.id;
   return {
     where: {
-      // TODO: we assume "data.id" to be the id
-      id: params.data.id,
+      id,
     },
     data: buildData(inputType, params, introspectionResults),
   };
@@ -494,7 +507,7 @@ export default (introspectionResults: IntrospectionResult) => (
       return {
         where: {
           id: {
-            in: params.id,
+            in: [params.id], // TOOD: not sure if this is correct, looks wrong to me
           },
         },
       };

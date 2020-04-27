@@ -1,18 +1,13 @@
+import gql from "dummy-tag";
+import { IntrospectionField, print as printOrg, TypeKind } from "graphql";
 import {
-  TypeKind,
-  print,
-  IntrospectionField,
-  FieldNode,
-  DocumentNode,
-} from "graphql";
-import {
-  GET_LIST,
-  GET_ONE,
-  GET_MANY,
-  GET_MANY_REFERENCE,
-  UPDATE,
   CREATE,
   DELETE,
+  GET_LIST,
+  GET_MANY,
+  GET_MANY_REFERENCE,
+  GET_ONE,
+  UPDATE,
 } from "react-admin";
 import buildGqlQuery, {
   buildApolloArgs,
@@ -22,47 +17,57 @@ import buildGqlQuery, {
   Query,
 } from "./buildGqlQuery";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
+import {
+  makeIntrospectionField,
+  makeIntrospectionResult,
+} from "./testUtils/introspection";
 
-describe("getArgType", () => {
-  it("returns the arg type", () => {
-    expect(
-      print(
+import "./testUtils/testTypes";
+import { getTestIntrospection } from "./testUtils/getTestIntrospection";
+
+describe("buildGqlQuery", () => {
+  let testIntrospection: IntrospectionResult;
+  let testUserResource: Resource;
+  beforeAll(async () => {
+    testIntrospection = await getTestIntrospection();
+    testUserResource = testIntrospection.resources.find(
+      (r) => r.type.kind === "OBJECT" && r.type.name === "User",
+    );
+  });
+
+  describe("getArgType", () => {
+    it("returns the arg type", () => {
+      expect(
         getArgType({
           type: { kind: TypeKind.SCALAR, name: "foo" },
         } as IntrospectionField),
-      ),
-    ).toEqual("foo");
-  });
+      ).toEqualGraphql("foo");
+    });
 
-  it("returns the arg type for NON_NULL types", () => {
-    expect(
-      print(
+    it("returns the arg type for NON_NULL types", () => {
+      expect(
         getArgType({
           type: {
             kind: TypeKind.NON_NULL,
             ofType: { name: "ID", kind: TypeKind.SCALAR },
           },
         } as IntrospectionField),
-      ),
-    ).toEqual("ID!");
-  });
+      ).toEqualGraphql("ID!");
+    });
 
-  it("returns the arg type for LIST types", () => {
-    expect(
-      print(
+    it("returns the arg type for LIST types", () => {
+      expect(
         getArgType({
           type: {
             kind: TypeKind.LIST,
             ofType: { name: "ID", kind: TypeKind.SCALAR },
           },
         } as IntrospectionField),
-      ),
-    ).toEqual("[ID]");
-  });
+      ).toEqualGraphql("[ID]");
+    });
 
-  it("returns the arg type for LIST types of NON_NULL type", () => {
-    expect(
-      print(
+    it("returns the arg type for LIST types of NON_NULL type", () => {
+      expect(
         getArgType({
           type: {
             kind: TypeKind.LIST,
@@ -75,35 +80,31 @@ describe("getArgType", () => {
             },
           },
         } as IntrospectionField),
-      ),
-    ).toEqual("[ID!]");
-  });
-});
-
-describe("buildArgs", () => {
-  it("returns an empty array when query does not have any arguments", () => {
-    expect(buildArgs({ args: [] } as Query)).toEqual([]);
+      ).toEqualGraphql("[ID!]");
+    });
   });
 
-  it("returns an array of args correctly filtered when query has arguments", () => {
-    expect(
-      print(
+  describe("buildArgs", () => {
+    it("returns an empty array when query does not have any arguments", () => {
+      expect(buildArgs({ args: [] } as Query)).toEqual([]);
+    });
+
+    it("returns an array of args correctly filtered when query has arguments", () => {
+      expect(
         buildArgs({ args: [{ name: "foo" }, { name: "bar" }] } as Query, {
           foo: "foo_value",
         }),
-      ),
-    ).toEqual(["foo: $foo"]);
-  });
-});
-
-describe("buildApolloArgs", () => {
-  it("returns an empty array when query does not have any arguments", () => {
-    expect(print(buildApolloArgs({ args: [] }))).toEqual([]);
+      ).toEqualGraphql(["foo: $foo"]);
+    });
   });
 
-  it("returns an array of args correctly filtered when query has arguments", () => {
-    expect(
-      print(
+  describe("buildApolloArgs", () => {
+    it("returns an empty array when query does not have any arguments", () => {
+      expect(buildApolloArgs({ args: [] })).toEqualGraphql([]);
+    });
+
+    it("returns an array of args correctly filtered when query has arguments", () => {
+      expect(
         buildApolloArgs(
           {
             args: [
@@ -139,81 +140,40 @@ describe("buildApolloArgs", () => {
           } as Query,
           { foo: "foo_value", barId: 100, barIds: [101, 102] },
         ),
-      ),
-    ).toEqual(["$foo: Int!", "$barId: ID", "$barIds: [ID!]"]);
+      ).toEqualGraphql(["$foo: Int!", "$barId: ID", "$barIds: [ID!]"]);
+    });
   });
-});
 
-describe("buildFields", () => {
-  it("returns an object with the fields to retrieve", () => {
-    const introspectionResults = {
-      resources: [{ type: { name: "resourceType" } }],
-      types: [
+  describe("buildFields", () => {
+    it("returns an object with the fields to retrieve", () => {
+      const introspectionResults: IntrospectionResult = makeIntrospectionResult(
         {
-          name: "linkedType",
-          fields: [
+          resources: [{ type: { name: "resourceType", fields: [] } }],
+          types: [
             {
-              name: "id",
-              type: { kind: TypeKind.SCALAR, name: "ID" },
+              name: "linkedType",
+              kind: "OBJECT",
+              interfaces: [],
+              fields: [
+                {
+                  name: "id",
+                  type: { kind: TypeKind.SCALAR, name: "ID" },
+                },
+              ].map(makeIntrospectionField),
             },
           ],
         },
-      ],
-    };
+      );
 
-    const fields = [
-      { type: { kind: TypeKind.SCALAR, name: "ID" }, name: "id" },
-      {
-        type: { kind: TypeKind.SCALAR, name: "_internalField" },
-        name: "foo1",
-      },
-      {
-        type: { kind: TypeKind.OBJECT, name: "linkedType" },
-        name: "linked",
-      },
-      {
-        type: { kind: TypeKind.OBJECT, name: "resourceType" },
-        name: "resource",
-      },
-    ];
-
-    expect(
-      print(
-        buildFields(introspectionResults as IntrospectionResult)(fields as any),
-      ),
-    ).toEqual([
-      "id",
-      `linked {
-  id
-}`,
-      `resource {
-  id
-}`,
-    ]);
-  });
-});
-
-describe("buildGqlQuery", () => {
-  const introspectionResults = {
-    resources: [{ type: { name: "resourceType" } }],
-    types: [
-      {
-        name: "linkedType",
-        fields: [
-          {
-            name: "foo",
-            type: { kind: TypeKind.SCALAR, name: "bar" },
-          },
-        ],
-      },
-    ],
-  };
-
-  const resource = {
-    type: {
-      fields: [
-        { type: { kind: TypeKind.SCALAR, name: "" }, name: "foo" },
-        { type: { kind: TypeKind.SCALAR, name: "_foo" }, name: "foo1" },
+      const fields: IntrospectionField[] = [
+        {
+          type: { kind: TypeKind.SCALAR, name: "ID" },
+          name: "id",
+        },
+        {
+          type: { kind: TypeKind.SCALAR, name: "_internalField" },
+          name: "foo1",
+        },
         {
           type: { kind: TypeKind.OBJECT, name: "linkedType" },
           name: "linked",
@@ -222,222 +182,199 @@ describe("buildGqlQuery", () => {
           type: { kind: TypeKind.OBJECT, name: "resourceType" },
           name: "resource",
         },
-      ],
-    },
-  };
+      ].map(makeIntrospectionField);
 
-  const queryType = {
-    name: "commands",
-    args: [
-      {
-        name: "foo",
-        type: {
-          kind: TypeKind.NON_NULL,
-          ofType: { kind: TypeKind.SCALAR, name: "Int" },
-        },
-      },
-      {
-        name: "barId",
-        type: { kind: TypeKind.SCALAR },
-      },
-      {
-        name: "barIds",
-        type: { kind: TypeKind.SCALAR },
-      },
-      { name: "bar" },
-    ],
-  };
-  const params = { foo: "foo_value" };
+      expect(buildFields(introspectionResults)(fields)).toEqualGraphql([
+        "id",
+        `linked { id }`, // currently disabled
+        `resource { id }`,
+      ]);
+    });
+  });
 
-  it("returns the correct query for GET_LIST", () => {
-    expect(
-      print(
-        buildGqlQuery(introspectionResults as IntrospectionResult)(
-          resource as Resource,
+  describe("buildGqlQuery", () => {
+    const where = { firstName: "foo_value" };
+
+    it("returns the correct query for GET_LIST", () => {
+      expect(
+        buildGqlQuery(testIntrospection)(
+          testUserResource,
           GET_LIST,
-          queryType as Query,
-          params,
-          {} as DocumentNode,
+          { where },
+          null,
         ),
-      ),
-    ).toEqual(
-      `query commands($foo: Int!) {
-  items: commands(foo: $foo) {
-    foo
-    linked {
-      foo
-    }
-    resource {
-      id
-    }
-  }
-  total: commandsConnection(foo: $foo) {
-    aggregate {
-      count
-    }
-  }
-}
-`,
-    );
-  });
-  it("returns the correct query for GET_MANY", () => {
-    expect(
-      print(
-        buildGqlQuery(introspectionResults as IntrospectionResult)(
-          resource as Resource,
+      ).toEqualGraphql(
+        gql`
+          query users($where: UserWhereInput) {
+            items: users(where: $where) {
+              id
+              email
+              firstName
+              lastName
+              yearOfBirth
+              roles {
+                id
+              }
+              gender
+            }
+            total: usersCount
+          }
+        `,
+      );
+    });
+    it("returns the correct query for GET_MANY", () => {
+      expect(
+        buildGqlQuery(testIntrospection)(
+          testUserResource,
           GET_MANY,
-          queryType as Query,
-          params,
-          {} as DocumentNode,
+          { where },
+          null,
         ),
-      ),
-    ).toEqual(
-      `query commands($foo: Int!) {
-  items: commands(foo: $foo) {
-    foo
-    linked {
-      foo
-    }
-    resource {
-      id
-    }
-  }
-  total: commandsConnection(foo: $foo) {
-    aggregate {
-      count
-    }
-  }
-}
-`,
-    );
-  });
-  it("returns the correct query for GET_MANY_REFERENCE", () => {
-    expect(
-      print(
-        buildGqlQuery(introspectionResults as IntrospectionResult)(
-          resource as Resource,
+      ).toEqualGraphql(
+        gql`
+          query users($where: UserWhereInput) {
+            items: users(where: $where) {
+              id
+              email
+              firstName
+              lastName
+              yearOfBirth
+              roles {
+                id
+              }
+              gender
+            }
+            total: usersCount
+          }
+        `,
+      );
+    });
+    it("returns the correct query for GET_MANY_REFERENCE", () => {
+      expect(
+        buildGqlQuery(testIntrospection)(
+          testUserResource,
           GET_MANY_REFERENCE,
-          queryType as Query,
-          params,
-          {} as DocumentNode,
+          { where },
+          null,
         ),
-      ),
-    ).toEqual(
-      `query commands($foo: Int!) {
-  items: commands(foo: $foo) {
-    foo
-    linked {
-      foo
-    }
-    resource {
-      id
-    }
-  }
-  total: commandsConnection(foo: $foo) {
-    aggregate {
-      count
-    }
-  }
-}
-`,
-    );
-  });
-  it("returns the correct query for GET_ONE", () => {
-    expect(
-      print(
-        buildGqlQuery(introspectionResults as IntrospectionResult)(
-          resource as Resource,
+      ).toEqualGraphql(
+        gql`
+          query users($where: UserWhereInput) {
+            items: users(where: $where) {
+              id
+              email
+              firstName
+              lastName
+              yearOfBirth
+              roles {
+                id
+              }
+              gender
+            }
+            total: usersCount
+          }
+        `,
+      );
+    });
+    it("returns the correct query for GET_ONE", () => {
+      expect(
+        buildGqlQuery(testIntrospection)(
+          testUserResource,
           GET_ONE,
-          { ...queryType, name: "getCommand" } as Query,
-          params,
-          {} as DocumentNode,
+
+          { where },
+          null,
         ),
-      ),
-    ).toEqual(
-      `query getCommand($foo: Int!) {
-  data: getCommand(foo: $foo) {
-    foo
-    linked {
-      foo
-    }
-    resource {
-      id
-    }
-  }
-}
-`,
-    );
-  });
-  it("returns the correct query for UPDATE", () => {
-    expect(
-      print(
-        buildGqlQuery(introspectionResults as IntrospectionResult)(
-          resource as Resource,
+      ).toEqualGraphql(
+        gql`
+          query user($where: UserWhereUniqueInput!) {
+            data: user(where: $where) {
+              id
+              email
+              firstName
+              lastName
+              yearOfBirth
+              roles {
+                id
+              }
+              gender
+            }
+          }
+        `,
+      );
+    });
+    it("returns the correct query for UPDATE", () => {
+      expect(
+        buildGqlQuery(testIntrospection)(
+          testUserResource,
           UPDATE,
-          { ...queryType, name: "updateCommand" } as Query,
-          params,
-          {} as DocumentNode,
+          { where, data: {} },
+          null,
         ),
-      ),
-    ).toEqual(
-      `mutation updateCommand($foo: Int!) {
-  data: updateCommand(foo: $foo) {
-    foo
-    linked {
-      foo
-    }
-    resource {
-      id
-    }
-  }
-}
-`,
-    );
-  });
-  it("returns the correct query for CREATE", () => {
-    expect(
-      print(
-        buildGqlQuery(introspectionResults as IntrospectionResult)(
-          resource as Resource,
+      ).toEqualGraphql(
+        gql`
+          mutation updateOneUser(
+            $data: UserUpdateInput!
+            $where: UserWhereUniqueInput!
+          ) {
+            data: updateOneUser(data: $data, where: $where) {
+              id
+              email
+              firstName
+              lastName
+              yearOfBirth
+              roles {
+                id
+              }
+              gender
+            }
+          }
+        `,
+      );
+    });
+    it("returns the correct query for CREATE", () => {
+      expect(
+        buildGqlQuery(testIntrospection)(
+          testUserResource,
           CREATE,
-          { ...queryType, name: "createCommand" } as Query,
-          params,
-          {} as DocumentNode,
+          { data: {} },
+          null,
         ),
-      ),
-    ).toEqual(
-      `mutation createCommand($foo: Int!) {
-  data: createCommand(foo: $foo) {
-    foo
-    linked {
-      foo
-    }
-    resource {
-      id
-    }
-  }
-}
-`,
-    );
-  });
-  it("returns the correct query for DELETE", () => {
-    expect(
-      print(
-        buildGqlQuery(introspectionResults as IntrospectionResult)(
-          resource as Resource,
+      ).toEqualGraphql(
+        gql`
+          mutation createOneUser($data: UserCreateInput!) {
+            data: createOneUser(data: $data) {
+              id
+              email
+              firstName
+              lastName
+              yearOfBirth
+              roles {
+                id
+              }
+              gender
+            }
+          }
+        `,
+      );
+    });
+    it("returns the correct query for DELETE", () => {
+      expect(
+        buildGqlQuery(testIntrospection)(
+          testUserResource,
           DELETE,
-          { ...queryType, name: "deleteCommand" } as Query,
-          params,
-          {} as DocumentNode,
+          { where },
+          null,
         ),
-      ),
-    ).toEqual(
-      `mutation deleteCommand($foo: Int!) {
-  data: deleteCommand(foo: $foo) {
-    id
-  }
-}
-`,
-    );
+      ).toEqualGraphql(
+        gql`
+          mutation deleteOneUser($where: UserWhereUniqueInput!) {
+            data: deleteOneUser(where: $where) {
+              id
+            }
+          }
+        `,
+      );
+    });
   });
 });

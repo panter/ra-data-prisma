@@ -20,7 +20,7 @@ import { Resource } from "./constants/interfaces";
 
 export const buildQuery = prismaBuildQuery;
 
-const defaultOptions = {
+export const defaultOptions = {
   buildQuery,
   introspection: {
     operationNames: {

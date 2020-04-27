@@ -27,14 +27,6 @@ export const buildQueryFactory = () => (
       );
     }
 
-    const queryType = resource[aorFetchType];
-
-    if (!queryType) {
-      throw new Error(
-        `No query or mutation matching aor fetch type ${aorFetchType} could be found for resource ${resource.type.name}`,
-      );
-    }
-
     const variables = buildVariables(introspectionResults)(
       resource,
       aorFetchType,
@@ -44,7 +36,6 @@ export const buildQueryFactory = () => (
     const query = buildGqlQuery(introspectionResults)(
       resource,
       aorFetchType,
-      queryType,
       variables,
       fragment,
     );
