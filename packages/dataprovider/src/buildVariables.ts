@@ -191,6 +191,12 @@ const getUpdateInputDataTypeForList = (
   ) as IntrospectionInputObjectType;
 };
 
+type ThingWithId = {
+  id: string;
+};
+function isObjectWithId(data: any): data is ThingWithId {
+  return Boolean(data?.id);
+}
 const buildNewInputValue = (
   fieldData: any,
   previousFieldData: any,
@@ -241,7 +247,7 @@ const buildNewInputValue = (
 
             const variables = fieldData.reduce<UpdateManyInput>(
               (inputs, referencedField) => {
-                if (isObject(referencedField)) {
+                if (isObjectWithId(referencedField)) {
                   if (!updateListInputType) {
                     throw new Error(
                       `Input data for "${fieldName}" is of type "Object" but graphql endpoints does not expose the "update" mutation for "${fullFieldObjectType.name}"`,
@@ -333,7 +339,7 @@ const buildNewInputValue = (
               disconnect: true,
             };
           }
-          if (isObject(fieldData)) {
+          if (isObjectWithId(fieldData)) {
             // TODO: we assume ".id" to be the id
             if (!fieldData.id) {
               const createObjectModifierType = getFinalType(
