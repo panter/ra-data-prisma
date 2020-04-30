@@ -6,7 +6,7 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 const sanitizeResource = (
   introspectionResults: IntrospectionResult,
   resource: Resource,
-) => (data: { [key: string]: any }): any => {
+) => (data: { [key: string]: any } = {}): any => {
   return Object.keys(data).reduce((acc, key) => {
     if (key.startsWith("_")) {
       return acc;

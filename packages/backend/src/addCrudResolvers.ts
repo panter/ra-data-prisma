@@ -1,7 +1,6 @@
 import { extendType } from "@nexus/schema";
-import upperFirst from "lodash/upperFirst";
+import { upperFirst, lowerFirst } from "lodash";
 
-import lowerFirst from "lodash/lowerFirst";
 import pluralize from "pluralize";
 
 declare global {
