@@ -110,7 +110,6 @@ export const buildWhere = (
   resource: Resource,
   introspectionResults: IntrospectionResult,
 ) => {
-  debugger;
   const whereType = introspectionResults.types.find(
     (t) => t.name === `${resource.type.name}WhereInput`,
   ) as IntrospectionInputObjectType;
