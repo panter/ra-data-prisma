@@ -1,12 +1,12 @@
 # `@ra-data-prisma/backend`
 
-> TODO: description
 
 ## Usage
 
 
-
 `yarn add @ra-data-prisma/backend`
+
+`addCrudResolvers(modelName)` will make your Model compatible with react-admin. It will become a `Resource` to react-admin:
 
 ```
 
@@ -108,3 +108,6 @@ const permissions = shield(
   }
 );
 ```
+
+
+use `addCrudResolvers` for every Model that you want to manage in react-admin. Additionaly if you have a relation between two Models, call it for both Models even if you only want to show one in a list
