@@ -5,6 +5,8 @@ import {
   IntrospectionListTypeRef,
   IntrospectionNamedTypeRef,
   IntrospectionNonNullTypeRef,
+  IntrospectionObjectType,
+  IntrospectionTypeRef,
 } from "graphql";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
