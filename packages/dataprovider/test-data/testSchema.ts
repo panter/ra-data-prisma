@@ -15,7 +15,7 @@ const User = objectType({
     t.model.firstName();
     t.model.lastName();
     t.model.yearOfBirth();
-    t.model.roles(null);
+    t.model.roles({ filtering: true });
     t.model.gender();
   },
 });

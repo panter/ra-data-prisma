@@ -3,5 +3,6 @@
   "compilerOptions": {
     "outDir": "lib-es"
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/**/*.test.ts", "src/testUtils", "test-data", "generated"]
 }
