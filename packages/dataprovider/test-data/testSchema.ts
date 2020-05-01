@@ -1,18 +1,9 @@
-import "../generated/nexus";
-import "../generated/nexus-prisma";
 import { makeSchema, objectType } from "@nexus/schema";
 import { nexusPrismaPlugin } from "nexus-prisma";
-import introspection from "ra-data-graphql/lib/introspection";
-import { addCrudResolvers } from "../../backend/src";
 import { join } from "path";
-import { readFileSync } from "fs";
-import {
-  print,
-  buildSchema,
-  graphql,
-  execute,
-  getIntrospectionQuery,
-} from "graphql";
+import { addCrudResolvers } from "../../backend/src";
+import "../generated/nexus";
+import "../generated/nexus-prisma";
 
 const typegenPath = (p: string) => process.env.PWD && join(process.env.PWD, p);
 

@@ -1,7 +1,6 @@
 import {
   IntrospectionField,
   IntrospectionObjectType,
-  TypeKind,
   IntrospectionType,
 } from "graphql";
 import { IntrospectionResult, Resource } from "../constants/interfaces";
