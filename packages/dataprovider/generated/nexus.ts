@@ -319,6 +319,7 @@ export interface NexusGenArgTypes {
       first?: number | null; // Int
       last?: number | null; // Int
       skip?: number | null; // Int
+      where?: NexusGenInputs['UserRoleWhereInput'] | null; // UserRoleWhereInput
     }
   }
 }

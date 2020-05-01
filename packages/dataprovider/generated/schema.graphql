@@ -77,7 +77,7 @@ type User {
   gender: Gender
   id: String!
   lastName: String
-  roles(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, skip: Int): [UserRole!]!
+  roles(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, skip: Int, where: UserRoleWhereInput): [UserRole!]!
   yearOfBirth: Int
 }
 

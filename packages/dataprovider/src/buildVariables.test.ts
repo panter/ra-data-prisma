@@ -200,7 +200,7 @@ describe("buildVariables", () => {
   });
 
   describe("GET_MANY", () => {
-    it("returns correct variables", () => {
+    it("returns correct variables for many relation", () => {
       const params = {
         ids: ["einstein", "rosen", "penrose"],
       };
@@ -213,10 +213,12 @@ describe("buildVariables", () => {
   });
 
   describe("GET_MANY_REFERENCE", () => {
-    it("returns correct variables", () => {
+    it("returns correct variables for many relation reference", () => {
       const params = {
-        target: "author.id",
-        id: "author1",
+        target: "roles",
+        id: "roleId",
+        pagination: { page: 10, perPage: 10 },
+        sort: { field: "email", order: "ASC" },
       };
 
       expect(
@@ -226,7 +228,10 @@ describe("buildVariables", () => {
           params,
         ),
       ).toEqual<NexusGenArgTypes["Query"]["users"]>({
-        where: { id: { in: ["author1"] } },
+        skip: 90,
+        first: 10,
+        orderBy: { email: "asc" },
+        where: { roles: { some: { id: { equals: "roleId" } } } },
       });
     });
   });

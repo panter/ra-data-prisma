@@ -19,6 +19,8 @@ import {
   IntrospectionInputTypeRef,
   IntrospectionInputValue,
   IntrospectionNamedTypeRef,
+  IntrospectionObjectType,
+  IntrospectionTypeRef,
 } from "graphql";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 
@@ -256,14 +258,15 @@ const buildNewInputValue = (
 
             const variables = fieldData.reduce<UpdateManyInput>(
               (inputs, referencedField) => {
-                if (isObjectWithId(referencedField)) {
-                  if (!updateListInputType) {
-                    throw new Error(
-                      `Input data for "${fieldName}" is of type "Object" but graphql endpoints does not expose the "update" mutation for "${fullFieldObjectType.name}"`,
-                    );
-                  }
+                if (isObject(referencedField)) {
                   // TODO: we assume "data.id" to be the id
-                  if (referencedField.id) {
+                  if (isObjectWithId(referencedField)) {
+                    if (!updateListInputType) {
+                      throw new Error(
+                        `Input data for "${fieldName}" is of type "Object" but graphql endpoints does not expose the "update" mutation for "${fullFieldObjectType.name}"`,
+                      );
+                    }
+
                     // update
                     const data = buildData(
                       updateListInputType,
@@ -504,13 +507,10 @@ export default (introspectionResults: IntrospectionResult) => (
         },
       };
     case GET_MANY_REFERENCE: {
-      return {
-        where: {
-          id: {
-            in: [params.id], // TOOD: not sure if this is correct, looks wrong to me
-          },
-        },
-      };
+      return buildGetListVariables(introspectionResults)(resource, GET_LIST, {
+        ...params,
+        filter: { [params.target]: params.id },
+      });
     }
     case GET_ONE:
       return {
