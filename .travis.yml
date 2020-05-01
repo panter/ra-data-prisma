@@ -10,6 +10,9 @@ before_script:
   - yarn run lerna run prepublish
 script:
   - yarn test
+branches:
+  except:
+    - /^v\d+\.\d+\.\d+$/
 jobs:
   include:
     # Define the release stage that runs semantic-release
