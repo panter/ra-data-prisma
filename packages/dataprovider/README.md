@@ -116,7 +116,7 @@ export const CityList = (props) => (
 
 ```
 
-*show all user roles in the user lis**
+*show all user roles in the user list*
 
 ```
   
@@ -141,7 +141,7 @@ export const UserList = (props) => (
 )
 ```
 
-*edit the roles for a user
+*edit the roles for a user*
 
 ```
 export const UserEdit = (props) => (
