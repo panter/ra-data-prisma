@@ -39,7 +39,7 @@
     "build": "lerna run build --stream --parallel",
     "lint:eslint": "eslint './**/*.ts'",
     "test": "jest",
-    "postinstall": "lerna bootstrap && lerna exec -- yarn install",
+    "prepare": "lerna bootstrap && lerna exec -- yarn install",
     "semantic-release": "semantic-release"
   },
   "dependencies": {
