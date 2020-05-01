@@ -19,7 +19,7 @@ import {
   UPDATE,
 } from "react-admin";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { getFilters, buildWhere } from "./buildWhere";
+import { buildWhere } from "./buildWhere";
 import exhaust from "./utils/exhaust";
 import getFinalType from "./utils/getFinalType";
 
