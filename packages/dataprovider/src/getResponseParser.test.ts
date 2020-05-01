@@ -52,20 +52,12 @@ const testListTypes = (type: string) => {
         {
           id: "user1",
           firstName: "firstName1",
-          roles: [
-            {
-              id: "admin",
-            },
-          ],
+          roles: ["admin"],
         },
         {
           id: "post2",
           firstName: "firstName2",
-          roles: [
-            {
-              id: "admin",
-            },
-          ],
+          roles: ["admin"],
         },
       ],
       total: 100,
@@ -98,11 +90,7 @@ const testSingleTypes = (type: string) => {
       data: {
         id: "user1",
         firstName: "firstName1",
-        roles: [
-          {
-            id: "admin",
-          },
-        ],
+        roles: ["admin"],
       },
     });
   });
