@@ -201,6 +201,7 @@ export interface NexusGenRootTypes {
     gender?: NexusGenEnums['Gender'] | null; // Gender
     id: string; // String!
     lastName?: string | null; // String
+    logs: string[]; // [String!]!
     yearOfBirth?: number | null; // Int
   }
   UserRole: { // root type
@@ -265,6 +266,7 @@ export interface NexusGenFieldTypes {
     gender: NexusGenEnums['Gender'] | null; // Gender
     id: string; // String!
     lastName: string | null; // String
+    logs: string[]; // [String!]!
     roles: NexusGenRootTypes['UserRole'][]; // [UserRole!]!
     yearOfBirth: number | null; // Int
   }
@@ -313,6 +315,10 @@ export interface NexusGenArgTypes {
     }
   }
   User: {
+    logs: { // args
+      from: string; // String!
+      to: string; // String!
+    }
     roles: { // args
       after?: NexusGenInputs['UserRoleWhereUniqueInput'] | null; // UserRoleWhereUniqueInput
       before?: NexusGenInputs['UserRoleWhereUniqueInput'] | null; // UserRoleWhereUniqueInput
