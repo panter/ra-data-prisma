@@ -37,7 +37,7 @@
     "build": "lerna run build --stream --parallel",
     "lint:eslint": "eslint './**/*.ts'",
     "test": "jest",
-    "postinstall": "lerna bootstrap"
+    "postinstall": "lerna bootstrap && lerna exec -- yarn install"
   },
   "dependencies": {
     "dummy-tag": "^1.0.1"

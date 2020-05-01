@@ -25,11 +25,13 @@
     "build:cjs": "rimraf ./lib && tsc --project tsconfig.json --outDir lib --module commonjs",
     "build:es": "rimraf ./lib-es && tsc --project tsconfig.json",
     "postinstall": "yarn generate:test",
-    "generate:test": "yarn generate:test:prisma",
-    "generate:test:prisma": "yarn prisma generate --schema test-data/datamodel.prisma"
+    "generate:test": "yarn generate:test:prisma && yarn generate:test:nexus",
+    "generate:test:prisma": "yarn prisma generate --schema test-data/datamodel.prisma",
+    "generate:test:nexus": "yarn ts-node --project test-data/tsconfig.json  --transpile-only test-data/testSchema.ts"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.0.0-beta.4"
+    "@prisma/cli": "^2.0.0-beta.4",
+    "ts-node": "~8.9.1"
   },
   "dependencies": {
     "lodash": "^4.17.15",
