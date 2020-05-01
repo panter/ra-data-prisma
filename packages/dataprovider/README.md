@@ -84,3 +84,82 @@ const AdminApp = () => {
 export default AdminApp
 
 ```
+
+
+## Relations
+
+If you have relations, you can use `ReferenceArrayField/Input` or `Referenceinput/Field`. Make sure that the reference Model is also compatible (by calling `addCrudResolvers("MyReferenceModel")` from `@ra-data-prisma/backend` on your backend).
+
+### some examples:
+
+
+*show a list of cities with the country*
+```
+
+export const CityList = (props) => (
+  <List {...props}>
+    <Datagrid>
+      <TextField source="id" />
+       <TextField source="name" />
+      <ReferenceField
+     
+        label="Country"
+        source="country"
+        reference="Country"
+      >
+        <TextField source="name" />
+      </ReferenceField>
+      <EditButton />
+    </Datagrid>
+  </List>
+)
+
+```
+
+*show all user roles in the user lis**
+
+```
+  
+export const UserList = (props) => (
+  <List {...props} >
+    <Datagrid>
+      <TextField source="id" />
+      <TextField source="username" />
+      <ReferenceArrayField
+        alwaysOn
+        label="Roles"
+        source="roles"
+        reference="UserRole"
+      >
+        <SingleFieldList>
+          <ChipField source="name" />
+        </SingleFieldList>
+      </ReferenceArrayField>
+      <EditButton />
+    </Datagrid>
+  </List>
+)
+```
+
+*edit the roles for a user
+
+```
+export const UserEdit = (props) => (
+  <Edit title={<UserTitle />} {...props} undoable={false}>
+    <SimpleForm variant="outlined">
+      <TextInput source="userName" />
+      <ReferenceArrayInput
+        label="Roles"
+        source="roles"
+        reference="UserRole"
+        allowEmpty
+        fullWidth
+      >
+        <SelectArrayInput optionText="id" />
+      </ReferenceArrayInput>
+    </SimpleForm>
+  </Edit>
+)
+
+```
+
