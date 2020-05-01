@@ -17,6 +17,8 @@ const User = objectType({
     t.model.yearOfBirth();
     t.model.roles({ filtering: true });
     t.model.gender();
+    t.model.wantsNewsletter();
+
     // add one field that needs arguments and therefore can't be used by react-admin
     t.list.field("logs", {
       type: "String",

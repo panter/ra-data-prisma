@@ -1,31 +1,27 @@
 import {
-  GET_LIST,
-  GET_ONE,
-  GET_MANY,
-  GET_MANY_REFERENCE,
-  CREATE,
-  UPDATE,
-  DELETE,
-} from "react-admin";
-import isObject from "lodash/isObject";
-import isEqual from "lodash/isEqual";
-import isNil from "lodash/isNil";
-import upperFirst from "lodash/upperFirst";
-
-import {
   IntrospectionInputObjectType,
-  IntrospectionListTypeRef,
-  IntrospectionNonNullTypeRef,
   IntrospectionInputTypeRef,
   IntrospectionInputValue,
+  IntrospectionListTypeRef,
   IntrospectionNamedTypeRef,
-  IntrospectionObjectType,
-  IntrospectionTypeRef,
+  IntrospectionNonNullTypeRef,
 } from "graphql";
+import isEqual from "lodash/isEqual";
+import isNil from "lodash/isNil";
+import isObject from "lodash/isObject";
+import {
+  CREATE,
+  DELETE,
+  GET_LIST,
+  GET_MANY,
+  GET_MANY_REFERENCE,
+  GET_ONE,
+  UPDATE,
+} from "react-admin";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-
-import getFinalType from "./utils/getFinalType";
+import { getFilters, buildWhere } from "./buildWhere";
 import exhaust from "./utils/exhaust";
+import getFinalType from "./utils/getFinalType";
 
 interface GetListParams {
   filter: { [key: string]: any };
@@ -33,114 +29,12 @@ interface GetListParams {
   sort: { field: string; order: string };
 }
 
-const getStringFilter = (key: string, value: any) => ({
-  OR: [
-    {
-      [key]: {
-        contains: value,
-      },
-    },
-    {
-      [key]: {
-        contains: value.toLowerCase(),
-      },
-    },
-    {
-      [key]: {
-        contains: upperFirst(value),
-      },
-    },
-  ],
-});
-const getFilters = (
-  key: string,
-  value: any,
-  resource: Resource,
-  introspectionResults: IntrospectionResult,
-) => {
-  const whereType = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}WhereInput`,
-  ) as IntrospectionInputObjectType;
-
-  const fieldType = whereType.inputFields.find((f) => f.name === key)
-    ?.type as IntrospectionInputObjectType;
-
-  if (!fieldType) {
-    if (key === "q") {
-      // special: q is universal text search
-      const OR = whereType.inputFields
-        .filter(
-          (i) =>
-            i.type.kind === "INPUT_OBJECT" &&
-            (i.type.name === "StringFilter" ||
-              i.type.name === "NullableStringFilter"),
-        )
-        .map((f) => getStringFilter(f.name, value));
-
-      return { OR };
-    } else {
-      return {};
-    }
-  }
-  if (
-    fieldType.name === "StringFilter" ||
-    fieldType.name === "NullableStringFilter"
-  ) {
-    return getStringFilter(key, value);
-  }
-  if (
-    fieldType.name === "IntFilter" ||
-    fieldType.name === "NullableIntFilter"
-  ) {
-    return {
-      [key]: {
-        equals: parseInt(value, 10),
-      },
-    };
-  }
-  if (fieldType.kind === "INPUT_OBJECT") {
-    // we asume for the moment that this is always a relation
-    const inputObjectType = introspectionResults.types.find(
-      (t) => t.name === fieldType.name,
-    ) as IntrospectionInputObjectType;
-    //console.log({ inputObjectType });
-    const hasSomeFilter = inputObjectType.inputFields.some(
-      (s) => s.name === "some",
-    );
-
-    if (hasSomeFilter) {
-      return {
-        [key]: {
-          some: {
-            id: {
-              equals: value,
-            },
-          },
-        },
-      };
-    }
-    return {
-      [key]: {
-        id: {
-          equals: value,
-        },
-      },
-    };
-  }
-  return {};
-};
 const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
   resource: Resource,
   aorFetchType: string,
   params: GetListParams,
 ) => {
-  const where = Object.keys(params.filter ?? {}).reduce((acc, key) => {
-    const value = params.filter[key];
-
-    const filters = getFilters(key, value, resource, introspectionResults);
-
-    return { ...acc, ...filters };
-  }, {});
+  const where = buildWhere(params.filter, resource, introspectionResults);
 
   return {
     skip: (params.pagination.page - 1) * params.pagination.perPage,

@@ -22,12 +22,16 @@ describe("buildVariables", () => {
   });
 
   describe("GET_LIST", () => {
-    it("returns first, skip and orderBy", async () => {
+    it("returns first, where, skip and orderBy", async () => {
       //
 
       const params = {
         pagination: { page: 10, perPage: 10 },
         sort: { field: "email", order: "ASC" },
+        filter: {
+          yearOfBirth: 1879,
+          firstName: "fooBar",
+        },
       };
       const result = buildVariables(testIntrospection)(
         testUserResource,
@@ -36,62 +40,33 @@ describe("buildVariables", () => {
       );
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]>({
-        where: {},
+        where: {
+          yearOfBirth: {
+            equals: 1879,
+          },
+          OR: [
+            {
+              firstName: {
+                contains: "fooBar",
+              },
+            },
+            {
+              firstName: {
+                contains: "foobar",
+              },
+            },
+            {
+              firstName: {
+                contains: "FooBar",
+              },
+            },
+          ],
+        },
         first: 10,
         orderBy: {
           email: "asc",
         },
         skip: 90,
-      });
-    });
-
-    describe("filter by string value", () => {
-      it("returns where with multiple cases", async () => {
-        //
-
-        const params = {
-          filter: {
-            yearOfBirth: 1879,
-            firstName: "fooBar",
-          },
-          pagination: { page: 10, perPage: 10 },
-          sort: { field: "email", order: "DESC" },
-        };
-        const result = buildVariables(testIntrospection)(
-          testUserResource,
-          GET_LIST,
-          params,
-        );
-
-        expect(result).toEqual<NexusGenArgTypes["Query"]["users"]>({
-          where: {
-            yearOfBirth: {
-              equals: 1879,
-            },
-            OR: [
-              {
-                firstName: {
-                  contains: "fooBar",
-                },
-              },
-              {
-                firstName: {
-                  contains: "foobar",
-                },
-              },
-              {
-                firstName: {
-                  contains: "FooBar",
-                },
-              },
-            ],
-          },
-          first: 10,
-          orderBy: {
-            email: "desc",
-          },
-          skip: 90,
-        });
       });
     });
   });
@@ -103,6 +78,7 @@ describe("buildVariables", () => {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
           lastName: "Einstein",
+          wantsNewsletter: true,
         },
       };
 
@@ -113,6 +89,7 @@ describe("buildVariables", () => {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
           lastName: "Einstein",
+          wantsNewsletter: true,
         },
       });
     });
@@ -122,6 +99,7 @@ describe("buildVariables", () => {
         data: {
           firstName: "Albert",
           lastName: "Einstein",
+          wantsNewsletter: true,
           email: "albert.einstein@patentamt-bern.ch",
           roles: ["admin"],
         },
@@ -134,6 +112,7 @@ describe("buildVariables", () => {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
           lastName: "Einstein",
+          wantsNewsletter: true,
           roles: {
             connect: [{ id: "admin" }],
           },

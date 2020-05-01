@@ -6,6 +6,11 @@ type BatchPayload {
   count: Int!
 }
 
+input BooleanFilter {
+  equals: Boolean
+  not: Boolean
+}
+
 enum Gender {
   FEMALE
   MALE
@@ -88,6 +93,7 @@ type User {
   lastName: String
   logs(from: String!, to: String!): [String!]!
   roles(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, skip: Int, where: UserRoleWhereInput): [UserRole!]!
+  wantsNewsletter: Boolean!
   yearOfBirth: Int
 }
 
@@ -98,6 +104,7 @@ input UserCreateInput {
   id: String
   lastName: String
   roles: UserRoleCreateManyWithoutUsersInput
+  wantsNewsletter: Boolean!
   yearOfBirth: Int
 }
 
@@ -112,6 +119,7 @@ input UserCreateWithoutRolesInput {
   gender: Gender
   id: String
   lastName: String
+  wantsNewsletter: Boolean!
   yearOfBirth: Int
 }
 
@@ -127,6 +135,7 @@ input UserOrderByInput {
   gender: OrderByArg
   id: OrderByArg
   lastName: OrderByArg
+  wantsNewsletter: OrderByArg
   yearOfBirth: OrderByArg
 }
 
@@ -233,6 +242,7 @@ input UserScalarWhereInput {
   NOT: [UserScalarWhereInput!]
   OR: [UserScalarWhereInput!]
   roles: UserRoleFilter
+  wantsNewsletter: BooleanFilter
   yearOfBirth: NullableIntFilter
 }
 
@@ -243,6 +253,7 @@ input UserUpdateInput {
   id: String
   lastName: String
   roles: UserRoleUpdateManyWithoutUsersInput
+  wantsNewsletter: Boolean
   yearOfBirth: Int
 }
 
@@ -252,6 +263,7 @@ input UserUpdateManyDataInput {
   gender: Gender
   id: String
   lastName: String
+  wantsNewsletter: Boolean
   yearOfBirth: Int
 }
 
@@ -261,6 +273,7 @@ input UserUpdateManyMutationInput {
   gender: Gender
   id: String
   lastName: String
+  wantsNewsletter: Boolean
   yearOfBirth: Int
 }
 
@@ -287,6 +300,7 @@ input UserUpdateWithoutRolesDataInput {
   gender: Gender
   id: String
   lastName: String
+  wantsNewsletter: Boolean
   yearOfBirth: Int
 }
 
@@ -311,6 +325,7 @@ input UserWhereInput {
   NOT: [UserWhereInput!]
   OR: [UserWhereInput!]
   roles: UserRoleFilter
+  wantsNewsletter: BooleanFilter
   yearOfBirth: NullableIntFilter
 }
 

@@ -19,6 +19,10 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  BooleanFilter: { // input type
+    equals?: boolean | null; // Boolean
+    not?: boolean | null; // Boolean
+  }
   NullableIntFilter: { // input type
     equals?: number | null; // Int
     gt?: number | null; // Int
@@ -75,6 +79,7 @@ export interface NexusGenInputs {
     id?: string | null; // String
     lastName?: string | null; // String
     roles?: NexusGenInputs['UserRoleCreateManyWithoutUsersInput'] | null; // UserRoleCreateManyWithoutUsersInput
+    wantsNewsletter: boolean; // Boolean!
     yearOfBirth?: number | null; // Int
   }
   UserCreateManyWithoutRolesInput: { // input type
@@ -87,6 +92,7 @@ export interface NexusGenInputs {
     gender?: NexusGenEnums['Gender'] | null; // Gender
     id?: string | null; // String
     lastName?: string | null; // String
+    wantsNewsletter: boolean; // Boolean!
     yearOfBirth?: number | null; // Int
   }
   UserFilter: { // input type
@@ -100,6 +106,7 @@ export interface NexusGenInputs {
     gender?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
     id?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
     lastName?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
+    wantsNewsletter?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
     yearOfBirth?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
   }
   UserRoleCreateInput: { // input type
@@ -185,6 +192,7 @@ export interface NexusGenInputs {
     NOT?: NexusGenInputs['UserScalarWhereInput'][] | null; // [UserScalarWhereInput!]
     OR?: NexusGenInputs['UserScalarWhereInput'][] | null; // [UserScalarWhereInput!]
     roles?: NexusGenInputs['UserRoleFilter'] | null; // UserRoleFilter
+    wantsNewsletter?: NexusGenInputs['BooleanFilter'] | null; // BooleanFilter
     yearOfBirth?: NexusGenInputs['NullableIntFilter'] | null; // NullableIntFilter
   }
   UserUpdateInput: { // input type
@@ -194,6 +202,7 @@ export interface NexusGenInputs {
     id?: string | null; // String
     lastName?: string | null; // String
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
+    wantsNewsletter?: boolean | null; // Boolean
     yearOfBirth?: number | null; // Int
   }
   UserUpdateManyDataInput: { // input type
@@ -202,6 +211,7 @@ export interface NexusGenInputs {
     gender?: NexusGenEnums['Gender'] | null; // Gender
     id?: string | null; // String
     lastName?: string | null; // String
+    wantsNewsletter?: boolean | null; // Boolean
     yearOfBirth?: number | null; // Int
   }
   UserUpdateManyMutationInput: { // input type
@@ -210,6 +220,7 @@ export interface NexusGenInputs {
     gender?: NexusGenEnums['Gender'] | null; // Gender
     id?: string | null; // String
     lastName?: string | null; // String
+    wantsNewsletter?: boolean | null; // Boolean
     yearOfBirth?: number | null; // Int
   }
   UserUpdateManyWithWhereNestedInput: { // input type
@@ -237,6 +248,7 @@ export interface NexusGenInputs {
     gender?: NexusGenEnums['Gender'] | null; // Gender
     id?: string | null; // String
     lastName?: string | null; // String
+    wantsNewsletter?: boolean | null; // Boolean
     yearOfBirth?: number | null; // Int
   }
   UserUpsertWithWhereUniqueWithoutRolesInput: { // input type
@@ -254,6 +266,7 @@ export interface NexusGenInputs {
     NOT?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
     OR?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
     roles?: NexusGenInputs['UserRoleFilter'] | null; // UserRoleFilter
+    wantsNewsletter?: NexusGenInputs['BooleanFilter'] | null; // BooleanFilter
     yearOfBirth?: NexusGenInputs['NullableIntFilter'] | null; // NullableIntFilter
   }
   UserWhereUniqueInput: { // input type
@@ -280,6 +293,7 @@ export interface NexusGenRootTypes {
     id: string; // String!
     lastName?: string | null; // String
     logs: string[]; // [String!]!
+    wantsNewsletter: boolean; // Boolean!
     yearOfBirth?: number | null; // Int
   }
   UserRole: { // root type
@@ -294,6 +308,7 @@ export interface NexusGenRootTypes {
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
+  BooleanFilter: NexusGenInputs['BooleanFilter'];
   NullableIntFilter: NexusGenInputs['NullableIntFilter'];
   NullableStringFilter: NexusGenInputs['NullableStringFilter'];
   StringFilter: NexusGenInputs['StringFilter'];
@@ -368,6 +383,7 @@ export interface NexusGenFieldTypes {
     lastName: string | null; // String
     logs: string[]; // [String!]!
     roles: NexusGenRootTypes['UserRole'][]; // [UserRole!]!
+    wantsNewsletter: boolean; // Boolean!
     yearOfBirth: number | null; // Int
   }
   UserRole: { // field return type
@@ -471,7 +487,7 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "BatchPayload" | "Mutation" | "Query" | "User" | "UserRole";
 
-export type NexusGenInputNames = "NullableIntFilter" | "NullableStringFilter" | "StringFilter" | "UUIDFilter" | "UserCreateInput" | "UserCreateManyWithoutRolesInput" | "UserCreateWithoutRolesInput" | "UserFilter" | "UserOrderByInput" | "UserRoleCreateInput" | "UserRoleCreateManyWithoutUsersInput" | "UserRoleCreateWithoutUsersInput" | "UserRoleFilter" | "UserRoleOrderByInput" | "UserRoleScalarWhereInput" | "UserRoleUpdateInput" | "UserRoleUpdateManyDataInput" | "UserRoleUpdateManyMutationInput" | "UserRoleUpdateManyWithWhereNestedInput" | "UserRoleUpdateManyWithoutUsersInput" | "UserRoleUpdateWithWhereUniqueWithoutUsersInput" | "UserRoleUpdateWithoutUsersDataInput" | "UserRoleUpsertWithWhereUniqueWithoutUsersInput" | "UserRoleWhereInput" | "UserRoleWhereUniqueInput" | "UserScalarWhereInput" | "UserUpdateInput" | "UserUpdateManyDataInput" | "UserUpdateManyMutationInput" | "UserUpdateManyWithWhereNestedInput" | "UserUpdateManyWithoutRolesInput" | "UserUpdateWithWhereUniqueWithoutRolesInput" | "UserUpdateWithoutRolesDataInput" | "UserUpsertWithWhereUniqueWithoutRolesInput" | "UserWhereInput" | "UserWhereUniqueInput";
+export type NexusGenInputNames = "BooleanFilter" | "NullableIntFilter" | "NullableStringFilter" | "StringFilter" | "UUIDFilter" | "UserCreateInput" | "UserCreateManyWithoutRolesInput" | "UserCreateWithoutRolesInput" | "UserFilter" | "UserOrderByInput" | "UserRoleCreateInput" | "UserRoleCreateManyWithoutUsersInput" | "UserRoleCreateWithoutUsersInput" | "UserRoleFilter" | "UserRoleOrderByInput" | "UserRoleScalarWhereInput" | "UserRoleUpdateInput" | "UserRoleUpdateManyDataInput" | "UserRoleUpdateManyMutationInput" | "UserRoleUpdateManyWithWhereNestedInput" | "UserRoleUpdateManyWithoutUsersInput" | "UserRoleUpdateWithWhereUniqueWithoutUsersInput" | "UserRoleUpdateWithoutUsersDataInput" | "UserRoleUpsertWithWhereUniqueWithoutUsersInput" | "UserRoleWhereInput" | "UserRoleWhereUniqueInput" | "UserScalarWhereInput" | "UserUpdateInput" | "UserUpdateManyDataInput" | "UserUpdateManyMutationInput" | "UserUpdateManyWithWhereNestedInput" | "UserUpdateManyWithoutRolesInput" | "UserUpdateWithWhereUniqueWithoutRolesInput" | "UserUpdateWithoutRolesDataInput" | "UserUpsertWithWhereUniqueWithoutRolesInput" | "UserWhereInput" | "UserWhereUniqueInput";
 
 export type NexusGenEnumNames = "Gender" | "OrderByArg";
 

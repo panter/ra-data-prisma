@@ -19,11 +19,12 @@ enum Gender {
 }
 
 model User {
-  id          String     @default(uuid()) @id
-  email       String     @unique
-  roles       UserRole[] @relation(references: [id])
-  firstName   String?
-  lastName    String?
-  gender      Gender?
-  yearOfBirth Int?
+  id              String     @default(uuid()) @id
+  email           String     @unique
+  roles           UserRole[] @relation(references: [id])
+  firstName       String?
+  lastName        String?
+  gender          Gender?
+  yearOfBirth     Int?
+  wantsNewsletter Boolean
 }

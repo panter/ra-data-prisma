@@ -259,15 +259,15 @@ interface NexusPrismaInputs {
   ordering: 'id'
 }
     users: {
-  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'AND' | 'OR' | 'NOT'
-  ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth'
+  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
 }
 
   },
     UserRole: {
     users: {
-  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'AND' | 'OR' | 'NOT'
-  ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth'
+  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
 }
 
   },  User: {
@@ -314,6 +314,7 @@ interface NexusPrismaTypes {
     lastName: 'String'
     gender: 'Gender'
     yearOfBirth: 'Int'
+    wantsNewsletter: 'Boolean'
 
 }
 }

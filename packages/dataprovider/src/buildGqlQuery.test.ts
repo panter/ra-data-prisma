@@ -216,6 +216,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               gender
+              wantsNewsletter
             }
             total: usersCount
           }
@@ -243,6 +244,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               gender
+              wantsNewsletter
             }
             total: usersCount
           }
@@ -270,6 +272,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               gender
+              wantsNewsletter
             }
             total: usersCount
           }
@@ -298,6 +301,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               gender
+              wantsNewsletter
             }
           }
         `,
@@ -327,6 +331,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               gender
+              wantsNewsletter
             }
           }
         `,
@@ -353,6 +358,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               gender
+              wantsNewsletter
             }
           }
         `,
