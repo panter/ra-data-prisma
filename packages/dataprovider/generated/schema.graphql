@@ -14,11 +14,17 @@ enum Gender {
 
 type Mutation {
   createOneUser(data: UserCreateInput!): User!
+  createOneUserRole(data: UserRoleCreateInput!): UserRole!
   deleteManyUser(where: UserWhereInput): BatchPayload!
+  deleteManyUserRole(where: UserRoleWhereInput): BatchPayload!
   deleteOneUser(where: UserWhereUniqueInput!): User
+  deleteOneUserRole(where: UserRoleWhereUniqueInput!): UserRole
   updateManyUser(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
+  updateManyUserRole(data: UserRoleUpdateManyMutationInput!, where: UserRoleWhereInput): BatchPayload!
   updateOneUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
+  updateOneUserRole(data: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole
   upsertOneUser(create: UserCreateInput!, update: UserUpdateInput!, where: UserWhereUniqueInput!): User!
+  upsertOneUserRole(create: UserRoleCreateInput!, update: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole!
 }
 
 input NullableIntFilter {
@@ -53,6 +59,9 @@ enum OrderByArg {
 
 type Query {
   user(where: UserWhereUniqueInput!): User
+  userRole(where: UserRoleWhereUniqueInput!): UserRole
+  userRoles(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, orderBy: UserRoleOrderByInput, skip: Int, where: UserRoleWhereInput): [UserRole!]!
+  userRolesCount: Int!
   users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput, skip: Int, where: UserWhereInput): [User!]!
   usersCount: Int!
 }
@@ -92,6 +101,20 @@ input UserCreateInput {
   yearOfBirth: Int
 }
 
+input UserCreateManyWithoutRolesInput {
+  connect: [UserWhereUniqueInput!]
+  create: [UserCreateWithoutRolesInput!]
+}
+
+input UserCreateWithoutRolesInput {
+  email: String!
+  firstName: String
+  gender: Gender
+  id: String
+  lastName: String
+  yearOfBirth: Int
+}
+
 input UserFilter {
   every: UserWhereInput
   none: UserWhereInput
@@ -111,6 +134,11 @@ type UserRole {
   id: String!
 }
 
+input UserRoleCreateInput {
+  id: String!
+  users: UserCreateManyWithoutRolesInput
+}
+
 input UserRoleCreateManyWithoutUsersInput {
   connect: [UserRoleWhereUniqueInput!]
   create: [UserRoleCreateWithoutUsersInput!]
@@ -126,6 +154,10 @@ input UserRoleFilter {
   some: UserRoleWhereInput
 }
 
+input UserRoleOrderByInput {
+  id: OrderByArg
+}
+
 input UserRoleScalarWhereInput {
   AND: [UserRoleScalarWhereInput!]
   id: StringFilter
@@ -134,7 +166,16 @@ input UserRoleScalarWhereInput {
   users: UserFilter
 }
 
+input UserRoleUpdateInput {
+  id: String
+  users: UserUpdateManyWithoutRolesInput
+}
+
 input UserRoleUpdateManyDataInput {
+  id: String
+}
+
+input UserRoleUpdateManyMutationInput {
   id: String
 }
 
@@ -182,6 +223,19 @@ input UserRoleWhereUniqueInput {
   id: String
 }
 
+input UserScalarWhereInput {
+  AND: [UserScalarWhereInput!]
+  email: StringFilter
+  firstName: NullableStringFilter
+  gender: Gender
+  id: UUIDFilter
+  lastName: NullableStringFilter
+  NOT: [UserScalarWhereInput!]
+  OR: [UserScalarWhereInput!]
+  roles: UserRoleFilter
+  yearOfBirth: NullableIntFilter
+}
+
 input UserUpdateInput {
   email: String
   firstName: String
@@ -192,6 +246,15 @@ input UserUpdateInput {
   yearOfBirth: Int
 }
 
+input UserUpdateManyDataInput {
+  email: String
+  firstName: String
+  gender: Gender
+  id: String
+  lastName: String
+  yearOfBirth: Int
+}
+
 input UserUpdateManyMutationInput {
   email: String
   firstName: String
@@ -199,6 +262,43 @@ input UserUpdateManyMutationInput {
   id: String
   lastName: String
   yearOfBirth: Int
+}
+
+input UserUpdateManyWithoutRolesInput {
+  connect: [UserWhereUniqueInput!]
+  create: [UserCreateWithoutRolesInput!]
+  delete: [UserWhereUniqueInput!]
+  deleteMany: [UserScalarWhereInput!]
+  disconnect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutRolesInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutRolesInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  data: UserUpdateManyDataInput!
+  where: UserScalarWhereInput!
+}
+
+input UserUpdateWithoutRolesDataInput {
+  email: String
+  firstName: String
+  gender: Gender
+  id: String
+  lastName: String
+  yearOfBirth: Int
+}
+
+input UserUpdateWithWhereUniqueWithoutRolesInput {
+  data: UserUpdateWithoutRolesDataInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutRolesInput {
+  create: UserCreateWithoutRolesInput!
+  update: UserUpdateWithoutRolesDataInput!
+  where: UserWhereUniqueInput!
 }
 
 input UserWhereInput {
