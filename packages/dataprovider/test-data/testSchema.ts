@@ -25,7 +25,12 @@ const UserRole = objectType({
     t.model.id();
   },
 });
-const types = [User, UserRole, addCrudResolvers("User")];
+const types = [
+  User,
+  UserRole,
+  addCrudResolvers("User"),
+  addCrudResolvers("UserRole"),
+];
 export const testSchema = makeSchema({
   types,
   plugins: [
