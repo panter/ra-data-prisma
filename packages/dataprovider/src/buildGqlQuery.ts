@@ -33,6 +33,10 @@ export const buildFields = (introspectionResults: IntrospectionResult) => (
     if (type.name.startsWith("_")) {
       return acc;
     }
+    // skip if the field has mandatory args
+    if (field.args.some((arg) => arg.type.kind === "NON_NULL")) {
+      return acc;
+    }
 
     if (type.kind !== TypeKind.OBJECT) {
       return [...acc, gqlTypes.field(gqlTypes.name(field.name))];

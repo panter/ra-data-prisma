@@ -1,4 +1,4 @@
-import { makeSchema, objectType } from "@nexus/schema";
+import { makeSchema, objectType, stringArg } from "@nexus/schema";
 import { nexusPrismaPlugin } from "nexus-prisma";
 import { join } from "path";
 import { addCrudResolvers } from "../../backend/src";
@@ -17,6 +17,14 @@ const User = objectType({
     t.model.yearOfBirth();
     t.model.roles({ filtering: true });
     t.model.gender();
+    // add one field that needs arguments and therefore can't be used by react-admin
+    t.list.field("logs", {
+      type: "String",
+      args: {
+        from: stringArg({ required: true }),
+        to: stringArg({ required: true }),
+      },
+    });
   },
 });
 const UserRole = objectType({
