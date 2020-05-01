@@ -10,10 +10,15 @@ before_script:
   - yarn run lerna run prepublish
 script:
   - yarn test
-# deploy:
-#   provider: script
-#   script: "yarn run lerna:publish"
-#   skip_cleanup: true
-#   on:
-#     node: "10"
-#     branch: release
+jobs:
+  include:
+    # Define the release stage that runs semantic-release
+    - stage: release
+      node_js: lts/*
+      # Advanced: optionally overwrite your default `script` step to skip the tests
+      # script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - lerna exec --concurrency 1 -- npx --no-install semantic-release -e semantic-release-monorepo

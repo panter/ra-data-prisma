@@ -29,6 +29,8 @@
     "react-admin": "^3.4.3",
     "react-dom": "~16.13.1",
     "rimraf": "^3.0.2",
+    "semantic-release": "^17.0.7",
+    "semantic-release-monorepo": "^7.0.2",
     "ts-node": "^8.9.1",
     "typescript": "^3.8.3"
   },
@@ -37,9 +39,15 @@
     "build": "lerna run build --stream --parallel",
     "lint:eslint": "eslint './**/*.ts'",
     "test": "jest",
-    "postinstall": "lerna bootstrap && lerna exec -- yarn install"
+    "postinstall": "lerna bootstrap && lerna exec -- yarn install",
+    "semantic-release": "semantic-release"
   },
   "dependencies": {
     "dummy-tag": "^1.0.1"
+  },
+  "version": "0.0.0-development",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/panter/ra-data-prisma.git"
   }
 }
