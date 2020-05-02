@@ -218,7 +218,7 @@ describe("buildGqlQuery", () => {
               gender
               wantsNewsletter
             }
-            total: usersCount
+            total: usersCount(where: $where)
           }
         `,
       );
@@ -246,7 +246,7 @@ describe("buildGqlQuery", () => {
               gender
               wantsNewsletter
             }
-            total: usersCount
+            total: usersCount(where: $where)
           }
         `,
       );
@@ -274,7 +274,7 @@ describe("buildGqlQuery", () => {
               gender
               wantsNewsletter
             }
-            total: usersCount
+            total: usersCount(where: $where)
           }
         `,
       );

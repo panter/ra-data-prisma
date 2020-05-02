@@ -9,6 +9,7 @@ import {
   VariableDefinitionNode,
   ArgumentNode,
   FieldNode,
+  IntrospectionInputObjectType,
 } from "graphql";
 import { QUERY_TYPES } from "ra-data-graphql";
 import { GET_LIST, GET_MANY, GET_MANY_REFERENCE, DELETE } from "react-admin";
@@ -202,6 +203,12 @@ export default (introspectionResults: IntrospectionResult) => (
   const apolloArgs = buildApolloArgs(queryType, variables);
   const args = buildArgs(queryType, variables);
   const countArgs = buildArgs(queryType, countVariables);
+  const countName = `${queryType.name}Count`;
+
+  const supportsCountArgs =
+    (introspectionResults.queries.find(
+      (query) => query.name === countName,
+    ) as any)?.args.length > 0;
 
   const fields = fragment
     ? buildFieldsFromFragment(fragment, resource.type.name, aorFetchType)
@@ -221,9 +228,9 @@ export default (introspectionResults: IntrospectionResult) => (
             arguments: args,
             selectionSet: gqlTypes.selectionSet(fields),
           }),
-          gqlTypes.field(gqlTypes.name(`${queryType.name}Count`), {
+          gqlTypes.field(gqlTypes.name(countName), {
             alias: gqlTypes.name("total"),
-            // arguments: countArgs, until we have https://github.com/prisma/prisma-client-js/issues/252
+            arguments: supportsCountArgs ? countArgs : undefined,
           }),
         ]),
         gqlTypes.name(queryType.name!),

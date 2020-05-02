@@ -1,4 +1,4 @@
-import { extendType } from "@nexus/schema";
+import { extendType, arg, intArg } from "@nexus/schema";
 import { upperFirst, lowerFirst } from "lodash";
 
 import pluralize from "pluralize";
@@ -54,8 +54,36 @@ export default (resourceName: string) => {
         // its now possible to pass params to count in latest prisma 🎉
         // but we have to check whether this is backwards compatible
         t.int(queryCountName, {
+          args: {
+            where: arg({
+              type: typeName + "WhereInput",
+              required: false,
+            }),
+            orderBy: arg({
+              type: typeName + "OrderByInput",
+              required: false,
+            }),
+            skip: intArg({
+              required: false,
+            }),
+            after: arg({
+              type: typeName + "WhereUniqueInput",
+              required: false,
+            }),
+            before: arg({
+              type: typeName + "WhereUniqueInput",
+              required: false,
+            }),
+            first: intArg({
+              required: false,
+            }),
+            last: intArg({
+              required: false,
+            }),
+          },
+
           resolve(root, args, { prisma }) {
-            return prisma[queryName].count();
+            return prisma[queryName].count(args);
           },
         });
       },
