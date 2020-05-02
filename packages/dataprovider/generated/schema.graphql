@@ -66,9 +66,9 @@ type Query {
   user(where: UserWhereUniqueInput!): User
   userRole(where: UserRoleWhereUniqueInput!): UserRole
   userRoles(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, orderBy: UserRoleOrderByInput, skip: Int, where: UserRoleWhereInput): [UserRole!]!
-  userRolesCount: Int!
+  userRolesCount(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, orderBy: UserRoleOrderByInput, skip: Int, where: UserRoleWhereInput): Int!
   users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput, skip: Int, where: UserWhereInput): [User!]!
-  usersCount: Int!
+  usersCount(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput, skip: Int, where: UserWhereInput): Int!
 }
 
 input StringFilter {
