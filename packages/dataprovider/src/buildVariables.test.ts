@@ -94,14 +94,14 @@ describe("buildVariables", () => {
       });
     });
 
-    it("returns correct variables when linked with other resources", () => {
+    it("create a new entity and create also its relation entity", () => {
       const params = {
         data: {
+          email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
           lastName: "Einstein",
-          wantsNewsletter: true,
-          email: "albert.einstein@patentamt-bern.ch",
-          roles: ["admin"],
+          wantsNewsletter: false,
+          userSocialMedia: { twitter: "@twitteru", instagram: "@instagramu" },
         },
       };
 
@@ -112,15 +112,67 @@ describe("buildVariables", () => {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
           lastName: "Einstein",
-          wantsNewsletter: true,
-          roles: {
-            connect: [{ id: "admin" }],
+          wantsNewsletter: false,
+          userSocialMedia: {
+            create: { twitter: "@twitteru", instagram: "@instagramu" },
           },
         },
       });
     });
 
-    it("returns create new many relations", () => {
+    it("create a new entity but connect an already existing related entity when provided only the value", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          userSocialMedia: "socialId",
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          userSocialMedia: {
+            connect: { id: "socialId" },
+          },
+        },
+      });
+    });
+
+    it("create a new entity but connect an already existing related entity when provided as object", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          userSocialMedia: { id: "socialId" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          userSocialMedia: {
+            connect: { id: "socialId" },
+          },
+        },
+      });
+    });
+
+    it("create a new entity and create also its many relation entities", () => {
       const params = {
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -146,14 +198,14 @@ describe("buildVariables", () => {
       });
     });
 
-    it("returns create one to one relation", () => {
+    it("create a new entity and connect many already existing related entities provided only the value", () => {
       const params = {
         data: {
-          email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
           lastName: "Einstein",
-          wantsNewsletter: false,
-          userSocialMedia: { twitter: "@twitteru", instagram: "@instagramu" },
+          wantsNewsletter: true,
+          email: "albert.einstein@patentamt-bern.ch",
+          roles: ["admin"],
         },
       };
 
@@ -164,9 +216,35 @@ describe("buildVariables", () => {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
           lastName: "Einstein",
-          wantsNewsletter: false,
-          userSocialMedia: {
-            create: { twitter: "@twitteru", instagram: "@instagramu" },
+          wantsNewsletter: true,
+          roles: {
+            connect: [{ id: "admin" }],
+          },
+        },
+      });
+    });
+
+    it("create a new entity and connect many already existing related entities provided as object", () => {
+      const params = {
+        data: {
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          email: "albert.einstein@patentamt-bern.ch",
+          roles: [{ id: "admin" }],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          roles: {
+            connect: [{ id: "admin" }],
           },
         },
       });
