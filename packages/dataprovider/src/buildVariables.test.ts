@@ -94,6 +94,7 @@ describe("buildVariables", () => {
       });
     });
 
+    // one
     it("create a new entity and create also its relation entity", () => {
       const params = {
         data: {
@@ -120,7 +121,7 @@ describe("buildVariables", () => {
       });
     });
 
-    it("create a new entity but connect an already existing related entity when provided only the value", () => {
+    it("create a new entity and connect an already existing related entity identified by primitive id", () => {
       const params = {
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -146,7 +147,7 @@ describe("buildVariables", () => {
       });
     });
 
-    it("create a new entity but connect an already existing related entity when provided as object", () => {
+    it("create a new entity and connect an already existing related entity identified by object with id property", () => {
       const params = {
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -172,7 +173,7 @@ describe("buildVariables", () => {
       });
     });
 
-    it("create a new entity and create also its many relation entities", () => {
+    it("create a new entity and create also it's many relation entities when they provided no id", () => {
       const params = {
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -198,7 +199,7 @@ describe("buildVariables", () => {
       });
     });
 
-    it("create a new entity and connect many already existing related entities provided only the value", () => {
+    it("create a new entity and connect many already existing related entities identified by primitive id", () => {
       const params = {
         data: {
           firstName: "Albert",
@@ -224,7 +225,7 @@ describe("buildVariables", () => {
       });
     });
 
-    it("create a new entity and connect many already existing related entities provided as object", () => {
+    it("create a new entity and connect many already existing related entities identified by object with id property", () => {
       const params = {
         data: {
           firstName: "Albert",
@@ -245,6 +246,33 @@ describe("buildVariables", () => {
           wantsNewsletter: true,
           roles: {
             connect: [{ id: "admin" }],
+          },
+        },
+      });
+    });
+
+    it("create a new entity and it's related entities with mixed primitive and object ids", () => {
+      const params = {
+        data: {
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          email: "albert.einstein@patentamt-bern.ch",
+          roles: [{ id: "admin" }, { name: "User" }, "coordinator"],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          roles: {
+            create: [{ name: "User" }],
+            connect: [{ id: "admin" }, { id: "coordinator" }],
           },
         },
       });
@@ -275,7 +303,119 @@ describe("buildVariables", () => {
       });
     });
 
-    it("correctly connects new roles", () => {
+    // one
+
+    it("update an entity and change the relation", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: { id: "newId", twitter: "tw", instagram: "in" },
+        },
+        previousData: {
+          userSocialMedia: { id: "oldId", twitter: "t", instagram: "i" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            connect: { id: "newId" },
+          },
+        },
+      });
+    });
+
+    it("update an entity and update also it's related entity", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: {
+            id: "socialId",
+            twitter: "another-twitter",
+            instagram: "another-instagram",
+          },
+        },
+        previousData: {
+          userSocialMedia: {
+            id: "socialId",
+            twitter: "twitter",
+            instagram: "instagram",
+          },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            update: {
+              twitter: "another-twitter",
+              instagram: "another-instagram",
+            },
+          },
+        },
+      });
+    });
+
+    it("update an entity and create also new related entity when provided no id", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: {
+            twitter: "new-twitter",
+            instagram: "new-instagram",
+          },
+        },
+        previousData: {
+          userSocialMedia: {
+            id: "socialId",
+            twitter: "twitter",
+            instagram: "instagram",
+          },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            create: { twitter: "new-twitter", instagram: "new-instagram" },
+          },
+        },
+      });
+    });
+
+    it("update an entity and disconnect the related entity", () => {
+      const params = {
+        data: {
+          id: "einstein",
+        },
+        previousData: {
+          userSocialMedia: { id: "oldId", twitter: "t", instagram: "i" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            disconnect: true,
+          },
+        },
+      });
+    });
+
+    //many
+    it("update an entity and change it's many relation entities", () => {
       const params = {
         data: {
           id: "einstein",
@@ -307,14 +447,20 @@ describe("buildVariables", () => {
       });
     });
 
-    it("correctly connects new socialmedia", () => {
+    it("update an entity and update also it's related entities", () => {
       const params = {
         data: {
           id: "einstein",
-          userSocialMedia: { id: "newId", twitter: "tw", instagram: "in" },
+          roles: [
+            { id: "student", name: "Student Role" },
+            { id: "human", name: "Human" },
+          ],
         },
         previousData: {
-          userSocialMedia: { id: "oldId", twitter: "t", instagram: "i" },
+          roles: [
+            { id: "student", name: "Student" },
+            { id: "human", name: "Human" },
+          ],
         },
       };
 
@@ -323,29 +469,23 @@ describe("buildVariables", () => {
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
-          userSocialMedia: {
-            connect: { id: "newId" },
+          roles: {
+            update: [
+              { where: { id: "student" }, data: { name: "Student Role" } },
+            ],
           },
         },
       });
     });
 
-    it("correctly update socialmedia", () => {
+    it("update an entity and creates also new related entities if they provide no id", () => {
       const params = {
         data: {
           id: "einstein",
-          userSocialMedia: {
-            id: "socialId",
-            twitter: "new-twitter",
-            instagram: "another-instagram",
-          },
+          roles: [{ name: "Student Role" }, { id: "human", name: "Human" }],
         },
         previousData: {
-          userSocialMedia: {
-            id: "socialId",
-            twitter: "twitter",
-            instagram: "instagram",
-          },
+          roles: [{ id: "human", name: "Human" }],
         },
       };
 
@@ -354,20 +494,28 @@ describe("buildVariables", () => {
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
-          userSocialMedia: {
-            update: { twitter: "new-twitter", instagram: "another-instagram" },
+          roles: {
+            create: [{ name: "Student Role" }],
           },
         },
       });
     });
 
-    it("correctly disconnects socialmedia", () => {
+    it("update an entity and creates, update and disconnects related entities accordingly", () => {
       const params = {
         data: {
           id: "einstein",
+          roles: [
+            { name: "Student Role" },
+            { id: "panter", name: "Panter" },
+            { id: "manul", name: "Manul is a cat" },
+          ],
         },
         previousData: {
-          userSocialMedia: { id: "oldId", twitter: "t", instagram: "i" },
+          roles: [
+            { id: "human", name: "Human" },
+            { id: "manul", name: "Manul" },
+          ],
         },
       };
 
@@ -376,8 +524,48 @@ describe("buildVariables", () => {
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
-          userSocialMedia: {
-            disconnect: true,
+          roles: {
+            connect: [{ id: "panter" }],
+            create: [{ name: "Student Role" }],
+            disconnect: [{ id: "human" }],
+            update: [
+              { where: { id: "manul" }, data: { name: "Manul is a cat" } },
+            ],
+          },
+        },
+      });
+    });
+
+    it("update an entity and it's related entities accordingly even with mixed primitive and object ids", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          roles: [
+            { name: "Student Role" },
+            "panter",
+            { id: "manul", name: "Manul is a cat" },
+          ],
+        },
+        previousData: {
+          roles: [
+            { id: "human", name: "Human" },
+            { id: "manul", name: "Manul" },
+          ],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          roles: {
+            create: [{ name: "Student Role" }],
+            connect: [{ id: "panter" }],
+            disconnect: [{ id: "human" }],
+            update: [
+              { where: { id: "manul" }, data: { name: "Manul is a cat" } },
+            ],
           },
         },
       });

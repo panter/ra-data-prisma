@@ -155,7 +155,12 @@ const buildNewInputValue = (
                 if (isObject(referencedField)) {
                   // TODO: we assume "data.id" to be the id
                   if (isObjectWithId(referencedField)) {
-                    if (!updateListInputType) {
+                    const connectRelation = !previousFieldData?.find((p) =>
+                      p.id
+                        ? p.id === referencedField.id
+                        : p === referencedField.id,
+                    );
+                    if (!updateListInputType || connectRelation) {
                       inputs.connect = [
                         ...(inputs.connect || []),
                         { id: referencedField.id },
@@ -176,10 +181,12 @@ const buildNewInputValue = (
                         },
                         introspectionResults,
                       );
-                      inputs.update = [
-                        ...(inputs.update || []),
-                        { where: { id: referencedField.id }, data },
-                      ];
+                      if (Object.keys(data).length) {
+                        inputs.update = [
+                          ...(inputs.update || []),
+                          { where: { id: referencedField.id }, data },
+                        ];
+                      }
                     }
                   } else {
                     // create
