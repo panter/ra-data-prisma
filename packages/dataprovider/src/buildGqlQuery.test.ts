@@ -217,6 +217,14 @@ describe("buildGqlQuery", () => {
               }
               gender
               wantsNewsletter
+              userSocialMedia {
+                id
+                instagram
+                twitter
+                user {
+                  id
+                }
+              }
             }
             total: usersCount(where: $where)
           }
@@ -245,6 +253,14 @@ describe("buildGqlQuery", () => {
               }
               gender
               wantsNewsletter
+              userSocialMedia {
+                id
+                instagram
+                twitter
+                user {
+                  id
+                }
+              }
             }
             total: usersCount(where: $where)
           }
@@ -273,6 +289,14 @@ describe("buildGqlQuery", () => {
               }
               gender
               wantsNewsletter
+              userSocialMedia {
+                id
+                instagram
+                twitter
+                user {
+                  id
+                }
+              }
             }
             total: usersCount(where: $where)
           }
@@ -302,6 +326,14 @@ describe("buildGqlQuery", () => {
               }
               gender
               wantsNewsletter
+              userSocialMedia {
+                id
+                instagram
+                twitter
+                user {
+                  id
+                }
+              }
             }
           }
         `,
@@ -332,6 +364,14 @@ describe("buildGqlQuery", () => {
               }
               gender
               wantsNewsletter
+              userSocialMedia {
+                id
+                instagram
+                twitter
+                user {
+                  id
+                }
+              }
             }
           }
         `,
@@ -359,6 +399,14 @@ describe("buildGqlQuery", () => {
               }
               gender
               wantsNewsletter
+              userSocialMedia {
+                id
+                instagram
+                twitter
+                user {
+                  id
+                }
+              }
             }
           }
         `,

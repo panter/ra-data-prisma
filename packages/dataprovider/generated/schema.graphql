@@ -93,6 +93,7 @@ type User {
   lastName: String
   logs(from: String!, to: String!): [String!]!
   roles(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, skip: Int, where: UserRoleWhereInput): [UserRole!]!
+  userSocialMedia: UserSocialMedia
   wantsNewsletter: Boolean!
   yearOfBirth: Int
 }
@@ -104,6 +105,7 @@ input UserCreateInput {
   id: String
   lastName: String
   roles: UserRoleCreateManyWithoutUsersInput
+  userSocialMedia: UserSocialMediaCreateOneWithoutUserInput
   wantsNewsletter: Boolean!
   yearOfBirth: Int
 }
@@ -119,6 +121,7 @@ input UserCreateWithoutRolesInput {
   gender: Gender
   id: String
   lastName: String
+  userSocialMedia: UserSocialMediaCreateOneWithoutUserInput
   wantsNewsletter: Boolean!
   yearOfBirth: Int
 }
@@ -141,10 +144,12 @@ input UserOrderByInput {
 
 type UserRole {
   id: String!
+  name: String!
 }
 
 input UserRoleCreateInput {
-  id: String!
+  id: String
+  name: String!
   users: UserCreateManyWithoutRolesInput
 }
 
@@ -154,7 +159,8 @@ input UserRoleCreateManyWithoutUsersInput {
 }
 
 input UserRoleCreateWithoutUsersInput {
-  id: String!
+  id: String
+  name: String!
 }
 
 input UserRoleFilter {
@@ -165,11 +171,13 @@ input UserRoleFilter {
 
 input UserRoleOrderByInput {
   id: OrderByArg
+  name: OrderByArg
 }
 
 input UserRoleScalarWhereInput {
   AND: [UserRoleScalarWhereInput!]
-  id: StringFilter
+  id: UUIDFilter
+  name: StringFilter
   NOT: [UserRoleScalarWhereInput!]
   OR: [UserRoleScalarWhereInput!]
   users: UserFilter
@@ -177,15 +185,18 @@ input UserRoleScalarWhereInput {
 
 input UserRoleUpdateInput {
   id: String
+  name: String
   users: UserUpdateManyWithoutRolesInput
 }
 
 input UserRoleUpdateManyDataInput {
   id: String
+  name: String
 }
 
 input UserRoleUpdateManyMutationInput {
   id: String
+  name: String
 }
 
 input UserRoleUpdateManyWithoutUsersInput {
@@ -207,6 +218,7 @@ input UserRoleUpdateManyWithWhereNestedInput {
 
 input UserRoleUpdateWithoutUsersDataInput {
   id: String
+  name: String
 }
 
 input UserRoleUpdateWithWhereUniqueWithoutUsersInput {
@@ -222,7 +234,8 @@ input UserRoleUpsertWithWhereUniqueWithoutUsersInput {
 
 input UserRoleWhereInput {
   AND: [UserRoleWhereInput!]
-  id: StringFilter
+  id: UUIDFilter
+  name: StringFilter
   NOT: [UserRoleWhereInput!]
   OR: [UserRoleWhereInput!]
   users: UserFilter
@@ -246,6 +259,59 @@ input UserScalarWhereInput {
   yearOfBirth: NullableIntFilter
 }
 
+type UserSocialMedia {
+  id: String!
+  instagram: String!
+  twitter: String!
+  user: User!
+}
+
+input UserSocialMediaCreateOneWithoutUserInput {
+  connect: UserSocialMediaWhereUniqueInput
+  create: UserSocialMediaCreateWithoutUserInput
+}
+
+input UserSocialMediaCreateWithoutUserInput {
+  id: String
+  instagram: String!
+  twitter: String!
+}
+
+input UserSocialMediaUpdateOneWithoutUserInput {
+  connect: UserSocialMediaWhereUniqueInput
+  create: UserSocialMediaCreateWithoutUserInput
+  delete: Boolean
+  disconnect: Boolean
+  update: UserSocialMediaUpdateWithoutUserDataInput
+  upsert: UserSocialMediaUpsertWithoutUserInput
+}
+
+input UserSocialMediaUpdateWithoutUserDataInput {
+  id: String
+  instagram: String
+  twitter: String
+}
+
+input UserSocialMediaUpsertWithoutUserInput {
+  create: UserSocialMediaCreateWithoutUserInput!
+  update: UserSocialMediaUpdateWithoutUserDataInput!
+}
+
+input UserSocialMediaWhereInput {
+  AND: [UserSocialMediaWhereInput!]
+  id: UUIDFilter
+  instagram: StringFilter
+  NOT: [UserSocialMediaWhereInput!]
+  OR: [UserSocialMediaWhereInput!]
+  twitter: StringFilter
+  user: UserWhereInput
+  userId: StringFilter
+}
+
+input UserSocialMediaWhereUniqueInput {
+  id: String
+}
+
 input UserUpdateInput {
   email: String
   firstName: String
@@ -253,6 +319,7 @@ input UserUpdateInput {
   id: String
   lastName: String
   roles: UserRoleUpdateManyWithoutUsersInput
+  userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: Boolean
   yearOfBirth: Int
 }
@@ -300,6 +367,7 @@ input UserUpdateWithoutRolesDataInput {
   gender: Gender
   id: String
   lastName: String
+  userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: Boolean
   yearOfBirth: Int
 }
@@ -325,6 +393,7 @@ input UserWhereInput {
   NOT: [UserWhereInput!]
   OR: [UserWhereInput!]
   roles: UserRoleFilter
+  userSocialMedia: UserSocialMediaWhereInput
   wantsNewsletter: BooleanFilter
   yearOfBirth: NullableIntFilter
 }

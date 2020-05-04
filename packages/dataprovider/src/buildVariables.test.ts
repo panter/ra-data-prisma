@@ -119,6 +119,58 @@ describe("buildVariables", () => {
         },
       });
     });
+
+    it("returns create new many relations", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          roles: [{ name: "admin" }, { name: "user" }],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          roles: {
+            create: [{ name: "admin" }, { name: "user" }],
+          },
+        },
+      });
+    });
+
+    it("returns create one to one relation", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          userSocialMedia: { twitter: "@twitteru", instagram: "@instagramu" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          userSocialMedia: {
+            create: { twitter: "@twitteru", instagram: "@instagramu" },
+          },
+        },
+      });
+    });
   });
 
   describe("UPDATE", () => {
@@ -172,6 +224,82 @@ describe("buildVariables", () => {
                 id: "student",
               },
             ],
+          },
+        },
+      });
+    });
+
+    it("correctly connects new socialmedia", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: { id: "newId", twitter: "tw", instagram: "in" },
+        },
+        previousData: {
+          userSocialMedia: { id: "oldId", twitter: "t", instagram: "i" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            connect: { id: "newId" },
+          },
+        },
+      });
+    });
+
+    it("correctly update socialmedia", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: {
+            id: "socialId",
+            twitter: "new-twitter",
+            instagram: "another-instagram",
+          },
+        },
+        previousData: {
+          userSocialMedia: {
+            id: "socialId",
+            twitter: "twitter",
+            instagram: "instagram",
+          },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            update: { twitter: "new-twitter", instagram: "another-instagram" },
+          },
+        },
+      });
+    });
+
+    it("correctly disconnects socialmedia", () => {
+      const params = {
+        data: {
+          id: "einstein",
+        },
+        previousData: {
+          userSocialMedia: { id: "oldId", twitter: "t", instagram: "i" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            disconnect: true,
           },
         },
       });

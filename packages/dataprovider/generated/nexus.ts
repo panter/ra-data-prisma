@@ -79,6 +79,7 @@ export interface NexusGenInputs {
     id?: string | null; // String
     lastName?: string | null; // String
     roles?: NexusGenInputs['UserRoleCreateManyWithoutUsersInput'] | null; // UserRoleCreateManyWithoutUsersInput
+    userSocialMedia?: NexusGenInputs['UserSocialMediaCreateOneWithoutUserInput'] | null; // UserSocialMediaCreateOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
     yearOfBirth?: number | null; // Int
   }
@@ -92,6 +93,7 @@ export interface NexusGenInputs {
     gender?: NexusGenEnums['Gender'] | null; // Gender
     id?: string | null; // String
     lastName?: string | null; // String
+    userSocialMedia?: NexusGenInputs['UserSocialMediaCreateOneWithoutUserInput'] | null; // UserSocialMediaCreateOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
     yearOfBirth?: number | null; // Int
   }
@@ -110,7 +112,8 @@ export interface NexusGenInputs {
     yearOfBirth?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
   }
   UserRoleCreateInput: { // input type
-    id: string; // String!
+    id?: string | null; // String
+    name: string; // String!
     users?: NexusGenInputs['UserCreateManyWithoutRolesInput'] | null; // UserCreateManyWithoutRolesInput
   }
   UserRoleCreateManyWithoutUsersInput: { // input type
@@ -118,7 +121,8 @@ export interface NexusGenInputs {
     create?: NexusGenInputs['UserRoleCreateWithoutUsersInput'][] | null; // [UserRoleCreateWithoutUsersInput!]
   }
   UserRoleCreateWithoutUsersInput: { // input type
-    id: string; // String!
+    id?: string | null; // String
+    name: string; // String!
   }
   UserRoleFilter: { // input type
     every?: NexusGenInputs['UserRoleWhereInput'] | null; // UserRoleWhereInput
@@ -127,23 +131,28 @@ export interface NexusGenInputs {
   }
   UserRoleOrderByInput: { // input type
     id?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
+    name?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
   }
   UserRoleScalarWhereInput: { // input type
     AND?: NexusGenInputs['UserRoleScalarWhereInput'][] | null; // [UserRoleScalarWhereInput!]
-    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    name?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['UserRoleScalarWhereInput'][] | null; // [UserRoleScalarWhereInput!]
     OR?: NexusGenInputs['UserRoleScalarWhereInput'][] | null; // [UserRoleScalarWhereInput!]
     users?: NexusGenInputs['UserFilter'] | null; // UserFilter
   }
   UserRoleUpdateInput: { // input type
     id?: string | null; // String
+    name?: string | null; // String
     users?: NexusGenInputs['UserUpdateManyWithoutRolesInput'] | null; // UserUpdateManyWithoutRolesInput
   }
   UserRoleUpdateManyDataInput: { // input type
     id?: string | null; // String
+    name?: string | null; // String
   }
   UserRoleUpdateManyMutationInput: { // input type
     id?: string | null; // String
+    name?: string | null; // String
   }
   UserRoleUpdateManyWithWhereNestedInput: { // input type
     data: NexusGenInputs['UserRoleUpdateManyDataInput']; // UserRoleUpdateManyDataInput!
@@ -166,6 +175,7 @@ export interface NexusGenInputs {
   }
   UserRoleUpdateWithoutUsersDataInput: { // input type
     id?: string | null; // String
+    name?: string | null; // String
   }
   UserRoleUpsertWithWhereUniqueWithoutUsersInput: { // input type
     create: NexusGenInputs['UserRoleCreateWithoutUsersInput']; // UserRoleCreateWithoutUsersInput!
@@ -174,7 +184,8 @@ export interface NexusGenInputs {
   }
   UserRoleWhereInput: { // input type
     AND?: NexusGenInputs['UserRoleWhereInput'][] | null; // [UserRoleWhereInput!]
-    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    name?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['UserRoleWhereInput'][] | null; // [UserRoleWhereInput!]
     OR?: NexusGenInputs['UserRoleWhereInput'][] | null; // [UserRoleWhereInput!]
     users?: NexusGenInputs['UserFilter'] | null; // UserFilter
@@ -195,6 +206,45 @@ export interface NexusGenInputs {
     wantsNewsletter?: NexusGenInputs['BooleanFilter'] | null; // BooleanFilter
     yearOfBirth?: NexusGenInputs['NullableIntFilter'] | null; // NullableIntFilter
   }
+  UserSocialMediaCreateOneWithoutUserInput: { // input type
+    connect?: NexusGenInputs['UserSocialMediaWhereUniqueInput'] | null; // UserSocialMediaWhereUniqueInput
+    create?: NexusGenInputs['UserSocialMediaCreateWithoutUserInput'] | null; // UserSocialMediaCreateWithoutUserInput
+  }
+  UserSocialMediaCreateWithoutUserInput: { // input type
+    id?: string | null; // String
+    instagram: string; // String!
+    twitter: string; // String!
+  }
+  UserSocialMediaUpdateOneWithoutUserInput: { // input type
+    connect?: NexusGenInputs['UserSocialMediaWhereUniqueInput'] | null; // UserSocialMediaWhereUniqueInput
+    create?: NexusGenInputs['UserSocialMediaCreateWithoutUserInput'] | null; // UserSocialMediaCreateWithoutUserInput
+    delete?: boolean | null; // Boolean
+    disconnect?: boolean | null; // Boolean
+    update?: NexusGenInputs['UserSocialMediaUpdateWithoutUserDataInput'] | null; // UserSocialMediaUpdateWithoutUserDataInput
+    upsert?: NexusGenInputs['UserSocialMediaUpsertWithoutUserInput'] | null; // UserSocialMediaUpsertWithoutUserInput
+  }
+  UserSocialMediaUpdateWithoutUserDataInput: { // input type
+    id?: string | null; // String
+    instagram?: string | null; // String
+    twitter?: string | null; // String
+  }
+  UserSocialMediaUpsertWithoutUserInput: { // input type
+    create: NexusGenInputs['UserSocialMediaCreateWithoutUserInput']; // UserSocialMediaCreateWithoutUserInput!
+    update: NexusGenInputs['UserSocialMediaUpdateWithoutUserDataInput']; // UserSocialMediaUpdateWithoutUserDataInput!
+  }
+  UserSocialMediaWhereInput: { // input type
+    AND?: NexusGenInputs['UserSocialMediaWhereInput'][] | null; // [UserSocialMediaWhereInput!]
+    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    instagram?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    NOT?: NexusGenInputs['UserSocialMediaWhereInput'][] | null; // [UserSocialMediaWhereInput!]
+    OR?: NexusGenInputs['UserSocialMediaWhereInput'][] | null; // [UserSocialMediaWhereInput!]
+    twitter?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    user?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
+    userId?: NexusGenInputs['StringFilter'] | null; // StringFilter
+  }
+  UserSocialMediaWhereUniqueInput: { // input type
+    id?: string | null; // String
+  }
   UserUpdateInput: { // input type
     email?: string | null; // String
     firstName?: string | null; // String
@@ -202,6 +252,7 @@ export interface NexusGenInputs {
     id?: string | null; // String
     lastName?: string | null; // String
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
+    userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: boolean | null; // Boolean
     yearOfBirth?: number | null; // Int
   }
@@ -248,6 +299,7 @@ export interface NexusGenInputs {
     gender?: NexusGenEnums['Gender'] | null; // Gender
     id?: string | null; // String
     lastName?: string | null; // String
+    userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: boolean | null; // Boolean
     yearOfBirth?: number | null; // Int
   }
@@ -266,6 +318,7 @@ export interface NexusGenInputs {
     NOT?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
     OR?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
     roles?: NexusGenInputs['UserRoleFilter'] | null; // UserRoleFilter
+    userSocialMedia?: NexusGenInputs['UserSocialMediaWhereInput'] | null; // UserSocialMediaWhereInput
     wantsNewsletter?: NexusGenInputs['BooleanFilter'] | null; // BooleanFilter
     yearOfBirth?: NexusGenInputs['NullableIntFilter'] | null; // NullableIntFilter
   }
@@ -298,6 +351,12 @@ export interface NexusGenRootTypes {
   }
   UserRole: { // root type
     id: string; // String!
+    name: string; // String!
+  }
+  UserSocialMedia: { // root type
+    id: string; // String!
+    instagram: string; // String!
+    twitter: string; // String!
   }
   String: string;
   Int: number;
@@ -335,6 +394,13 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   UserRoleWhereInput: NexusGenInputs['UserRoleWhereInput'];
   UserRoleWhereUniqueInput: NexusGenInputs['UserRoleWhereUniqueInput'];
   UserScalarWhereInput: NexusGenInputs['UserScalarWhereInput'];
+  UserSocialMediaCreateOneWithoutUserInput: NexusGenInputs['UserSocialMediaCreateOneWithoutUserInput'];
+  UserSocialMediaCreateWithoutUserInput: NexusGenInputs['UserSocialMediaCreateWithoutUserInput'];
+  UserSocialMediaUpdateOneWithoutUserInput: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'];
+  UserSocialMediaUpdateWithoutUserDataInput: NexusGenInputs['UserSocialMediaUpdateWithoutUserDataInput'];
+  UserSocialMediaUpsertWithoutUserInput: NexusGenInputs['UserSocialMediaUpsertWithoutUserInput'];
+  UserSocialMediaWhereInput: NexusGenInputs['UserSocialMediaWhereInput'];
+  UserSocialMediaWhereUniqueInput: NexusGenInputs['UserSocialMediaWhereUniqueInput'];
   UserUpdateInput: NexusGenInputs['UserUpdateInput'];
   UserUpdateManyDataInput: NexusGenInputs['UserUpdateManyDataInput'];
   UserUpdateManyMutationInput: NexusGenInputs['UserUpdateManyMutationInput'];
@@ -383,11 +449,19 @@ export interface NexusGenFieldTypes {
     lastName: string | null; // String
     logs: string[]; // [String!]!
     roles: NexusGenRootTypes['UserRole'][]; // [UserRole!]!
+    userSocialMedia: NexusGenRootTypes['UserSocialMedia'] | null; // UserSocialMedia
     wantsNewsletter: boolean; // Boolean!
     yearOfBirth: number | null; // Int
   }
   UserRole: { // field return type
     id: string; // String!
+    name: string; // String!
+  }
+  UserSocialMedia: { // field return type
+    id: string; // String!
+    instagram: string; // String!
+    twitter: string; // String!
+    user: NexusGenRootTypes['User']; // User!
   }
 }
 
@@ -503,9 +577,9 @@ export interface NexusGenAbstractResolveReturnTypes {
 
 export interface NexusGenInheritedFields {}
 
-export type NexusGenObjectNames = "BatchPayload" | "Mutation" | "Query" | "User" | "UserRole";
+export type NexusGenObjectNames = "BatchPayload" | "Mutation" | "Query" | "User" | "UserRole" | "UserSocialMedia";
 
-export type NexusGenInputNames = "BooleanFilter" | "NullableIntFilter" | "NullableStringFilter" | "StringFilter" | "UUIDFilter" | "UserCreateInput" | "UserCreateManyWithoutRolesInput" | "UserCreateWithoutRolesInput" | "UserFilter" | "UserOrderByInput" | "UserRoleCreateInput" | "UserRoleCreateManyWithoutUsersInput" | "UserRoleCreateWithoutUsersInput" | "UserRoleFilter" | "UserRoleOrderByInput" | "UserRoleScalarWhereInput" | "UserRoleUpdateInput" | "UserRoleUpdateManyDataInput" | "UserRoleUpdateManyMutationInput" | "UserRoleUpdateManyWithWhereNestedInput" | "UserRoleUpdateManyWithoutUsersInput" | "UserRoleUpdateWithWhereUniqueWithoutUsersInput" | "UserRoleUpdateWithoutUsersDataInput" | "UserRoleUpsertWithWhereUniqueWithoutUsersInput" | "UserRoleWhereInput" | "UserRoleWhereUniqueInput" | "UserScalarWhereInput" | "UserUpdateInput" | "UserUpdateManyDataInput" | "UserUpdateManyMutationInput" | "UserUpdateManyWithWhereNestedInput" | "UserUpdateManyWithoutRolesInput" | "UserUpdateWithWhereUniqueWithoutRolesInput" | "UserUpdateWithoutRolesDataInput" | "UserUpsertWithWhereUniqueWithoutRolesInput" | "UserWhereInput" | "UserWhereUniqueInput";
+export type NexusGenInputNames = "BooleanFilter" | "NullableIntFilter" | "NullableStringFilter" | "StringFilter" | "UUIDFilter" | "UserCreateInput" | "UserCreateManyWithoutRolesInput" | "UserCreateWithoutRolesInput" | "UserFilter" | "UserOrderByInput" | "UserRoleCreateInput" | "UserRoleCreateManyWithoutUsersInput" | "UserRoleCreateWithoutUsersInput" | "UserRoleFilter" | "UserRoleOrderByInput" | "UserRoleScalarWhereInput" | "UserRoleUpdateInput" | "UserRoleUpdateManyDataInput" | "UserRoleUpdateManyMutationInput" | "UserRoleUpdateManyWithWhereNestedInput" | "UserRoleUpdateManyWithoutUsersInput" | "UserRoleUpdateWithWhereUniqueWithoutUsersInput" | "UserRoleUpdateWithoutUsersDataInput" | "UserRoleUpsertWithWhereUniqueWithoutUsersInput" | "UserRoleWhereInput" | "UserRoleWhereUniqueInput" | "UserScalarWhereInput" | "UserSocialMediaCreateOneWithoutUserInput" | "UserSocialMediaCreateWithoutUserInput" | "UserSocialMediaUpdateOneWithoutUserInput" | "UserSocialMediaUpdateWithoutUserDataInput" | "UserSocialMediaUpsertWithoutUserInput" | "UserSocialMediaWhereInput" | "UserSocialMediaWhereUniqueInput" | "UserUpdateInput" | "UserUpdateManyDataInput" | "UserUpdateManyMutationInput" | "UserUpdateManyWithWhereNestedInput" | "UserUpdateManyWithoutRolesInput" | "UserUpdateWithWhereUniqueWithoutRolesInput" | "UserUpdateWithoutRolesDataInput" | "UserUpsertWithWhereUniqueWithoutRolesInput" | "UserWhereInput" | "UserWhereUniqueInput";
 
 export type NexusGenEnumNames = "Gender" | "OrderByArg";
 

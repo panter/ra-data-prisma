@@ -245,51 +245,46 @@ const buildNewInputValue = (
               disconnect: true,
             };
           }
-          if (isObjectWithId(fieldData)) {
+
+          if (!isObjectWithId(fieldData)) {
             // TODO: we assume ".id" to be the id
-            if (!fieldData.id) {
-              const createObjectModifierType = getFinalType(
-                createModifier.type,
+            const createObjectModifierType = getFinalType(createModifier.type);
+            const createObjectInputType = introspectionResults.types.find(
+              (t) => t.name === createObjectModifierType.name,
+            ) as IntrospectionInputObjectType;
+
+            // create
+            const data = buildData(
+              createObjectInputType,
+              {
+                data: fieldData,
+              },
+              introspectionResults,
+            );
+            return { create: data };
+          } else {
+            if (previousFieldData?.id === fieldData.id) {
+              const updateObjectModifierType = getFinalType(
+                updateModifier.type,
               );
-              const createObjectInputType = introspectionResults.types.find(
-                (t) => t.name === createObjectModifierType.name,
+              const updateObjectInputType = introspectionResults.types.find(
+                (t) => t.name === updateObjectModifierType.name,
               ) as IntrospectionInputObjectType;
 
-              // create
+              // update
               const data = buildData(
-                createObjectInputType,
+                updateObjectInputType,
                 {
+                  id: fieldData.id,
                   data: fieldData,
+                  previousData: previousFieldData,
                 },
                 introspectionResults,
               );
-              return { create: data };
+              return { update: data };
             } else {
-              if (previousFieldData?.id === fieldData.id) {
-                const updateObjectModifierType = getFinalType(
-                  updateModifier.type,
-                );
-                const updateObjectInputType = introspectionResults.types.find(
-                  (t) => t.name === updateObjectModifierType.name,
-                ) as IntrospectionInputObjectType;
-
-                // update
-                const data = buildData(
-                  updateObjectInputType,
-                  {
-                    id: fieldData.id,
-                    data: fieldData,
-                    previousData: previousFieldData,
-                  },
-                  introspectionResults,
-                );
-                return { update: data };
-              } else {
-                return { connect: { id: fieldData.id } };
-              }
+              return { connect: { id: fieldData.id } };
             }
-          } else if (previousFieldData !== fieldData) {
-            return { connect: { id: fieldData } };
           }
         }
       } else if (setModifier) {
