@@ -56,22 +56,22 @@ export default (resourceName: string) => {
         t.int(queryCountName, {
           args: {
             where: arg({
-              type: typeName + "WhereInput",
+              type: `${typeName}WhereInput`,
               required: false,
             }),
             orderBy: arg({
-              type: typeName + "OrderByInput",
+              type: `${typeName}OrderByInput`,
               required: false,
             }),
             skip: intArg({
               required: false,
             }),
             after: arg({
-              type: typeName + "WhereUniqueInput",
+              type: `${typeName}WhereUniqueInput`,
               required: false,
             }),
             before: arg({
-              type: typeName + "WhereUniqueInput",
+              type: `${typeName}WhereUniqueInput`,
               required: false,
             }),
             first: intArg({

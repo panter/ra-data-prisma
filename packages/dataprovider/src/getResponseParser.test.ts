@@ -66,7 +66,7 @@ const testListTypes = (type: string) => {
 };
 
 const testSingleTypes = (type: string) => {
-  it("returns the response expected by RA for " + type, async () => {
+  it(`returns the response expected by RA for ${type}`, async () => {
     const testIntrospection: IntrospectionResult = await getTestIntrospection();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
