@@ -155,31 +155,39 @@ const buildNewInputValue = (
                 if (isObject(referencedField)) {
                   // TODO: we assume "data.id" to be the id
                   if (isObjectWithId(referencedField)) {
-                    if (!updateListInputType) {
-                      throw new Error(
-                        `Input data for "${fieldName}" is of type "Object" but graphql endpoints does not expose the "update" mutation for "${fullFieldObjectType.name}"`,
-                      );
-                    }
-
-                    // update
-                    const data = buildData(
-                      updateListInputType,
-                      {
-                        id: referencedField.id,
-                        data: referencedField,
-                        previousData: previousFieldData?.find(
-                          (previousField) => {
-                            // TODO: we assume ".id" to be the id
-                            return previousField.id === referencedField.id;
-                          },
-                        ),
-                      },
-                      introspectionResults,
+                    const connectRelation = !previousFieldData?.find((p) =>
+                      p.id
+                        ? p.id === referencedField.id
+                        : p === referencedField.id,
                     );
-                    inputs.update = [
-                      ...(inputs.update || []),
-                      { where: { id: referencedField.id }, data },
-                    ];
+                    if (!updateListInputType || connectRelation) {
+                      inputs.connect = [
+                        ...(inputs.connect || []),
+                        { id: referencedField.id },
+                      ];
+                    } else {
+                      // update
+                      const data = buildData(
+                        updateListInputType,
+                        {
+                          id: referencedField.id,
+                          data: referencedField,
+                          previousData: previousFieldData?.find(
+                            (previousField) => {
+                              // TODO: we assume ".id" to be the id
+                              return previousField.id === referencedField.id;
+                            },
+                          ),
+                        },
+                        introspectionResults,
+                      );
+                      if (Object.keys(data).length) {
+                        inputs.update = [
+                          ...(inputs.update || []),
+                          { where: { id: referencedField.id }, data },
+                        ];
+                      }
+                    }
                   } else {
                     // create
                     const data = buildData(
@@ -245,9 +253,9 @@ const buildNewInputValue = (
               disconnect: true,
             };
           }
-          if (isObjectWithId(fieldData)) {
-            // TODO: we assume ".id" to be the id
-            if (!fieldData.id) {
+          if (isObject(fieldData)) {
+            if (!isObjectWithId(fieldData)) {
+              // TODO: we assume ".id" to be the id
               const createObjectModifierType = getFinalType(
                 createModifier.type,
               );
@@ -288,7 +296,7 @@ const buildNewInputValue = (
                 return { connect: { id: fieldData.id } };
               }
             }
-          } else if (previousFieldData !== fieldData) {
+          } else {
             return { connect: { id: fieldData } };
           }
         }

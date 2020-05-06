@@ -249,31 +249,39 @@ type GetNexusPrisma<
 // Generated
 interface ModelTypes {
   UserRole: prisma.UserRole
+  UserSocialMedia: prisma.UserSocialMedia
   User: prisma.User
 }
   
 interface NexusPrismaInputs {
   Query: {
     userRoles: {
-  filtering: 'id' | 'users' | 'AND' | 'OR' | 'NOT'
-  ordering: 'id'
+  filtering: 'id' | 'name' | 'users' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'name'
+}
+    userSocialMedias: {
+  filtering: 'id' | 'instagram' | 'twitter' | 'userId' | 'AND' | 'OR' | 'NOT' | 'user'
+  ordering: 'id' | 'instagram' | 'twitter' | 'userId'
 }
     users: {
-  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT'
+  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
   ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
 }
 
   },
     UserRole: {
     users: {
-  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT'
+  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
   ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
 }
 
+  },  UserSocialMedia: {
+
+
   },  User: {
     roles: {
-  filtering: 'id' | 'users' | 'AND' | 'OR' | 'NOT'
-  ordering: 'id'
+  filtering: 'id' | 'name' | 'users' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'name'
 }
 
   }
@@ -283,6 +291,8 @@ interface NexusPrismaTypes {
   Query: {
     userRole: 'UserRole'
     userRoles: 'UserRole'
+    userSocialMedia: 'UserSocialMedia'
+    userSocialMedias: 'UserSocialMedia'
     user: 'User'
     users: 'User'
 
@@ -294,6 +304,12 @@ interface NexusPrismaTypes {
     deleteOneUserRole: 'UserRole'
     deleteManyUserRole: 'BatchPayload'
     upsertOneUserRole: 'UserRole'
+    createOneUserSocialMedia: 'UserSocialMedia'
+    updateOneUserSocialMedia: 'UserSocialMedia'
+    updateManyUserSocialMedia: 'BatchPayload'
+    deleteOneUserSocialMedia: 'UserSocialMedia'
+    deleteManyUserSocialMedia: 'BatchPayload'
+    upsertOneUserSocialMedia: 'UserSocialMedia'
     createOneUser: 'User'
     updateOneUser: 'User'
     updateManyUser: 'BatchPayload'
@@ -304,7 +320,15 @@ interface NexusPrismaTypes {
   },
   UserRole: {
     id: 'String'
+    name: 'String'
     users: 'User'
+
+},  UserSocialMedia: {
+    id: 'String'
+    instagram: 'String'
+    twitter: 'String'
+    user: 'User'
+    userId: 'String'
 
 },  User: {
     id: 'String'
@@ -315,12 +339,14 @@ interface NexusPrismaTypes {
     gender: 'Gender'
     yearOfBirth: 'Int'
     wantsNewsletter: 'Boolean'
+    userSocialMedia: 'UserSocialMedia'
 
 }
 }
 
 interface NexusPrismaMethods {
   UserRole: NexusPrismaFields<'UserRole'>
+  UserSocialMedia: NexusPrismaFields<'UserSocialMedia'>
   User: NexusPrismaFields<'User'>
   Query: NexusPrismaFields<'Query'>
   Mutation: NexusPrismaFields<'Mutation'>

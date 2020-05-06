@@ -18,6 +18,7 @@ const User = objectType({
     t.model.roles({ filtering: true });
     t.model.gender();
     t.model.wantsNewsletter();
+    t.model.userSocialMedia(null);
 
     // add one field that needs arguments and therefore can't be used by react-admin
     t.list.field("logs", {
@@ -33,11 +34,24 @@ const UserRole = objectType({
   name: "UserRole",
   definition(t) {
     t.model.id();
+    t.model.name();
   },
 });
+
+const UserSocialMedia = objectType({
+  name: "UserSocialMedia",
+  definition(t) {
+    t.model.id();
+    t.model.instagram();
+    t.model.twitter();
+    t.model.user();
+  },
+});
+
 const types = [
   User,
   UserRole,
+  UserSocialMedia,
   addCrudResolvers("User"),
   addCrudResolvers("UserRole"),
 ];

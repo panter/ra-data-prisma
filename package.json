@@ -25,6 +25,7 @@
     "nexus-prisma": "^0.12.0",
     "path": "^0.12.7",
     "pluralize": "~7.0.0",
+    "prettier": "^2.0.5",
     "react": "~16.12.0",
     "react-admin": "^3.4.3",
     "react-dom": "~16.13.1",
