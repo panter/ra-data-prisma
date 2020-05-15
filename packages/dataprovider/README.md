@@ -23,7 +23,7 @@ const dataprovider = await buildGraphQLProvider({
 and add it to your admin app. We suggest to use a hook for that:
 
 ```
-// useDataprovider.ts
+// useDataProvider.ts
 import buildGraphQLProvider from "@ra-data-prisma/dataprovider"
 import { useEffect, useState } from "react"
 
