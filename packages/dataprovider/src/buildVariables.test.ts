@@ -41,24 +41,30 @@ describe("buildVariables", () => {
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]>({
         where: {
-          yearOfBirth: {
-            equals: 1879,
-          },
-          OR: [
+          AND: [
             {
-              firstName: {
-                contains: "fooBar",
+              yearOfBirth: {
+                equals: 1879,
               },
             },
             {
-              firstName: {
-                contains: "foobar",
-              },
-            },
-            {
-              firstName: {
-                contains: "FooBar",
-              },
+              OR: [
+                {
+                  firstName: {
+                    contains: "fooBar",
+                  },
+                },
+                {
+                  firstName: {
+                    contains: "foobar",
+                  },
+                },
+                {
+                  firstName: {
+                    contains: "FooBar",
+                  },
+                },
+              ],
             },
           ],
         },

@@ -19,28 +19,50 @@ describe("buildWhere", () => {
     const filter = {
       yearOfBirth: 1879,
       firstName: "fooBar",
+      lastName: "einstein",
     };
     const result = buildWhere(filter, testUserResource, testIntrospection);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
-      yearOfBirth: {
-        equals: 1879,
-      },
-      OR: [
+      AND: [
         {
-          firstName: {
-            contains: "fooBar",
+          yearOfBirth: {
+            equals: 1879,
           },
         },
         {
-          firstName: {
-            contains: "foobar",
-          },
+          OR: [
+            {
+              firstName: {
+                contains: "fooBar",
+              },
+            },
+            {
+              firstName: {
+                contains: "foobar",
+              },
+            },
+            {
+              firstName: {
+                contains: "FooBar",
+              },
+            },
+          ],
         },
         {
-          firstName: {
-            contains: "FooBar",
-          },
+          OR: [
+            {
+              lastName: {
+                contains: "einstein",
+              },
+            },
+
+            {
+              lastName: {
+                contains: "Einstein",
+              },
+            },
+          ],
         },
       ],
     });
@@ -129,45 +151,53 @@ describe("buildWhere", () => {
     const result = buildWhere(filter, testUserResource, testIntrospection);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
-      yearOfBirth: {
-        equals: 1879,
-      },
-      roles: {
-        some: {
-          id: {
-            equals: "admin",
+      AND: [
+        {
+          yearOfBirth: {
+            equals: 1879,
           },
         },
-      },
-      OR: [
+        {
+          roles: {
+            some: {
+              id: {
+                equals: "admin",
+              },
+            },
+          },
+        },
         {
           OR: [
             {
-              firstName: {
-                contains: "fooBar",
+              OR: [
+                {
+                  firstName: {
+                    contains: "fooBar",
+                  },
+                },
+                {
+                  firstName: {
+                    contains: "foobar",
+                  },
+                },
+                {
+                  firstName: {
+                    contains: "FooBar",
+                  },
+                },
+              ],
+            },
+            {
+              lastName: {
+                startsWith: "Ein",
               },
             },
             {
               firstName: {
-                contains: "foobar",
-              },
-            },
-            {
-              firstName: {
-                contains: "FooBar",
+                equals: "Albert",
               },
             },
           ],
-        },
-        {
-          lastName: {
-            startsWith: "Ein",
-          },
-        },
-        {
-          firstName: {
-            equals: "Albert",
-          },
         },
       ],
     });

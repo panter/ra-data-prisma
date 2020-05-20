@@ -3,25 +3,33 @@ import upperFirst from "lodash/upperFirst";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { isObject } from "lodash";
 
-const getStringFilter = (key: string, value: any) => ({
-  OR: [
+const getStringFilter = (key: string, value: any) => {
+  const OR = [
     {
       [key]: {
         contains: value,
       },
     },
-    {
+  ];
+  const valueLowerCased = value.toLowerCase();
+  if (valueLowerCased !== value) {
+    OR.push({
       [key]: {
-        contains: value.toLowerCase(),
+        contains: valueLowerCased,
       },
-    },
-    {
+    });
+  }
+  const valueUpperFirst = upperFirst(value);
+
+  if (valueUpperFirst !== value) {
+    OR.push({
       [key]: {
-        contains: upperFirst(value),
+        contains: valueUpperFirst,
       },
-    },
-  ],
-});
+    });
+  }
+  return { OR };
+};
 const getFilters = (
   key: string,
   value: any,
@@ -29,6 +37,14 @@ const getFilters = (
 
   introspectionResults: IntrospectionResult,
 ) => {
+  if (key === "NOT" || key === "OR" || key === "AND") {
+    return {
+      [key]: value.map((f) =>
+        buildWhereWithType(f, introspectionResults, whereType),
+      ),
+    };
+  }
+
   const fieldType = whereType.inputFields.find((f) => f.name === key)
     ?.type as IntrospectionInputObjectType;
 
@@ -122,26 +138,33 @@ const buildWhereWithType = (
   introspectionResults: IntrospectionResult,
   whereType: IntrospectionInputObjectType,
 ) => {
-  const where = Object.keys(filter ?? {}).reduce((acc, key) => {
-    if (key === "NOT" || key === "OR" || key === "AND") {
-      return {
-        ...acc,
-        [key]: filter[key].map((f) =>
-          buildWhereWithType(f, introspectionResults, whereType),
-        ),
-      };
-    }
+  const where = Object.keys(filter ?? {}).reduce(
+    (acc, key) => {
+      // defaults to AND
+      const filters = getFilters(
+        key,
+        filter[key],
+        whereType,
 
-    const filters = getFilters(
-      key,
-      filter[key],
-      whereType,
+        introspectionResults,
+      );
 
-      introspectionResults,
-    );
-
-    return { ...acc, ...filters };
-  }, {});
+      return { ...acc, AND: [...acc.AND, filters] };
+    },
+    { AND: [] },
+  );
+  // simplify AND if there is only one
+  if (where.AND.length === 0) {
+    delete where.AND;
+  }
+  if (where.AND?.length === 1) {
+    const singleAnd = where.AND[0];
+    delete where.AND;
+    return {
+      ...where,
+      ...singleAnd,
+    };
+  }
   return where;
 };
 export const buildWhere = (
