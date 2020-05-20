@@ -13,6 +13,21 @@ describe("buildWhere", () => {
     );
   });
 
+  it("can handle the most simple case", async () => {
+    //
+
+    const filter = {
+      yearOfBirth: 1879,
+    };
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      yearOfBirth: {
+        equals: 1879,
+      },
+    });
+  });
+
   it("returns where with multiple cases when its a string", async () => {
     //
 
