@@ -26,6 +26,7 @@ const getFilters = (
   key: string,
   value: any,
   whereType: IntrospectionInputObjectType,
+
   introspectionResults: IntrospectionResult,
 ) => {
   const fieldType = whereType.inputFields.find((f) => f.name === key)
@@ -65,34 +66,45 @@ const getFilters = (
       },
     };
   }
-  if (!isObject(value) && fieldType.kind === "INPUT_OBJECT") {
+  if (fieldType.kind === "INPUT_OBJECT") {
     // we asume for the moment that this is always a relation
     const inputObjectType = introspectionResults.types.find(
       (t) => t.name === fieldType.name,
     ) as IntrospectionInputObjectType;
-    //console.log({ inputObjectType });
-    const hasSomeFilter = inputObjectType.inputFields.some(
-      (s) => s.name === "some",
-    );
 
-    if (hasSomeFilter) {
+    if (!isObject(value)) {
+      //console.log({ inputObjectType });
+      const hasSomeFilter = inputObjectType.inputFields.some(
+        (s) => s.name === "some",
+      );
+
+      if (hasSomeFilter) {
+        return {
+          [key]: {
+            some: {
+              id: {
+                equals: value,
+              },
+            },
+          },
+        };
+      }
       return {
         [key]: {
-          some: {
-            id: {
-              equals: value,
-            },
+          id: {
+            equals: value,
           },
         },
       };
+    } else {
+      // its something nested
+      const where = buildWhereWithType(
+        value,
+        introspectionResults,
+        inputObjectType,
+      );
+      return { [key]: where };
     }
-    return {
-      [key]: {
-        id: {
-          equals: value,
-        },
-      },
-    };
   }
   return { [key]: value };
 };
@@ -105,6 +117,33 @@ type Filter = {
   [key: string]: any;
 };
 
+const buildWhereWithType = (
+  filter: Filter,
+  introspectionResults: IntrospectionResult,
+  whereType: IntrospectionInputObjectType,
+) => {
+  const where = Object.keys(filter ?? {}).reduce((acc, key) => {
+    if (key === "NOT" || key === "OR" || key === "AND") {
+      return {
+        ...acc,
+        [key]: filter[key].map((f) =>
+          buildWhereWithType(f, introspectionResults, whereType),
+        ),
+      };
+    }
+
+    const filters = getFilters(
+      key,
+      filter[key],
+      whereType,
+
+      introspectionResults,
+    );
+
+    return { ...acc, ...filters };
+  }, {});
+  return where;
+};
 export const buildWhere = (
   filter: Filter,
   resource: Resource,
@@ -114,24 +153,5 @@ export const buildWhere = (
     (t) => t.name === `${resource.type.name}WhereInput`,
   ) as IntrospectionInputObjectType;
 
-  const where = Object.keys(filter ?? {}).reduce((acc, key) => {
-    if (key === "NOT" || key === "OR" || key === "AND") {
-      return {
-        ...acc,
-        [key]: filter[key].map((f) =>
-          buildWhere(f, resource, introspectionResults),
-        ),
-      };
-    }
-
-    const filters = getFilters(
-      key,
-      filter[key],
-      whereType,
-      introspectionResults,
-    );
-
-    return { ...acc, ...filters };
-  }, {});
-  return where;
+  return buildWhereWithType(filter, introspectionResults, whereType);
 };

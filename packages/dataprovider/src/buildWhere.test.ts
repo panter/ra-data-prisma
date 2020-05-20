@@ -172,6 +172,68 @@ describe("buildWhere", () => {
       ],
     });
   });
+  it("allows to filter nested data as well", async () => {
+    //
+
+    const filter = {
+      OR: [
+        {
+          firstName: "fooBar",
+        },
+        {
+          userSocialMedia: {
+            instagram: "fooBar",
+          },
+        },
+      ],
+    };
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      OR: [
+        {
+          OR: [
+            {
+              firstName: {
+                contains: "fooBar",
+              },
+            },
+            {
+              firstName: {
+                contains: "foobar",
+              },
+            },
+            {
+              firstName: {
+                contains: "FooBar",
+              },
+            },
+          ],
+        },
+        {
+          userSocialMedia: {
+            OR: [
+              {
+                instagram: {
+                  contains: "fooBar",
+                },
+              },
+              {
+                instagram: {
+                  contains: "foobar",
+                },
+              },
+              {
+                instagram: {
+                  contains: "FooBar",
+                },
+              },
+            ],
+          },
+        },
+      ],
+    });
+  });
   it("allows to NOT find certain fields", async () => {
     //
 

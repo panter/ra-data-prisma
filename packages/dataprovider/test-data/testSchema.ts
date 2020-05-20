@@ -52,6 +52,7 @@ const types = [
   User,
   UserRole,
   UserSocialMedia,
+
   addCrudResolvers("User"),
   addCrudResolvers("UserRole"),
 ];
