@@ -1,7 +1,7 @@
 import { IntrospectionInputObjectType } from "graphql";
 import upperFirst from "lodash/upperFirst";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { isObject } from "lodash";
+import { isObject, isArray } from "lodash";
 
 const getStringFilter = (key: string, value: any) => {
   const OR = [
@@ -30,6 +30,11 @@ const getStringFilter = (key: string, value: any) => {
   }
   return { OR };
 };
+const getIntFilter = (key: string, value: any) => ({
+  [key]: {
+    equals: parseInt(value, 10),
+  },
+});
 const getFilters = (
   key: string,
   value: any,
@@ -65,22 +70,22 @@ const getFilters = (
       return {};
     }
   }
-  if (
-    !isObject(value) &&
-    (fieldType.name === "StringFilter" ||
-      fieldType.name === "NullableStringFilter")
-  ) {
+  const isStringFilter =
+    fieldType.name === "StringFilter" ||
+    fieldType.name === "NullableStringFilter";
+  if (!isObject(value) && isStringFilter) {
     return getStringFilter(key, value);
   }
-  if (
-    !isObject(value) &&
-    (fieldType.name === "IntFilter" || fieldType.name === "NullableIntFilter")
-  ) {
-    return {
-      [key]: {
-        equals: parseInt(value, 10),
-      },
-    };
+  if (isArray(value) && isStringFilter) {
+    return { OR: value.map((v) => getStringFilter(key, v)) };
+  }
+  const isIntFilter =
+    fieldType.name === "IntFilter" || fieldType.name === "NullableIntFilter";
+  if (!isObject(value) && isIntFilter) {
+    return getIntFilter(key, value);
+  }
+  if (isArray(value) && isIntFilter) {
+    return { OR: value.map((v) => getIntFilter(key, v)) };
   }
   if (fieldType.kind === "INPUT_OBJECT") {
     // we asume for the moment that this is always a relation
@@ -109,6 +114,15 @@ const getFilters = (
         [key]: {
           id: {
             equals: value,
+          },
+        },
+      };
+    }
+    if (isArray(value)) {
+      return {
+        [key]: {
+          id: {
+            in: value,
           },
         },
       };

@@ -28,6 +28,27 @@ describe("buildWhere", () => {
     });
   });
 
+  it("arrays are interpreted as or", async () => {
+    const filter = {
+      yearOfBirth: [1879, 1920],
+    };
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      OR: [
+        {
+          yearOfBirth: {
+            equals: 1879,
+          },
+        },
+        {
+          yearOfBirth: {
+            equals: 1920,
+          },
+        },
+      ],
+    });
+  });
+
   it("returns where with multiple cases when its a string", async () => {
     //
 
@@ -217,6 +238,95 @@ describe("buildWhere", () => {
       ],
     });
   });
+  it("handles mixes of arrays as well", async () => {
+    const filter = {
+      yearOfBirth: [1879, 1920],
+      firstName: ["albert", "niels"],
+    };
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      AND: [
+        {
+          OR: [
+            {
+              yearOfBirth: {
+                equals: 1879,
+              },
+            },
+            {
+              yearOfBirth: {
+                equals: 1920,
+              },
+            },
+          ],
+        },
+        {
+          OR: [
+            {
+              OR: [
+                {
+                  firstName: {
+                    contains: "albert",
+                  },
+                },
+                {
+                  firstName: {
+                    contains: "Albert",
+                  },
+                },
+              ],
+            },
+            {
+              OR: [
+                {
+                  firstName: {
+                    contains: "niels",
+                  },
+                },
+                {
+                  firstName: {
+                    contains: "Niels",
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  it("allows to filter one for related id", async () => {
+    const filter = {
+      userSocialMedia: "foo",
+    };
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      userSocialMedia: {
+        id: {
+          equals: "foo",
+        },
+      },
+    });
+  });
+
+  it("allows to filter for related ids", async () => {
+    const filter = {
+      userSocialMedia: ["foo", "bar"],
+    };
+
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      userSocialMedia: {
+        id: {
+          in: ["foo", "bar"],
+        },
+      },
+    });
+  });
+
   it("allows to filter nested data as well", async () => {
     //
 
@@ -279,9 +389,8 @@ describe("buildWhere", () => {
       ],
     });
   });
-  it("allows to NOT find certain fields", async () => {
-    //
 
+  it("allows to NOT find certain fields", async () => {
     const filter = {
       NOT: [
         {
