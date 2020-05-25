@@ -405,7 +405,11 @@ export default (introspectionResults: IntrospectionResult) => (
       return {
         where: {
           //@ts-ignore
-          id: { in: params.ids.map((obj) => (isObject(obj) ? obj.id : obj)) },
+          id: {
+            in: params.ids
+              .map((obj) => (isObject(obj) ? obj.id : obj))
+              .filter((v) => !isNil(v)),
+          },
         },
       };
     case GET_MANY_REFERENCE: {
