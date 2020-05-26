@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-export default (resourceName: string) => {
+export default (resourceName: string, { printSecurityWarning = true } = {}) => {
   const typeName = upperFirst(resourceName);
 
   const queryName = lowerFirst(resourceName);
@@ -25,7 +25,7 @@ export default (resourceName: string) => {
     `deleteOne${typeName}`,
     `deleteMany${typeName}`,
   ];
-  if (process.env.NODE_ENV === "development") {
+  if (process.env.NODE_ENV === "development" && printSecurityWarning) {
     const queries = [queryName, queryName, queryCountName];
     console.info("");
     console.info(
