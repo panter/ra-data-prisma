@@ -6,6 +6,7 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 const sanitizeResource = (
   introspectionResults: IntrospectionResult,
   resource: Resource,
+  shouldSanitizeLinkedResources: boolean = true,
 ) => (data: { [key: string]: any } = {}): any => {
   return Object.keys(data).reduce((acc, key) => {
     if (key.startsWith("_")) {
@@ -26,7 +27,7 @@ const sanitizeResource = (
       (r) => r.type.name === type.name,
     );
 
-    if (linkedResource) {
+    if (shouldSanitizeLinkedResources && linkedResource) {
       const linkedResourceData = data[field.name];
 
       if (Array.isArray(linkedResourceData)) {
@@ -46,11 +47,17 @@ const sanitizeResource = (
   }, {});
 };
 
-export default (introspectionResults: IntrospectionResult) => (
-  aorFetchType: string,
-  resource: Resource,
-) => (response: { [key: string]: any }) => {
-  const sanitize = sanitizeResource(introspectionResults, resource);
+export default (
+  introspectionResults: IntrospectionResult,
+  { shouldSanitizeLinkedResources = true } = {},
+) => (aorFetchType: string, resource: Resource) => (response: {
+  [key: string]: any;
+}) => {
+  const sanitize = sanitizeResource(
+    introspectionResults,
+    resource,
+    shouldSanitizeLinkedResources,
+  );
   const data = response.data;
 
   if (

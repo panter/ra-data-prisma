@@ -1,4 +1,5 @@
 import gql from "dummy-tag";
+import gqlReal from "graphql-tag";
 import { IntrospectionField, print as printOrg, TypeKind } from "graphql";
 import {
   CREATE,
@@ -224,6 +225,36 @@ describe("buildGqlQuery", () => {
                 user {
                   id
                 }
+              }
+            }
+            total: usersCount(where: $where)
+          }
+        `,
+      );
+    });
+
+    it("returns the correct query for GET_LIST when defining a fragment", () => {
+      expect(
+        buildGqlQuery(testIntrospection)(
+          testUserResource,
+          GET_LIST,
+          { where },
+          gqlReal`
+            fragment UserWithTwitter on User {
+              id
+              socialMedia {
+                twitter
+              }
+            }
+          `,
+        ),
+      ).toEqualGraphql(
+        gql`
+          query users($where: UserWhereInput) {
+            items: users(where: $where) {
+              id
+              socialMedia {
+                twitter
               }
             }
             total: usersCount(where: $where)
