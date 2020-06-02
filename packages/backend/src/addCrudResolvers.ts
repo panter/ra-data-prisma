@@ -26,7 +26,7 @@ export default (resourceName: string, { printSecurityWarning = true } = {}) => {
     `deleteMany${typeName}`,
   ];
   if (process.env.NODE_ENV === "development" && printSecurityWarning) {
-    const queries = [queryName, queryName, queryCountName];
+    const queries = [queryName, queryAllName, queryCountName];
     console.info("");
     console.info(
       `☝ The following resolvers were defined for the resource '${resourceName}' to make it compatible for react-admin`,
