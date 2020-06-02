@@ -23,11 +23,36 @@ import { buildWhere } from "./buildWhere";
 import exhaust from "./utils/exhaust";
 import getFinalType from "./utils/getFinalType";
 
-interface GetListParams {
+export interface GetListParams {
   filter: { [key: string]: any };
   pagination: { page: number; perPage: number };
   sort: { field: string; order: string };
 }
+
+const buildOrderBy = (
+  introspectionResults: IntrospectionResult,
+  resource: Resource,
+  sort: GetListParams["sort"],
+) => {
+  if (!sort) return null;
+  const { field, order } = sort;
+
+  const orderType = introspectionResults.types.find(
+    (t) => t.name === `${resource.type.name}OrderByInput`,
+  ) as IntrospectionInputObjectType;
+
+  if (!orderType) {
+    return null;
+  }
+
+  if (!orderType.inputFields.some((f) => f.name === field)) {
+    return null;
+  }
+
+  return {
+    [sort.field]: sort.order === "ASC" ? "asc" : "desc",
+  };
+};
 
 const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
   resource: Resource,
@@ -39,14 +64,12 @@ const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
   return {
     skip: (params.pagination.page - 1) * params.pagination.perPage,
     first: params.pagination.perPage,
-    orderBy: {
-      [params.sort.field]: params.sort.order === "ASC" ? "asc" : "desc",
-    },
+    orderBy: buildOrderBy(introspectionResults, resource, params?.sort),
     where,
   };
 };
 
-interface UpdateParams {
+export interface UpdateParams {
   id: string;
   data: { [key: string]: any };
   previousData: { [key: string]: any };

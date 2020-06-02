@@ -1,7 +1,7 @@
 import camelCase from "lodash/camelCase";
 import merge from "lodash/merge";
 import pluralize from "pluralize";
-
+import gql from "graphql-tag";
 import buildDataProvider from "ra-data-graphql";
 import {
   CREATE,
@@ -15,13 +15,14 @@ import {
   UPDATE_MANY,
 } from "react-admin";
 
-import prismaBuildQuery from "./buildQuery";
 import { Resource } from "./constants/interfaces";
+import { DocumentNode } from "graphql";
+import { Options, ResourceView } from "./types";
+import { buildQueryFactory } from "./buildQuery";
 
-export const buildQuery = prismaBuildQuery;
-
+export { ResourceView, Options };
 export const defaultOptions = {
-  buildQuery,
+  buildQuery: buildQueryFactory,
   introspection: {
     operationNames: {
       [GET_LIST]: (resource: Resource) =>
@@ -40,8 +41,7 @@ export const defaultOptions = {
   },
 };
 
-//TODO: Prisma supports batching (UPDATE_MANY, DELETE_MANY)
-export default (options) => {
+export default (options: Options) => {
   return buildDataProvider(merge({}, defaultOptions, options)).then(
     (graphQLDataProvider) => {
       return (
