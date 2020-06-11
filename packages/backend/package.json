@@ -30,7 +30,7 @@
     "pluralize": "^7.0.0"
   },
   "peerDependencies": {
-    "nexus": "*"
+    "@nexus/schema": "*"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",

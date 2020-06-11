@@ -63,7 +63,7 @@ const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
 
   return {
     skip: (params.pagination.page - 1) * params.pagination.perPage,
-    first: params.pagination.perPage,
+    take: params.pagination.perPage,
     orderBy: buildOrderBy(introspectionResults, resource, params?.sort),
     where,
   };

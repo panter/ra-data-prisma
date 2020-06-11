@@ -87,14 +87,14 @@ describe("buildQueryFactory", () => {
         query users(
           $where: UserWhereInput
           $orderBy: UserOrderByInput
+          $take: Int
           $skip: Int
-          $first: Int
         ) {
           items: users(
             where: $where
             orderBy: $orderBy
+            take: $take
             skip: $skip
-            first: $first
           ) {
             id
             socialMedia {
