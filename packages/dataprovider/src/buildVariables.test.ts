@@ -69,7 +69,7 @@ describe("buildVariables", () => {
             },
           ],
         },
-        first: 10,
+        take: 10,
         orderBy: {
           email: "asc",
         },
@@ -659,7 +659,7 @@ describe("buildVariables", () => {
         ),
       ).toEqual<NexusGenArgTypes["Query"]["users"]>({
         skip: 90,
-        first: 10,
+        take: 10,
         orderBy: { email: "asc" },
         where: { roles: { some: { id: { equals: "roleId" } } } },
       });

@@ -1,8 +1,6 @@
 # `@ra-data-prisma/backend`
 
-
 ## Usage
-
 
 `yarn add @ra-data-prisma/backend`
 
@@ -11,7 +9,7 @@
 ```
 
 import { addCrudResolvers } from '@ra-data-prisma/backend';
-import { makeSchema } from "nexus";
+import { makeSchema } from "@nexus/schema";
 import { nexusPrismaPlugin } from "nexus-prisma";
 
 type User = objectType({
@@ -31,6 +29,7 @@ const schema = makeSchema({
   ],
   plugins: [
     nexusPrismaPlugin({
+      experimentalCRUD: true, // required
       outputs: {
         typegen: typegenPath("./generated/nexus-prisma.ts")
       }
@@ -108,6 +107,5 @@ const permissions = shield(
   }
 );
 ```
-
 
 use `addCrudResolvers` for every Model that you want to manage in react-admin. Additionaly if you have a relation between two Models, call it for both Models even if you only want to show one in a list
