@@ -4,6 +4,8 @@
 
 `yarn add @ra-data-prisma/backend`
 
+make also sure that you use `@nexus/schema` version `0.14.0` or higher and `nexus-prisma` version `0.15.0-next.x`
+
 `addCrudResolvers(modelName)` will make your Model compatible with react-admin. It will become a `Resource` to react-admin:
 
 ```

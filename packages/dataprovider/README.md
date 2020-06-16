@@ -6,10 +6,10 @@ Data provider for [react admin](https://github.com/marmelab/react-admin)
 
 `yarn add @ra-data-prisma/dataprovider`
 
+make sure you backend api is compatible by using the other package in this repo [backend](../backend/README.md)
+
 ```
 import buildGraphQLProvider from '@ra-data-prisma/dataprovider'
-
-
 
 const dataprovider = await buildGraphQLProvider({
     clientOptions: { uri: "/api/graphql" }
