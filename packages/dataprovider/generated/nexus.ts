@@ -598,21 +598,17 @@ export interface NexusGenArgTypes {
       where: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput']; // SomePublicRecordWithIntIdWhereUniqueInput!
     }
     somePublicRecordWithIntIds: { // args
-      after?: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput'] | null; // SomePublicRecordWithIntIdWhereUniqueInput
-      before?: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput'] | null; // SomePublicRecordWithIntIdWhereUniqueInput
-      first?: number | null; // Int
-      last?: number | null; // Int
+      cursor?: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput'] | null; // SomePublicRecordWithIntIdWhereUniqueInput
       orderBy?: NexusGenInputs['SomePublicRecordWithIntIdOrderByInput'] | null; // SomePublicRecordWithIntIdOrderByInput
       skip?: number | null; // Int
+      take?: number | null; // Int
       where?: NexusGenInputs['SomePublicRecordWithIntIdWhereInput'] | null; // SomePublicRecordWithIntIdWhereInput
     }
     somePublicRecordWithIntIdsCount: { // args
-      after?: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput'] | null; // SomePublicRecordWithIntIdWhereUniqueInput
-      before?: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput'] | null; // SomePublicRecordWithIntIdWhereUniqueInput
-      first?: number | null; // Int
-      last?: number | null; // Int
+      cursor?: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput'] | null; // SomePublicRecordWithIntIdWhereUniqueInput
       orderBy?: NexusGenInputs['SomePublicRecordWithIntIdOrderByInput'] | null; // SomePublicRecordWithIntIdOrderByInput
       skip?: number | null; // Int
+      take?: number | null; // Int
       where?: NexusGenInputs['SomePublicRecordWithIntIdWhereInput'] | null; // SomePublicRecordWithIntIdWhereInput
     }
     user: { // args

@@ -44,6 +44,7 @@
   "peerDependencies": {
     "graphql": ">=14.0.0",
     "react": "*",
-    "react-admin": "*"
+    "react-admin": "*",
+    "nexus-prisma": ">= 0.15.0 || >= 0.15.0-next"
   }
 }

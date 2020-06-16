@@ -81,8 +81,8 @@ enum OrderByArg {
 
 type Query {
   somePublicRecordWithIntId(where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId
-  somePublicRecordWithIntIds(after: SomePublicRecordWithIntIdWhereUniqueInput, before: SomePublicRecordWithIntIdWhereUniqueInput, first: Int, last: Int, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, where: SomePublicRecordWithIntIdWhereInput): [SomePublicRecordWithIntId!]!
-  somePublicRecordWithIntIdsCount(after: SomePublicRecordWithIntIdWhereUniqueInput, before: SomePublicRecordWithIntIdWhereUniqueInput, first: Int, last: Int, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, where: SomePublicRecordWithIntIdWhereInput): Int!
+  somePublicRecordWithIntIds(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): [SomePublicRecordWithIntId!]!
+  somePublicRecordWithIntIdsCount(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): Int!
   user(where: UserWhereUniqueInput!): User
   userRole(where: UserRoleWhereUniqueInput!): UserRole
   userRoles(cursor: UserRoleWhereUniqueInput, orderBy: UserRoleOrderByInput, skip: Int, take: Int, where: UserRoleWhereInput): [UserRole!]!
