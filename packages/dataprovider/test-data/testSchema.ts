@@ -38,6 +38,14 @@ const UserRole = objectType({
   },
 });
 
+const SomePublicRecordWithIntId = objectType({
+  name: "SomePublicRecordWithIntId",
+  definition(t) {
+    t.model.id();
+    t.model.title();
+  },
+});
+
 const UserSocialMedia = objectType({
   name: "UserSocialMedia",
   definition(t) {
@@ -52,9 +60,11 @@ const types = [
   User,
   UserRole,
   UserSocialMedia,
+  SomePublicRecordWithIntId,
 
   addCrudResolvers("User"),
   addCrudResolvers("UserRole"),
+  addCrudResolvers("SomePublicRecordWithIntId"),
 ];
 export const testSchema = makeSchema({
   types,

@@ -3,6 +3,7 @@ import {
   DELETE,
   GET_LIST,
   GET_MANY,
+  GET_ONE,
   GET_MANY_REFERENCE,
   UPDATE,
 } from "react-admin";
@@ -574,6 +575,56 @@ describe("buildVariables", () => {
             ],
           },
         },
+      });
+    });
+  });
+
+  describe("GET_ONE", () => {
+    it("returns correct variables for one record that has a string id", () => {
+      const params = {
+        id: "some-id",
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, GET_ONE, params),
+      ).toEqual<NexusGenArgTypes["Query"]["user"]>({
+        where: { id: "some-id" },
+      });
+    });
+
+    it("returns correct variables for one record that has a integer id", () => {
+      const params = {
+        id: 1234,
+      };
+      const resource = testIntrospection.resources.find(
+        (r) =>
+          r.type.kind === "OBJECT" &&
+          r.type.name === "SomePublicRecordWithIntId",
+      );
+      expect(
+        buildVariables(testIntrospection)(resource, GET_ONE, params),
+      ).toEqual<NexusGenArgTypes["Query"]["somePublicRecordWithIntId"]>({
+        where: { id: 1234 },
+      });
+    });
+    it("returns correct variables for one record that has a integer id even if it comes as a string", () => {
+      const params = {
+        id: "1234",
+      };
+      const resource = testIntrospection.resources.find(
+        (r) =>
+          r.type.kind === "OBJECT" &&
+          r.type.name === "SomePublicRecordWithIntId",
+      );
+      const result = buildVariables(testIntrospection)(
+        resource,
+        GET_ONE,
+        params,
+      );
+      expect(result).toEqual<
+        NexusGenArgTypes["Query"]["somePublicRecordWithIntId"]
+      >({
+        where: { id: 1234 },
       });
     });
   });

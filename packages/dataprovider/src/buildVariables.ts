@@ -69,6 +69,38 @@ const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
   };
 };
 
+const buildGetOneVariables = (introspectionResults: IntrospectionResult) => (
+  resource: Resource,
+
+  params: any,
+) => {
+  const type = introspectionResults.types.find(
+    (t) => t.name === `${resource.type.name}WhereUniqueInput`,
+  ) as IntrospectionInputObjectType;
+
+  const idType = type?.inputFields.find((f) => f.name === "id");
+  if (idType.type.kind === "SCALAR" && idType.type.name === "String") {
+    return {
+      where: {
+        id: String(params.id),
+      },
+    };
+  }
+  if (idType.type.kind === "SCALAR" && idType.type.name === "Int") {
+    return {
+      where: {
+        id: parseInt(params.id),
+      },
+    };
+  }
+  // should usually not happen
+  return {
+    where: {
+      id: params.id,
+    },
+  };
+};
+
 export interface UpdateParams {
   id: string;
   data: { [key: string]: any };
@@ -441,10 +473,9 @@ export default (introspectionResults: IntrospectionResult) => (
         filter: { [params.target]: params.id },
       });
     }
-    case GET_ONE:
-      return {
-        where: { id: params.id },
-      };
+    case GET_ONE: {
+      return buildGetOneVariables(introspectionResults)(resource, params);
+    }
     case UPDATE: {
       return buildUpdateVariables(introspectionResults)(resource, params);
     }

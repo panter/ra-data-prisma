@@ -38,3 +38,8 @@ model User {
   wantsNewsletter Boolean
   userSocialMedia UserSocialMedia?
 }
+
+model SomePublicRecordWithIntId {
+  id    Int    @default(autoincrement()) @id
+  title String
+}

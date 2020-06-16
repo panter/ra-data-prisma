@@ -13,7 +13,7 @@ describe("buildWhere", () => {
     );
   });
 
-  it("can handle the most simple case", async () => {
+  it("can handle simple number values", async () => {
     //
 
     const filter = {
