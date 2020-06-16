@@ -199,7 +199,7 @@ export default (introspectionResults: IntrospectionResult) => (
     );
   }
 
-  const { orderBy, skip, first, ...countVariables } = variables;
+  const { orderBy, skip, take, ...countVariables } = variables;
   const apolloArgs = buildApolloArgs(queryType, variables);
   const args = buildArgs(queryType, variables);
   const countArgs = buildArgs(queryType, countVariables);

@@ -70,6 +70,7 @@ export const testSchema = makeSchema({
   types,
   plugins: [
     nexusPrismaPlugin({
+      experimentalCRUD: true,
       outputs: {
         typegen: typegenPath("./generated/nexus-prisma.ts"),
       },

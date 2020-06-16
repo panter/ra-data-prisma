@@ -50,9 +50,6 @@ export default (resourceName: string, { printSecurityWarning = true } = {}) => {
           pagination: true,
           ordering: true,
         });
-        // workaround for https://github.com/prisma/prisma-client-js/issues/252
-        // its now possible to pass params to count in latest prisma 🎉
-        // but we have to check whether this is backwards compatible
         t.int(queryCountName, {
           args: {
             where: arg({
@@ -66,18 +63,12 @@ export default (resourceName: string, { printSecurityWarning = true } = {}) => {
             skip: intArg({
               required: false,
             }),
-            after: arg({
+
+            cursor: arg({
               type: `${typeName}WhereUniqueInput`,
               required: false,
             }),
-            before: arg({
-              type: `${typeName}WhereUniqueInput`,
-              required: false,
-            }),
-            first: intArg({
-              required: false,
-            }),
-            last: intArg({
+            take: intArg({
               required: false,
             }),
           },
