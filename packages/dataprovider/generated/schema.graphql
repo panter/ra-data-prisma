@@ -17,17 +17,34 @@ enum Gender {
   OTHER
 }
 
+input IntFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: Int
+  notIn: [Int!]
+}
+
 type Mutation {
+  createOneSomePublicRecordWithIntId(data: SomePublicRecordWithIntIdCreateInput!): SomePublicRecordWithIntId!
   createOneUser(data: UserCreateInput!): User!
   createOneUserRole(data: UserRoleCreateInput!): UserRole!
+  deleteManySomePublicRecordWithIntId(where: SomePublicRecordWithIntIdWhereInput): BatchPayload!
   deleteManyUser(where: UserWhereInput): BatchPayload!
   deleteManyUserRole(where: UserRoleWhereInput): BatchPayload!
+  deleteOneSomePublicRecordWithIntId(where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId
   deleteOneUser(where: UserWhereUniqueInput!): User
   deleteOneUserRole(where: UserRoleWhereUniqueInput!): UserRole
+  updateManySomePublicRecordWithIntId(data: SomePublicRecordWithIntIdUpdateManyMutationInput!, where: SomePublicRecordWithIntIdWhereInput): BatchPayload!
   updateManyUser(data: UserUpdateManyMutationInput!, where: UserWhereInput): BatchPayload!
   updateManyUserRole(data: UserRoleUpdateManyMutationInput!, where: UserRoleWhereInput): BatchPayload!
+  updateOneSomePublicRecordWithIntId(data: SomePublicRecordWithIntIdUpdateInput!, where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId
   updateOneUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateOneUserRole(data: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole
+  upsertOneSomePublicRecordWithIntId(create: SomePublicRecordWithIntIdCreateInput!, update: SomePublicRecordWithIntIdUpdateInput!, where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId!
   upsertOneUser(create: UserCreateInput!, update: UserUpdateInput!, where: UserWhereUniqueInput!): User!
   upsertOneUserRole(create: UserRoleCreateInput!, update: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole!
 }
@@ -63,12 +80,51 @@ enum OrderByArg {
 }
 
 type Query {
+  somePublicRecordWithIntId(where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId
+  somePublicRecordWithIntIds(after: SomePublicRecordWithIntIdWhereUniqueInput, before: SomePublicRecordWithIntIdWhereUniqueInput, first: Int, last: Int, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, where: SomePublicRecordWithIntIdWhereInput): [SomePublicRecordWithIntId!]!
+  somePublicRecordWithIntIdsCount(after: SomePublicRecordWithIntIdWhereUniqueInput, before: SomePublicRecordWithIntIdWhereUniqueInput, first: Int, last: Int, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, where: SomePublicRecordWithIntIdWhereInput): Int!
   user(where: UserWhereUniqueInput!): User
   userRole(where: UserRoleWhereUniqueInput!): UserRole
   userRoles(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, orderBy: UserRoleOrderByInput, skip: Int, where: UserRoleWhereInput): [UserRole!]!
   userRolesCount(after: UserRoleWhereUniqueInput, before: UserRoleWhereUniqueInput, first: Int, last: Int, orderBy: UserRoleOrderByInput, skip: Int, where: UserRoleWhereInput): Int!
   users(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput, skip: Int, where: UserWhereInput): [User!]!
   usersCount(after: UserWhereUniqueInput, before: UserWhereUniqueInput, first: Int, last: Int, orderBy: UserOrderByInput, skip: Int, where: UserWhereInput): Int!
+}
+
+type SomePublicRecordWithIntId {
+  id: Int!
+  title: String!
+}
+
+input SomePublicRecordWithIntIdCreateInput {
+  title: String!
+}
+
+input SomePublicRecordWithIntIdOrderByInput {
+  id: OrderByArg
+  title: OrderByArg
+}
+
+input SomePublicRecordWithIntIdUpdateInput {
+  id: Int
+  title: String
+}
+
+input SomePublicRecordWithIntIdUpdateManyMutationInput {
+  id: Int
+  title: String
+}
+
+input SomePublicRecordWithIntIdWhereInput {
+  AND: [SomePublicRecordWithIntIdWhereInput!]
+  id: IntFilter
+  NOT: [SomePublicRecordWithIntIdWhereInput!]
+  OR: [SomePublicRecordWithIntIdWhereInput!]
+  title: StringFilter
+}
+
+input SomePublicRecordWithIntIdWhereUniqueInput {
+  id: Int
 }
 
 input StringFilter {

@@ -251,6 +251,7 @@ interface ModelTypes {
   UserRole: prisma.UserRole
   UserSocialMedia: prisma.UserSocialMedia
   User: prisma.User
+  SomePublicRecordWithIntId: prisma.SomePublicRecordWithIntId
 }
   
 interface NexusPrismaInputs {
@@ -266,6 +267,10 @@ interface NexusPrismaInputs {
     users: {
   filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
   ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
+}
+    somePublicRecordWithIntIds: {
+  filtering: 'id' | 'title' | 'AND' | 'OR' | 'NOT'
+  ordering: 'id' | 'title'
 }
 
   },
@@ -284,6 +289,9 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'name'
 }
 
+  },  SomePublicRecordWithIntId: {
+
+
   }
 }
 
@@ -295,6 +303,8 @@ interface NexusPrismaTypes {
     userSocialMedias: 'UserSocialMedia'
     user: 'User'
     users: 'User'
+    somePublicRecordWithIntId: 'SomePublicRecordWithIntId'
+    somePublicRecordWithIntIds: 'SomePublicRecordWithIntId'
 
   },
   Mutation: {
@@ -316,6 +326,12 @@ interface NexusPrismaTypes {
     deleteOneUser: 'User'
     deleteManyUser: 'BatchPayload'
     upsertOneUser: 'User'
+    createOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
+    updateOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
+    updateManySomePublicRecordWithIntId: 'BatchPayload'
+    deleteOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
+    deleteManySomePublicRecordWithIntId: 'BatchPayload'
+    upsertOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
 
   },
   UserRole: {
@@ -341,6 +357,10 @@ interface NexusPrismaTypes {
     wantsNewsletter: 'Boolean'
     userSocialMedia: 'UserSocialMedia'
 
+},  SomePublicRecordWithIntId: {
+    id: 'Int'
+    title: 'String'
+
 }
 }
 
@@ -348,6 +368,7 @@ interface NexusPrismaMethods {
   UserRole: NexusPrismaFields<'UserRole'>
   UserSocialMedia: NexusPrismaFields<'UserSocialMedia'>
   User: NexusPrismaFields<'User'>
+  SomePublicRecordWithIntId: NexusPrismaFields<'SomePublicRecordWithIntId'>
   Query: NexusPrismaFields<'Query'>
   Mutation: NexusPrismaFields<'Mutation'>
 }
