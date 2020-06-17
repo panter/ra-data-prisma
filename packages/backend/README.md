@@ -4,7 +4,9 @@
 
 `yarn add @ra-data-prisma/backend`
 
-make sure that you use `@nexus/schema` version `^0.14.0` and `nexus-prisma` version `^0.15.0`
+make sure that you use `@nexus/schema` version `^0.14.0` and `nexus-prisma` version `^0.15.0`.
+
+**important: set `paginationStrategy: "prisma"` and `experimentalCRUD: true` as options for nexusPrismaPlugin`**
 
 `addCrudResolvers(modelName)` will make your Model compatible with react-admin. It will become a `Resource` to react-admin:
 
@@ -31,7 +33,8 @@ const schema = makeSchema({
   ],
   plugins: [
     nexusPrismaPlugin({
-      experimentalCRUD: true, // required
+      experimentalCRUD: true, // required!
+      paginationStrategy: "prisma", // required!
       outputs: {
         typegen: typegenPath("./generated/nexus-prisma.ts")
       }
