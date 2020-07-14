@@ -82,11 +82,22 @@ export default AdminApp
 
 ```
 
-## Relations
+## Features
+
+### Search & Filtering
+
+this dataprovider supports all filtering and searching and adds some convenience to it:
+
+- _intelligent handling of strings and ints_: you don't have to specify `equals` or `contains`, we do that for you. The filter can just be `{firstname: "albert"}` and we create the correct graphql query for that
+- _case insensitive_: prisma currently does not support case insensitive queries ([but its on the way](https://github.com/prisma/prisma-client-js/issues/690)), so we currently emulate it query for multiple variations of the search term: as-is, fully lowercase, first letter uppercase. This does work in many cases (searching for terms and names), it fails in some. When prisma supports case insensitive querying, we will adopt that
+- _q_ query. `q` is a convention in react-admin for general search. We implement this client side. A query on `q` will search all string fields and int fields on a resource. It additionaly splits multiple search terms and does an AND search
+- if you need more sophisticated search, you can use normal nexus-prisma graphql queries. You can even mix it with `q` and the intelligent short notation
+
+### Relations
 
 If you have relations, you can use `ReferenceArrayField/Input` or `Referenceinput/Field`. Make sure that the reference Model is also compatible (by calling `addCrudResolvers("MyReferenceModel")` from `@ra-data-prisma/backend` on your backend).
 
-### some examples:
+#### some examples:
 
 _show a list of cities with the country_
 

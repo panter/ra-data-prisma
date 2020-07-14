@@ -572,5 +572,98 @@ describe("buildWhere", () => {
         ],
       });
     });
+    it("also searches int fields if it is a number", () => {
+      const filter = {
+        q: "albert 1879",
+      };
+      const result = buildWhere(filter, testUserResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+        AND: [
+          {
+            OR: [
+              {
+                OR: [
+                  {
+                    email: {
+                      contains: "albert",
+                    },
+                  },
+                  {
+                    email: {
+                      contains: "Albert",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    firstName: {
+                      contains: "albert",
+                    },
+                  },
+                  {
+                    firstName: {
+                      contains: "Albert",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    lastName: {
+                      contains: "albert",
+                    },
+                  },
+                  {
+                    lastName: {
+                      contains: "Albert",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                OR: [
+                  {
+                    email: {
+                      contains: "1879",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    firstName: {
+                      contains: "1879",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    lastName: {
+                      contains: "1879",
+                    },
+                  },
+                ],
+              },
+              {
+                yearOfBirth: {
+                  equals: 1879,
+                },
+              },
+            ],
+          },
+        ],
+      });
+    });
   });
 });

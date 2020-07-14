@@ -1,7 +1,11 @@
-import { IntrospectionInputObjectType } from "graphql";
+import {
+  IntrospectionInputObjectType,
+  IntrospectionInputTypeRef,
+} from "graphql";
 import upperFirst from "lodash/upperFirst";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { isObject, isArray } from "lodash";
+import { isObject, isArray, isEmpty } from "lodash";
+import { field } from "./utils/gqlTypes";
 
 const getStringFilter = (key: string, value: any) => {
   const OR = [
@@ -30,11 +34,26 @@ const getStringFilter = (key: string, value: any) => {
   }
   return { OR };
 };
-const getIntFilter = (key: string, value: any) => ({
-  [key]: {
-    equals: parseInt(value, 10),
-  },
-});
+const getIntFilter = (key: string, value: any) => {
+  const asNumber = parseInt(value, 10);
+  if (isNaN(asNumber)) {
+    return {};
+  }
+  return {
+    [key]: {
+      equals: asNumber,
+    },
+  };
+};
+
+const isStringFilter = (type: IntrospectionInputTypeRef) =>
+  type.kind === "INPUT_OBJECT" &&
+  (type.name === "StringFilter" || type.name === "NullableStringFilter");
+
+const isIntFilter = (type: IntrospectionInputTypeRef) =>
+  type.kind === "INPUT_OBJECT" &&
+  (type.name === "IntFilter" || type.name === "NullableIntFilter");
+
 const getFilters = (
   key: string,
   value: any,
@@ -60,13 +79,14 @@ const getFilters = (
       // additionaly we split by  space to make a AND connection
       const AND = value.split(" ").map((part: string) => ({
         OR: whereType.inputFields
-          .filter(
-            (i) =>
-              i.type.kind === "INPUT_OBJECT" &&
-              (i.type.name === "StringFilter" ||
-                i.type.name === "NullableStringFilter"),
+          .map((f) =>
+            isStringFilter(f.type)
+              ? getStringFilter(f.name, part.trim())
+              : isIntFilter(f.type)
+              ? getIntFilter(f.name, part.trim())
+              : null,
           )
-          .map((f) => getStringFilter(f.name, part.trim())),
+          .filter((f) => !isEmpty(f)),
       }));
 
       return { AND };
@@ -74,21 +94,18 @@ const getFilters = (
       return {};
     }
   }
-  const isStringFilter =
-    fieldType.name === "StringFilter" ||
-    fieldType.name === "NullableStringFilter";
-  if (!isObject(value) && isStringFilter) {
+
+  if (!isObject(value) && isStringFilter(fieldType)) {
     return getStringFilter(key, value);
   }
-  if (isArray(value) && isStringFilter) {
+  if (isArray(value) && isStringFilter(fieldType)) {
     return { OR: value.map((v) => getStringFilter(key, v)) };
   }
-  const isIntFilter =
-    fieldType.name === "IntFilter" || fieldType.name === "NullableIntFilter";
-  if (!isObject(value) && isIntFilter) {
+
+  if (!isObject(value) && isIntFilter(fieldType)) {
     return getIntFilter(key, value);
   }
-  if (isArray(value) && isIntFilter) {
+  if (isArray(value) && isIntFilter(fieldType)) {
     return { OR: value.map((v) => getIntFilter(key, v)) };
   }
   if (fieldType.kind === "INPUT_OBJECT") {
