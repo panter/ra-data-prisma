@@ -410,4 +410,167 @@ describe("buildWhere", () => {
       ],
     });
   });
+
+  describe("q", () => {
+    it("is a special query that searches all text fields", () => {
+      const filter = {
+        q: "stein",
+      };
+      const result = buildWhere(filter, testUserResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+        AND: [
+          {
+            OR: [
+              {
+                OR: [
+                  {
+                    email: {
+                      contains: "stein",
+                    },
+                  },
+                  {
+                    email: {
+                      contains: "Stein",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    firstName: {
+                      contains: "stein",
+                    },
+                  },
+                  {
+                    firstName: {
+                      contains: "Stein",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    lastName: {
+                      contains: "stein",
+                    },
+                  },
+                  {
+                    lastName: {
+                      contains: "Stein",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+    });
+    it("does an AND connection on multiple terms", () => {
+      const filter = {
+        q: "albert stein",
+      };
+      const result = buildWhere(filter, testUserResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+        AND: [
+          {
+            OR: [
+              {
+                OR: [
+                  {
+                    email: {
+                      contains: "albert",
+                    },
+                  },
+                  {
+                    email: {
+                      contains: "Albert",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    firstName: {
+                      contains: "albert",
+                    },
+                  },
+                  {
+                    firstName: {
+                      contains: "Albert",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    lastName: {
+                      contains: "albert",
+                    },
+                  },
+                  {
+                    lastName: {
+                      contains: "Albert",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            OR: [
+              {
+                OR: [
+                  {
+                    email: {
+                      contains: "stein",
+                    },
+                  },
+                  {
+                    email: {
+                      contains: "Stein",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    firstName: {
+                      contains: "stein",
+                    },
+                  },
+                  {
+                    firstName: {
+                      contains: "Stein",
+                    },
+                  },
+                ],
+              },
+              {
+                OR: [
+                  {
+                    lastName: {
+                      contains: "stein",
+                    },
+                  },
+                  {
+                    lastName: {
+                      contains: "Stein",
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      });
+    });
+  });
 });

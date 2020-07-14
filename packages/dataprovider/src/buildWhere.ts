@@ -56,16 +56,20 @@ const getFilters = (
   if (!fieldType) {
     if (key === "q") {
       // special: q is universal text search
-      const OR = whereType.inputFields
-        .filter(
-          (i) =>
-            i.type.kind === "INPUT_OBJECT" &&
-            (i.type.name === "StringFilter" ||
-              i.type.name === "NullableStringFilter"),
-        )
-        .map((f) => getStringFilter(f.name, value));
+      // we search all text fields
+      // additionaly we split by  space to make a AND connection
+      const AND = value.split(" ").map((part: string) => ({
+        OR: whereType.inputFields
+          .filter(
+            (i) =>
+              i.type.kind === "INPUT_OBJECT" &&
+              (i.type.name === "StringFilter" ||
+                i.type.name === "NullableStringFilter"),
+          )
+          .map((f) => getStringFilter(f.name, part.trim())),
+      }));
 
-      return { OR };
+      return { AND };
     } else {
       return {};
     }
