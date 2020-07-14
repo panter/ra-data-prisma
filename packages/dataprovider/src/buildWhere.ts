@@ -108,6 +108,7 @@ const getFilters = (
   if (isArray(value) && isIntFilter(fieldType)) {
     return { OR: value.map((v) => getIntFilter(key, v)) };
   }
+
   if (fieldType.kind === "INPUT_OBJECT") {
     // we asume for the moment that this is always a relation
     const inputObjectType = introspectionResults.types.find(
