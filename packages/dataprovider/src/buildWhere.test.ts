@@ -14,8 +14,6 @@ describe("buildWhere", () => {
   });
 
   it("can handle simple number values", async () => {
-    //
-
     const filter = {
       yearOfBirth: 1879,
     };
@@ -24,6 +22,19 @@ describe("buildWhere", () => {
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       yearOfBirth: {
         equals: 1879,
+      },
+    });
+  });
+
+  it("can handle simple boolean values", async () => {
+    const filter = {
+      wantsNewsletter: true,
+    };
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      wantsNewsletter: {
+        equals: true,
       },
     });
   });

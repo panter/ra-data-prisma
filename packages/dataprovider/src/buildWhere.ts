@@ -3,9 +3,10 @@ import {
   IntrospectionInputTypeRef,
 } from "graphql";
 import upperFirst from "lodash/upperFirst";
+import isObject from "lodash/isObject";
+import isArray from "lodash/isArray";
+import isEmpty from "lodash/isEmpty";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { isObject, isArray, isEmpty } from "lodash";
-import { field } from "./utils/gqlTypes";
 
 const getStringFilter = (key: string, value: any) => {
   const OR = [
@@ -45,6 +46,18 @@ const getIntFilter = (key: string, value: any) => {
     },
   };
 };
+
+const getBooleanFilter = (key: string, value: any) => {
+  return {
+    [key]: {
+      equals: Boolean(value),
+    },
+  };
+};
+
+const isBooleanFilter = (type: IntrospectionInputTypeRef) =>
+  type.kind === "INPUT_OBJECT" &&
+  (type.name === "BooleanFilter" || type.name === "NullableBooleanFilter");
 
 const isStringFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
@@ -93,6 +106,9 @@ const getFilters = (
     } else {
       return {};
     }
+  }
+  if (!isObject(value) && isBooleanFilter(fieldType)) {
+    return getBooleanFilter(key, value);
   }
 
   if (!isObject(value) && isStringFilter(fieldType)) {
