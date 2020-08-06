@@ -10,7 +10,35 @@ declare global {
   }
 }
 
-export default (resourceName: string, { printSecurityWarning = true } = {}) => {
+const DEFAULT_MANY = {
+  filtering: true,
+  pagination: true,
+  ordering: true,
+};
+
+type Customize = {
+  // no good types here :-(
+  one?: (c: {}) => any;
+  many?: (c: typeof DEFAULT_MANY) => any;
+  createOne?: (c: {}) => any;
+  updateOne?: (c: {}) => any;
+  updateMany?: (c: {}) => any;
+  upsertOne?: (c: {}) => any;
+  deleteOne?: (c: {}) => any;
+  deleteMany?: (c: {}) => any;
+};
+
+type Options = {
+  /**
+   * whether to display a warning to secure the mutations and resolvers (defaults to true)
+   */
+  printSecurityWarning?: boolean;
+  customize?: Customize;
+};
+const addCrudResolvers = (
+  resourceName: string,
+  { printSecurityWarning = true, customize }: Options = {},
+) => {
   const typeName = upperFirst(resourceName);
 
   const queryName = lowerFirst(resourceName);
@@ -18,12 +46,12 @@ export default (resourceName: string, { printSecurityWarning = true } = {}) => {
   const queryCountName = `${pluralize(queryName)}Count`;
 
   const mutations = [
-    `createOne${typeName}`,
-    `updateOne${typeName}`,
-    `updateMany${typeName}`,
-    `upsertOne${typeName}`,
-    `deleteOne${typeName}`,
-    `deleteMany${typeName}`,
+    { name: `createOne${typeName}`, type: "createOne" },
+    { name: `updateOne${typeName}`, type: "updateOne" },
+    { name: `updateMany${typeName}`, type: "updateMany" },
+    { name: `upsertOne${typeName}`, type: "upsertOne" },
+    { name: `deleteOne${typeName}`, type: "deleteOne" },
+    { name: `deleteMany${typeName}`, type: "deleteMany" },
   ];
   if (process.env.NODE_ENV === "development" && printSecurityWarning) {
     const queries = [queryName, queryAllName, queryCountName];
@@ -33,7 +61,7 @@ export default (resourceName: string, { printSecurityWarning = true } = {}) => {
     );
 
     console.info(`Queries:     ${queries.join(" ")}`);
-    console.info(`Mutations:   ${mutations.join(" ")}`);
+    console.info(`Mutations:   ${mutations.map((m) => m.name).join(" ")}`);
 
     console.info(
       "☝ please make sure to restirct unauthorized access to these queries using graphq-shield",
@@ -44,12 +72,9 @@ export default (resourceName: string, { printSecurityWarning = true } = {}) => {
     Query: extendType({
       type: "Query",
       definition(t) {
-        t.crud[queryName]();
-        t.crud[queryAllName]({
-          filtering: true,
-          pagination: true,
-          ordering: true,
-        });
+        t.crud[queryName](customize?.one?.({}) ?? {});
+
+        t.crud[queryAllName](customize?.many?.(DEFAULT_MANY) ?? DEFAULT_MANY);
         t.int(queryCountName, {
           args: {
             where: arg({
@@ -83,8 +108,12 @@ export default (resourceName: string, { printSecurityWarning = true } = {}) => {
     Mutation: extendType({
       type: "Mutation",
       definition(t) {
-        mutations.forEach((mutation) => t.crud[mutation](null));
+        mutations.forEach((mutation) =>
+          t.crud[mutation.name](customize?.[mutation.type]?.({}) ?? {}),
+        );
       },
     }),
   };
 };
+
+export default addCrudResolvers;
