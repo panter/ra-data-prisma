@@ -251,6 +251,7 @@ type GetNexusPrisma<TypeName extends string, ModelOrCrud extends 'model' | 'crud
 interface ModelTypes {
   UserRole: prisma.UserRole
   UserSocialMedia: prisma.UserSocialMedia
+  BlogPost: prisma.BlogPost
   User: prisma.User
   SomePublicRecordWithIntId: prisma.SomePublicRecordWithIntId
 }
@@ -265,8 +266,12 @@ interface NexusPrismaInputs {
   filtering: 'id' | 'instagram' | 'twitter' | 'userId' | 'AND' | 'OR' | 'NOT' | 'user'
   ordering: 'id' | 'instagram' | 'twitter' | 'userId'
 }
+    blogPosts: {
+  filtering: 'id' | 'title' | 'text' | 'authorId' | 'AND' | 'OR' | 'NOT' | 'author'
+  ordering: 'id' | 'title' | 'text' | 'authorId'
+}
     users: {
-  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
+  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'blogPosts' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
   ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
 }
     somePublicRecordWithIntIds: {
@@ -277,17 +282,24 @@ interface NexusPrismaInputs {
   },
     UserRole: {
     users: {
-  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
+  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'blogPosts' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
   ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
 }
 
   },  UserSocialMedia: {
 
 
+  },  BlogPost: {
+
+
   },  User: {
     roles: {
   filtering: 'id' | 'name' | 'users' | 'AND' | 'OR' | 'NOT'
   ordering: 'id' | 'name'
+}
+    blogPosts: {
+  filtering: 'id' | 'title' | 'text' | 'authorId' | 'AND' | 'OR' | 'NOT' | 'author'
+  ordering: 'id' | 'title' | 'text' | 'authorId'
 }
 
   },  SomePublicRecordWithIntId: {
@@ -302,6 +314,8 @@ interface NexusPrismaTypes {
     userRoles: 'UserRole'
     userSocialMedia: 'UserSocialMedia'
     userSocialMedias: 'UserSocialMedia'
+    blogPost: 'BlogPost'
+    blogPosts: 'BlogPost'
     user: 'User'
     users: 'User'
     somePublicRecordWithIntId: 'SomePublicRecordWithIntId'
@@ -321,6 +335,12 @@ interface NexusPrismaTypes {
     deleteOneUserSocialMedia: 'UserSocialMedia'
     deleteManyUserSocialMedia: 'BatchPayload'
     upsertOneUserSocialMedia: 'UserSocialMedia'
+    createOneBlogPost: 'BlogPost'
+    updateOneBlogPost: 'BlogPost'
+    updateManyBlogPost: 'BatchPayload'
+    deleteOneBlogPost: 'BlogPost'
+    deleteManyBlogPost: 'BatchPayload'
+    upsertOneBlogPost: 'BlogPost'
     createOneUser: 'User'
     updateOneUser: 'User'
     updateManyUser: 'BatchPayload'
@@ -347,6 +367,13 @@ interface NexusPrismaTypes {
     user: 'User'
     userId: 'String'
 
+},  BlogPost: {
+    id: 'String'
+    title: 'String'
+    text: 'String'
+    author: 'User'
+    authorId: 'String'
+
 },  User: {
     id: 'String'
     email: 'String'
@@ -357,6 +384,7 @@ interface NexusPrismaTypes {
     yearOfBirth: 'Int'
     wantsNewsletter: 'Boolean'
     userSocialMedia: 'UserSocialMedia'
+    blogPosts: 'BlogPost'
 
 },  SomePublicRecordWithIntId: {
     id: 'Int'
@@ -368,6 +396,7 @@ interface NexusPrismaTypes {
 interface NexusPrismaMethods {
   UserRole: NexusPrismaFields<'UserRole'>
   UserSocialMedia: NexusPrismaFields<'UserSocialMedia'>
+  BlogPost: NexusPrismaFields<'BlogPost'>
   User: NexusPrismaFields<'User'>
   SomePublicRecordWithIntId: NexusPrismaFields<'SomePublicRecordWithIntId'>
   Query: NexusPrismaFields<'Query'>

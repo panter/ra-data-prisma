@@ -157,6 +157,20 @@ const getFilters = (
       };
     }
     if (isArray(value)) {
+      const hasSomeFilter = inputObjectType.inputFields.some(
+        (s) => s.name === "some",
+      );
+      if (hasSomeFilter) {
+        return {
+          [key]: {
+            some: {
+              id: {
+                in: value,
+              },
+            },
+          },
+        };
+      }
       return {
         [key]: {
           id: {

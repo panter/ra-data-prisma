@@ -6,10 +6,14 @@ import { getTestIntrospection } from "./testUtils/getTestIntrospection";
 describe("buildWhere", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
+  let testBlogPostResource: Resource;
   beforeAll(async () => {
     testIntrospection = await getTestIntrospection();
     testUserResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
+    );
+    testBlogPostResource = testIntrospection.resources.find(
+      (r) => r.type.kind === "OBJECT" && r.type.name === "BlogPost",
     );
   });
 
@@ -307,7 +311,7 @@ describe("buildWhere", () => {
     });
   });
 
-  it("allows to filter one for related id", async () => {
+  it("allows to filter for one related id in a 1-1 relation", async () => {
     const filter = {
       userSocialMedia: "foo",
     };
@@ -322,7 +326,7 @@ describe("buildWhere", () => {
     });
   });
 
-  it("allows to filter for related ids", async () => {
+  it("allows to filter for related ids in a 1-1 reation", async () => {
     const filter = {
       userSocialMedia: ["foo", "bar"],
     };
@@ -333,6 +337,73 @@ describe("buildWhere", () => {
       userSocialMedia: {
         id: {
           in: ["foo", "bar"],
+        },
+      },
+    });
+  });
+
+  it("allows to filter for one related id in a 1-many relation", async () => {
+    const filter = {
+      author: "einstein-id",
+    };
+    const result = buildWhere(filter, testBlogPostResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
+      author: {
+        id: {
+          equals: "einstein-id",
+        },
+      },
+    });
+  });
+
+  it("allows to filter for related ids in a 1-many reation", async () => {
+    const filter = {
+      author: ["einstein-id", "oppenheimer-id"],
+    };
+
+    const result = buildWhere(filter, testBlogPostResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
+      author: {
+        id: {
+          in: ["einstein-id", "oppenheimer-id"],
+        },
+      },
+    });
+  });
+
+  it("allows to filter for one related id in a n-to-m reation", async () => {
+    const filter = {
+      roles: "admin",
+    };
+
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      roles: {
+        some: {
+          id: {
+            equals: "admin",
+          },
+        },
+      },
+    });
+  });
+
+  it("allows to filter for related ids in a n-to-m reation", async () => {
+    const filter = {
+      roles: ["admin", "member"],
+    };
+
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      roles: {
+        some: {
+          id: {
+            in: ["admin", "member"],
+          },
         },
       },
     });

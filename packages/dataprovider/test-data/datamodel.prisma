@@ -21,6 +21,14 @@ model UserSocialMedia {
   userId    String
 }
 
+model BlogPost {
+  id       String  @default(uuid()) @id
+  title    String
+  text     String
+  author   User?   @relation(fields: [authorId], references: [id])
+  authorId String?
+}
+
 enum Gender {
   MALE
   FEMALE
@@ -37,6 +45,7 @@ model User {
   yearOfBirth     Int?
   wantsNewsletter Boolean
   userSocialMedia UserSocialMedia?
+  blogPosts       BlogPost[]
 }
 
 model SomePublicRecordWithIntId {

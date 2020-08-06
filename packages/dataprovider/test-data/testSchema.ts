@@ -19,7 +19,7 @@ const User = objectType({
     t.model.gender();
     t.model.wantsNewsletter();
     t.model.userSocialMedia(null);
-
+    t.model.blogPosts(null);
     // add one field that needs arguments and therefore can't be used by react-admin
     t.list.field("logs", {
       type: "String",
@@ -56,15 +56,27 @@ const UserSocialMedia = objectType({
   },
 });
 
+const BlogPost = objectType({
+  name: "BlogPost",
+  definition(t) {
+    t.model.id();
+    t.model.title();
+    t.model.text();
+    t.model.author();
+  },
+});
+
 const types = [
   User,
   UserRole,
   UserSocialMedia,
   SomePublicRecordWithIntId,
+  BlogPost,
 
   addCrudResolvers("User"),
   addCrudResolvers("UserRole"),
   addCrudResolvers("SomePublicRecordWithIntId"),
+  addCrudResolvers("BlogPost"),
 ];
 export const testSchema = makeSchema({
   types,

@@ -226,6 +226,9 @@ describe("buildGqlQuery", () => {
                   id
                 }
               }
+              blogPosts {
+                id
+              }
             }
             total: usersCount(where: $where)
           }
@@ -292,6 +295,9 @@ describe("buildGqlQuery", () => {
                   id
                 }
               }
+              blogPosts {
+                id
+              }
             }
             total: usersCount(where: $where)
           }
@@ -327,6 +333,9 @@ describe("buildGqlQuery", () => {
                 user {
                   id
                 }
+              }
+              blogPosts {
+                id
               }
             }
             total: usersCount(where: $where)
@@ -364,6 +373,9 @@ describe("buildGqlQuery", () => {
                 user {
                   id
                 }
+              }
+              blogPosts {
+                id
               }
             }
           }
@@ -403,6 +415,9 @@ describe("buildGqlQuery", () => {
                   id
                 }
               }
+              blogPosts {
+                id
+              }
             }
           }
         `,
@@ -437,6 +452,9 @@ describe("buildGqlQuery", () => {
                 user {
                   id
                 }
+              }
+              blogPosts {
+                id
               }
             }
           }
