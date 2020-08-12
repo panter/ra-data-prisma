@@ -10,22 +10,16 @@ declare global {
   }
 }
 
-const DEFAULT_MANY = {
-  filtering: true,
-  pagination: true,
-  ordering: true,
-};
-
 type Customize = {
   // no good types here :-(
-  one?: (c: {}) => any;
-  many?: (c: typeof DEFAULT_MANY) => any;
-  createOne?: (c: {}) => any;
-  updateOne?: (c: {}) => any;
-  updateMany?: (c: {}) => any;
-  upsertOne?: (c: {}) => any;
-  deleteOne?: (c: {}) => any;
-  deleteMany?: (c: {}) => any;
+  one?: (c: any) => any;
+  many?: (c: any) => any;
+  createOne?: (c: any) => any;
+  updateOne?: (c: any) => any;
+  updateMany?: (c: any) => any;
+  upsertOne?: (c: any) => any;
+  deleteOne?: (c: any) => any;
+  deleteMany?: (c: any) => any;
 };
 
 type Options = {
@@ -33,11 +27,16 @@ type Options = {
    * whether to display a warning to secure the mutations and resolvers (defaults to true)
    */
   printSecurityWarning?: boolean;
+  aliasPrefix?: string;
   customize?: Customize;
+};
+
+const makePrefixedFullName = (name: string, prefix?: string) => {
+  return !prefix ? name : prefix + upperFirst(name);
 };
 const addCrudResolvers = (
   resourceName: string,
-  { printSecurityWarning = true, customize }: Options = {},
+  { printSecurityWarning = true, customize, aliasPrefix }: Options = {},
 ) => {
   const typeName = upperFirst(resourceName);
 
@@ -54,7 +53,9 @@ const addCrudResolvers = (
     { name: `deleteMany${typeName}`, type: "deleteMany" },
   ];
   if (process.env.NODE_ENV === "development" && printSecurityWarning) {
-    const queries = [queryName, queryAllName, queryCountName];
+    const queries = [queryName, queryAllName, queryCountName].map((n) =>
+      makePrefixedFullName(n, aliasPrefix),
+    );
     console.info("");
     console.info(
       `☝ The following resolvers were defined for the resource '${resourceName}' to make it compatible for react-admin`,
@@ -72,10 +73,18 @@ const addCrudResolvers = (
     Query: extendType({
       type: "Query",
       definition(t) {
-        t.crud[queryName](customize?.one?.({}) ?? {});
-
-        t.crud[queryAllName](customize?.many?.(DEFAULT_MANY) ?? DEFAULT_MANY);
-        t.int(queryCountName, {
+        const oneConfig = {
+          alias: makePrefixedFullName(queryName, aliasPrefix),
+        };
+        t.crud[queryName](customize?.one?.(oneConfig) ?? oneConfig);
+        const manyConfig = {
+          filtering: true,
+          pagination: true,
+          ordering: true,
+          alias: makePrefixedFullName(queryAllName, aliasPrefix),
+        };
+        t.crud[queryAllName](customize?.many?.(manyConfig) ?? manyConfig);
+        t.int(makePrefixedFullName(queryCountName, aliasPrefix), {
           args: {
             where: arg({
               type: `${typeName}WhereInput`,
@@ -108,9 +117,14 @@ const addCrudResolvers = (
     Mutation: extendType({
       type: "Mutation",
       definition(t) {
-        mutations.forEach((mutation) =>
-          t.crud[mutation.name](customize?.[mutation.type]?.({}) ?? {}),
-        );
+        mutations.forEach((mutation) => {
+          const options = {
+            alias: makePrefixedFullName(mutation.name, aliasPrefix),
+          };
+          t.crud[mutation.name](
+            customize?.[mutation.type]?.(options) ?? options,
+          );
+        });
       },
     }),
   };
