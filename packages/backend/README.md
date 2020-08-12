@@ -140,10 +140,10 @@ use(
 // there is a new key-value api to define all resources:
 nexusAddCrudResolvers(schema, {
   User: {
-    aliasPrefix: "admin",
+    // options here
   },
   BlogPost: {
-    aliasPrefix: "admin",
+    // options here
   },
 });
 ```
