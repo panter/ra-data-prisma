@@ -409,6 +409,24 @@ describe("buildWhere", () => {
     });
   });
 
+  it("allows to use prisma graphql filters", async () => {
+    const filter = {
+      yearOfBirth: {
+        lte: 2020,
+        gte: 1900,
+      },
+    };
+
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      yearOfBirth: {
+        lte: 2020,
+        gte: 1900,
+      },
+    });
+  });
+
   it("allows to filter nested data as well", async () => {
     //
 

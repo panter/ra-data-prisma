@@ -180,6 +180,7 @@ const getFilters = (
       };
     } else {
       // its something nested
+
       const where = buildWhereWithType(
         value,
         introspectionResults,
@@ -204,23 +205,36 @@ const buildWhereWithType = (
   introspectionResults: IntrospectionResult,
   whereType: IntrospectionInputObjectType,
 ) => {
-  const where = Object.keys(filter ?? {}).reduce(
-    (acc, key) => {
-      // defaults to AND
-      const filters = getFilters(
-        key,
-        filter[key],
-        whereType,
+  const hasAnd = whereType.inputFields.some((i) => i.name === "AND");
+  const where = hasAnd
+    ? Object.keys(filter ?? {}).reduce(
+        (acc, key) => {
+          // defaults to AND
+          const filters = getFilters(
+            key,
+            filter[key],
+            whereType,
 
-        introspectionResults,
-      );
+            introspectionResults,
+          );
 
-      return { ...acc, AND: [...acc.AND, filters] };
-    },
-    { AND: [] },
-  );
+          return { ...acc, AND: [...acc.AND, filters] };
+        },
+        { AND: [] },
+      )
+    : Object.keys(filter ?? {}).reduce((acc, key) => {
+        const filters = getFilters(
+          key,
+          filter[key],
+          whereType,
+
+          introspectionResults,
+        );
+
+        return { ...acc, ...filters };
+      }, {});
   // simplify AND if there is only one
-  if (where.AND.length === 0) {
+  if (where.AND?.length === 0) {
     delete where.AND;
   }
   if (where.AND?.length === 1) {
