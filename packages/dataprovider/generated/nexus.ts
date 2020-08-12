@@ -188,17 +188,17 @@ export interface NexusGenInputs {
     startsWith?: string | null; // String
   }
   UUIDFilter: { // input type
-    contains?: any | null; // UUID
-    endsWith?: any | null; // UUID
-    equals?: any | null; // UUID
-    gt?: any | null; // UUID
-    gte?: any | null; // UUID
-    in?: any[] | null; // [UUID!]
-    lt?: any | null; // UUID
-    lte?: any | null; // UUID
-    not?: any | null; // UUID
-    notIn?: any[] | null; // [UUID!]
-    startsWith?: any | null; // UUID
+    contains?: NexusGenScalars['UUID'] | null; // UUID
+    endsWith?: NexusGenScalars['UUID'] | null; // UUID
+    equals?: NexusGenScalars['UUID'] | null; // UUID
+    gt?: NexusGenScalars['UUID'] | null; // UUID
+    gte?: NexusGenScalars['UUID'] | null; // UUID
+    in?: NexusGenScalars['UUID'][] | null; // [UUID!]
+    lt?: NexusGenScalars['UUID'] | null; // UUID
+    lte?: NexusGenScalars['UUID'] | null; // UUID
+    not?: NexusGenScalars['UUID'] | null; // UUID
+    notIn?: NexusGenScalars['UUID'][] | null; // [UUID!]
+    startsWith?: NexusGenScalars['UUID'] | null; // UUID
   }
   UserCreateInput: { // input type
     blogPosts?: NexusGenInputs['BlogPostCreateManyWithoutAuthorInput'] | null; // BlogPostCreateManyWithoutAuthorInput
@@ -505,6 +505,15 @@ export interface NexusGenEnums {
   OrderByArg: "asc" | "desc"
 }
 
+export interface NexusGenScalars {
+  String: string
+  Int: number
+  Float: number
+  Boolean: boolean
+  ID: string
+  UUID: any
+}
+
 export interface NexusGenRootTypes {
   BatchPayload: { // root type
     count: number; // Int!
@@ -539,12 +548,6 @@ export interface NexusGenRootTypes {
     instagram: string; // String!
     twitter: string; // String!
   }
-  String: string;
-  Int: number;
-  Float: number;
-  Boolean: boolean;
-  ID: string;
-  UUID: any;
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
@@ -622,6 +625,12 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   UserWhereUniqueInput: NexusGenInputs['UserWhereUniqueInput'];
   Gender: NexusGenEnums['Gender'];
   OrderByArg: NexusGenEnums['OrderByArg'];
+  String: NexusGenScalars['String'];
+  Int: NexusGenScalars['Int'];
+  Float: NexusGenScalars['Float'];
+  Boolean: NexusGenScalars['Boolean'];
+  ID: NexusGenScalars['ID'];
+  UUID: NexusGenScalars['UUID'];
 }
 
 export interface NexusGenFieldTypes {

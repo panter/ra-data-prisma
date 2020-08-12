@@ -1,3 +1,5 @@
 import addCrudResolvers from "./addCrudResolvers";
+import nexusAddCrudResolvers from "./nexusAddCrudResolvers";
+import { Options } from "./types";
 
-export { addCrudResolvers };
+export { addCrudResolvers, nexusAddCrudResolvers, Options };

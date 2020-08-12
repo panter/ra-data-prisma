@@ -1,6 +1,6 @@
 # `@ra-data-prisma/backend`
 
-## Usage
+## Usage with @nexus/schema
 
 `yarn add @ra-data-prisma/backend`
 
@@ -114,3 +114,36 @@ const permissions = shield(
 ```
 
 use `addCrudResolvers` for every Model that you want to manage in react-admin. Additionaly if you have a relation between two Models, call it for both Models even if you only want to show one in a list
+
+## Usage with nexus framework (experimental)
+
+```
+import { schema, use } from "nexus";
+
+import { prisma } from "nexus-plugin-prisma";
+
+import { shield } from "nexus-plugin-shield"; // recommended, it uses graphql-shield like above
+
+import { nexusAddCrudResolvers } from "@ra-data-prisma/backend";
+
+// import your nexus models here
+
+use(
+  prisma({
+    paginationStrategy: "prisma",
+    features: {
+      crud: true,
+    },
+  })
+);
+
+// there is a new key-value api to define all resources:
+nexusAddCrudResolvers(schema, {
+  User: {
+    aliasPrefix: "admin",
+  },
+  BlogPost: {
+    aliasPrefix: "admin",
+  },
+});
+```

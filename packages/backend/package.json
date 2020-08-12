@@ -26,6 +26,8 @@
     "prepublish": "yarn build"
   },
   "dependencies": {
+    "@ra-data-prisma/backend-common": "file:.yalc/@ra-data-prisma/backend-common",
+    "@ra-data-prisma/backend-nexus": "file:.yalc/@ra-data-prisma/backend-nexus",
     "lodash": "^4.17.15",
     "pluralize": "^7.0.0"
   },
