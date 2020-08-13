@@ -8,16 +8,7 @@ Data provider for [react admin](https://github.com/marmelab/react-admin)
 
 make sure you backend api is compatible by using the other package in this repo [backend](../backend/README.md)
 
-```
-import buildGraphQLProvider from '@ra-data-prisma/dataprovider'
-
-const dataprovider = await buildGraphQLProvider({
-    clientOptions: { uri: "/api/graphql" }
-})
-
-```
-
-and add it to your admin app. We suggest to use our hook for that:
+Add the dataprovider to your react-admin app:
 
 ```
 
@@ -31,7 +22,10 @@ import useAuthProvider from "./useAuthProvider"
 
 
 const AdminApp = () => {
-  const dataProvider = useDataProvider()
+  const dataProvider = useDataProvider({
+    clientOptions: { uri: "/graphql" }
+    aliasPrefix: "admin" // 👈 set this, if you use a aliasPrefix on your backend as well (recommended)
+  })
   const authProvider = useAuthProvider()
 
   if (!dataProvider) {
@@ -60,6 +54,10 @@ export default AdminApp
 ```
 
 ## Features
+
+### aliasPrefix
+
+Set `aliasPrefix` if you have set it on the backend as well (see [backend](./packages/backend/README.md) ).
 
 ### Search & Filtering
 

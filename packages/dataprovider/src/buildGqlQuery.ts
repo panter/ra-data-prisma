@@ -1,22 +1,18 @@
 import {
-  TypeKind,
-  parse,
-  IntrospectionField,
-  DocumentNode,
-  IntrospectionType,
-  IntrospectionObjectType,
-  SelectionNode,
-  VariableDefinitionNode,
   ArgumentNode,
+  DocumentNode,
   FieldNode,
-  IntrospectionInputObjectType,
+  IntrospectionField,
+  parse,
+  SelectionNode,
+  TypeKind,
+  VariableDefinitionNode,
 } from "graphql";
 import { QUERY_TYPES } from "ra-data-graphql";
-import { GET_LIST, GET_MANY, GET_MANY_REFERENCE, DELETE } from "react-admin";
+import { DELETE, GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-
-import * as gqlTypes from "./utils/gqlTypes";
 import getFinalType from "./utils/getFinalType";
+import * as gqlTypes from "./utils/gqlTypes";
 import isList from "./utils/isList";
 import isRequired from "./utils/isRequired";
 

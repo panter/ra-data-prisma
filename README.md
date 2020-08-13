@@ -5,15 +5,15 @@ Packages to connect [react-admin](https://marmelab.com/react-admin) 🧩 with [p
 - [dataprovider](./packages/dataprovider/README.md): the dataprovider for the frontend
 - [backend](./packages/backend/README.md): tools to help making a nexus-prisma backend compatible with the data-provider
 
-
 ## Usage
 
-
-you need to add the [dataprovider](./packages/dataprovider/README.md) to your react-admin app. 
+you need to add the [dataprovider](./packages/dataprovider/README.md) to your react-admin app.
 Your backend needs additional resolver for all the resoures you gonna need. [backend](./packages/backend/README.md) package will help you with making your backend compatible with the dataprovider!
 
 See the readmes above for further information.
 
+- [dataprovider (frontend)](./packages/dataprovider/README.md)
+- [backend](./packages/backend/README.md)
 
 ## Develop
 
@@ -26,7 +26,6 @@ Some tests use an actual introspection result from a nexus-prisma backend. If yo
 - edit [datamodel.prisma](packages/dataprovider/test-data/datamodel.prisma) to alter the underlying prisma model
 - edit [testSchema.ts](packages/dataprovider/test-data/testSchema.ts) to modify the nexus types
 - call `yarn install` in the root to update all types and the test introspection schema
-
 
 ## Prior work
 

@@ -1,16 +1,17 @@
-import buildGraphQLProvider from "./";
+import buildDataProvider from "./buildDataProvider";
 import { useEffect, useState } from "react";
+import { Options } from "./types";
 
-export default () => {
+const useDataProvider = (options: Options) => {
   const [dataProvider, setDataProvider] = useState();
 
   useEffect(() => {
-    buildGraphQLProvider({
-      clientOptions: { uri: "/api/graphql" } as any,
-    }).then((p) => {
+    buildDataProvider(options).then((p) => {
       setDataProvider(() => p);
     });
   }, []);
 
   return dataProvider;
 };
+
+export default useDataProvider;
