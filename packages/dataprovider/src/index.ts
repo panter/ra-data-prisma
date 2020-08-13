@@ -16,69 +16,80 @@ import {
 } from "react-admin";
 
 import { Resource } from "./constants/interfaces";
-import { DocumentNode } from "graphql";
-import { Options, ResourceView } from "./types";
+
+import { Options, ResourceView, OurOptions } from "./types";
 import { buildQueryFactory } from "./buildQuery";
+import { makePrefixedFullName } from "./buildGqlQuery";
 
 export { ResourceView, Options };
 export const defaultOptions = {
   buildQuery: buildQueryFactory,
-  introspection: {
+};
+
+export const makeIntrospectionOptions = (options: OurOptions) => {
+  const prefix = (s: string) => makePrefixedFullName(s, options?.aliasPrefix);
+  return {
     operationNames: {
       [GET_LIST]: (resource: Resource) =>
-        `${pluralize(camelCase(resource.name))}`,
-      [GET_ONE]: (resource: Resource) => `${camelCase(resource.name)}`,
+        prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_ONE]: (resource: Resource) => prefix(`${camelCase(resource.name)}`),
       [GET_MANY]: (resource: Resource) =>
-        `${pluralize(camelCase(resource.name))}`,
+        prefix(`${pluralize(camelCase(resource.name))}`),
       [GET_MANY_REFERENCE]: (resource: Resource) =>
-        `${pluralize(camelCase(resource.name))}`,
-      [CREATE]: (resource: Resource) => `createOne${resource.name}`,
-      [UPDATE]: (resource: Resource) => `updateOne${resource.name}`,
-      [DELETE]: (resource: Resource) => `deleteOne${resource.name}`,
+        prefix(`${pluralize(camelCase(resource.name))}`),
+      [CREATE]: (resource: Resource) => prefix(`createOne${resource.name}`),
+      [UPDATE]: (resource: Resource) => prefix(`updateOne${resource.name}`),
+      [DELETE]: (resource: Resource) => prefix(`deleteOne${resource.name}`),
     },
     exclude: undefined,
     include: undefined,
-  },
+  };
 };
-
 export default (options: Options) => {
-  return buildDataProvider(merge({}, defaultOptions, options)).then(
-    (graphQLDataProvider) => {
-      return (
-        fetchType: string,
-        resource: string,
-        params: { [key: string]: any },
-      ): Promise<any> => {
-        // Temporary work-around until we make use of updateMany and deleteMany mutations
-        if (fetchType === DELETE_MANY) {
-          const { ids, ...otherParams } = params;
-          return Promise.all(
-            params.ids.map((id: string) =>
-              graphQLDataProvider(DELETE, resource, {
-                id,
-                ...otherParams,
-              }),
-            ),
-          ).then((results) => {
-            return { data: results.map(({ data }: any) => data.id) };
-          });
-        }
+  return buildDataProvider(
+    merge(
+      {},
+      defaultOptions,
+      {
+        introspection: makeIntrospectionOptions(options),
+      },
+      options,
+    ),
+  ).then((graphQLDataProvider) => {
+    return (
+      fetchType: string,
+      resource: string,
+      params: { [key: string]: any },
+    ): Promise<any> => {
+      // Temporary work-around until we make use of updateMany and deleteMany mutations
+      if (fetchType === DELETE_MANY) {
+        const { ids, ...otherParams } = params;
+        return Promise.all(
+          params.ids.map((id: string) =>
+            graphQLDataProvider(DELETE, resource, {
+              id,
+              ...otherParams,
+            }),
+          ),
+        ).then((results) => {
+          return { data: results.map(({ data }: any) => data.id) };
+        });
+      }
 
-        if (fetchType === UPDATE_MANY) {
-          const { ids, ...otherParams } = params;
-          return Promise.all(
-            params.ids.map((id: string) =>
-              graphQLDataProvider(UPDATE, resource, {
-                id,
-                ...otherParams,
-              }),
-            ),
-          ).then((results) => {
-            return { data: results.map(({ data }: any) => data.id) };
-          });
-        }
-        return graphQLDataProvider(fetchType, resource, params);
-      };
-    },
-  );
+      if (fetchType === UPDATE_MANY) {
+        const { ids, ...otherParams } = params;
+        return Promise.all(
+          params.ids.map((id: string) =>
+            graphQLDataProvider(UPDATE, resource, {
+              id,
+              ...otherParams,
+            }),
+          ),
+        ).then((results) => {
+          return { data: results.map(({ data }: any) => data.id) };
+        });
+      }
+      return graphQLDataProvider(fetchType, resource, params);
+    };
+  });
 };

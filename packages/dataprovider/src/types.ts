@@ -9,6 +9,7 @@ export type OurOptions = {
   resourceViews?: {
     [name: string]: ResourceView;
   };
+  aliasPrefix?: string;
 };
 
 type RaDataGraphqlOptions = {
@@ -18,7 +19,6 @@ type RaDataGraphqlOptions = {
   };
 
   client?: any;
-  introspection?: any;
 };
 
 export type Options = RaDataGraphqlOptions & OurOptions;

@@ -19,6 +19,10 @@ import * as gqlTypes from "./utils/gqlTypes";
 import getFinalType from "./utils/getFinalType";
 import isList from "./utils/isList";
 import isRequired from "./utils/isRequired";
+import upperFirst from "lodash/upperFirst";
+export const makePrefixedFullName = (name: string, prefix?: string) => {
+  return !prefix ? name : prefix + upperFirst(name);
+};
 
 export interface Query {
   name?: string;
