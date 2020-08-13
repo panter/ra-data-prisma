@@ -167,8 +167,14 @@ const buildNewInputValue = (
   const kind = fieldType.kind;
   switch (kind) {
     case "SCALAR":
-    case "ENUM":
+    case "ENUM": {
+      if (fieldType.kind === "SCALAR" && fieldType.name === "String") {
+        if (isObject(fieldData)) {
+          return JSON.stringify(fieldData);
+        }
+      }
       return fieldData;
+    }
     case "INPUT_OBJECT": {
       const fieldObjectType = fieldType as IntrospectionInputObjectType;
 

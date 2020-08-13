@@ -101,6 +101,30 @@ describe("buildVariables", () => {
       });
     });
 
+    it("automatically converts objects to json string on type missmatch", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          wantsNewsletter: true,
+          firstName: {
+            // ok thats a bad example, but it us useful in other cases
+            foo: "asdf",
+            bar: "bar",
+          },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          wantsNewsletter: true,
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: '{"foo":"asdf","bar":"bar"}',
+        },
+      });
+    });
+
     // one
     it("create a new entity and create also its relation entity", () => {
       const params = {
