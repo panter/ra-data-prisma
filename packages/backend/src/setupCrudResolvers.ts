@@ -92,8 +92,8 @@ const setupCrudResolvers = (
             }),
           },
 
-          resolve(root, args, { prisma }) {
-            return prisma[queryName].count(args);
+          resolve(root, args, { prisma, db }) {
+            return (prisma ?? db)[queryName].count(args);
           },
         });
       },
