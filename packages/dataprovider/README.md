@@ -17,39 +17,16 @@ const dataprovider = await buildGraphQLProvider({
 
 ```
 
-and add it to your admin app. We suggest to use a hook for that:
-
-```
-// useDataProvider.ts
-import buildGraphQLProvider from "@ra-data-prisma/dataprovider"
-import { useEffect, useState } from "react"
-
-export default () => {
-  const [dataProvider, setDataProvider] = useState()
-
-  useEffect(() => {
-    buildGraphQLProvider({
-      clientOptions: { uri: "/api/graphql" } as any,
-    }).then((p) => {
-      setDataProvider(() => p)
-    })
-  }, [])
-  return dataProvider
-}
-
-
-```
-
-and then in our admin app:
+and add it to your admin app. We suggest to use our hook for that:
 
 ```
 
 import React, { Component } from "react"
 
 import { Admin, Resource, Datagrid, TextField, Login } from "react-admin"
+import { useDataProvider } from "@ra-data-prisma/dataprovider"
 import { UserList, UserEdit, UserCreate } from "./resources/user"
 
-import useDataProvider from "./useDataProvider"
 import useAuthProvider from "./useAuthProvider"
 
 

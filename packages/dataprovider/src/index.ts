@@ -1,7 +1,6 @@
 import camelCase from "lodash/camelCase";
 import merge from "lodash/merge";
 import pluralize from "pluralize";
-import gql from "graphql-tag";
 import buildDataProvider from "ra-data-graphql";
 import {
   CREATE,
@@ -16,11 +15,11 @@ import {
 } from "react-admin";
 
 import { Resource } from "./constants/interfaces";
-import { DocumentNode } from "graphql";
 import { Options, ResourceView } from "./types";
+import useDataProvider from "./useDataProvider";
 import { buildQueryFactory } from "./buildQuery";
 
-export { ResourceView, Options };
+export { ResourceView, Options, useDataProvider };
 export const defaultOptions = {
   buildQuery: buildQueryFactory,
   introspection: {
