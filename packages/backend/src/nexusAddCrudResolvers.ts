@@ -1,14 +1,18 @@
-import { Options } from "./types";
+import { ResourceOptions, CommonOptions } from "./types";
 import setupCrudResolvers from "./setupCrudResolvers";
 
 const nexusAddCrudResolvers = (
   schema: any,
   resources: {
-    [resourceName: string]: Options;
+    [resourceName: string]: ResourceOptions;
   },
+  commonOptions: CommonOptions = {},
 ) =>
   Object.keys(resources).forEach((resourceName) => {
-    setupCrudResolvers(schema, resourceName, resources[resourceName]);
+    setupCrudResolvers(schema, resourceName, {
+      ...commonOptions,
+      ...resources[resourceName],
+    });
   });
 
 export default nexusAddCrudResolvers;

@@ -1,7 +1,7 @@
 import { upperFirst, lowerFirst } from "lodash";
 
 import pluralize from "pluralize";
-import { Options } from "./types";
+import { ResourceOptions, CommonOptions } from "./types";
 
 declare global {
   interface NexusGenCustomOutputProperties<TypeName extends string> {
@@ -17,7 +17,11 @@ const makePrefixedFullName = (name: string, prefix?: string) => {
 const setupCrudResolvers = (
   { extendType, arg, intArg },
   resourceName: string,
-  { printSecurityWarning = true, customize, aliasPrefix }: Options = {},
+  {
+    printSecurityWarning = true,
+    customize,
+    aliasPrefix,
+  }: ResourceOptions & CommonOptions = {},
 ) => {
   const typeName = upperFirst(resourceName);
 

@@ -10,7 +10,10 @@ export type Customize = {
   deleteMany?: (c: any) => any;
 };
 
-export type Options = {
+export type CommonOptions = {
+  aliasPrefix?: string;
+};
+export type ResourceOptions = {
   /**
    * whether to display a warning to secure the mutations and resolvers (defaults to true)
    */
