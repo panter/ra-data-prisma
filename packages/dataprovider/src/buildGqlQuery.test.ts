@@ -28,6 +28,7 @@ import { getTestIntrospection } from "./testUtils/getTestIntrospection";
 
 describe("buildGqlQuery", () => {
   let testIntrospection: IntrospectionResult;
+  let testIntrospectionWithPrefix: IntrospectionResult;
   let testUserResource: Resource;
   beforeAll(async () => {
     testIntrospection = await getTestIntrospection();
@@ -478,6 +479,75 @@ describe("buildGqlQuery", () => {
           }
         `,
       );
+    });
+
+    describe("with prefixed introspections", () => {
+      beforeAll(async () => {
+        testIntrospection = await getTestIntrospection({
+          aliasPrefix: "admin",
+        });
+        testUserResource = testIntrospection.resources.find(
+          (r) => r.type.kind === "OBJECT" && r.type.name === "User",
+        );
+      });
+
+      it("allows to prefix all queries with a prefix", () => {
+        expect(
+          buildGqlQuery(testIntrospection)(
+            testUserResource,
+            GET_LIST,
+            { where },
+            null,
+          ),
+        ).toEqualGraphql(
+          gql`
+            query adminUsers($where: UserWhereInput) {
+              items: adminUsers(where: $where) {
+                id
+                email
+                firstName
+                lastName
+                yearOfBirth
+                roles {
+                  id
+                }
+                gender
+                wantsNewsletter
+                userSocialMedia {
+                  id
+                  instagram
+                  twitter
+                  user {
+                    id
+                  }
+                }
+                blogPosts {
+                  id
+                }
+              }
+              total: adminUsersCount(where: $where)
+            }
+          `,
+        );
+      });
+      it("allows to prefix all mutations with a prefix", () => {
+        expect(
+          buildGqlQuery(testIntrospection)(
+            testUserResource,
+            DELETE,
+            { where },
+            null,
+          ),
+        ).toEqualGraphql(
+          gql`
+            mutation adminDeleteOneUser($where: UserWhereUniqueInput!) {
+              data: adminDeleteOneUser(where: $where) {
+                id
+              }
+            }
+          `,
+        );
+      });
     });
   });
 });
