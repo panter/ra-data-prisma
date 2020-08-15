@@ -36,7 +36,7 @@ use(
 
 // there is a new key-value api to define all resources:
 // 👇 here is the magic
-nexusAddCrudResolvers(schema, { // 👈 passing schema is currently needed (maybe solved with a proper nexus plugin)
+nexusAddCrudResolvers(schema, { // 👈 passing schema is currently required (maybe solved with a proper nexus plugin)
   User: {
     // options for users here
   },
@@ -81,7 +81,7 @@ type User = objectType({
 const schema = makeSchema({
   types: [
     User,
-    addCrudResolvers("User") // 👈 this will expose all needed Query's and Mutation's.
+    addCrudResolvers("User") // 👈 this will expose all required Query's and Mutation's.
   ],
   plugins: [
     nexusPrismaPlugin({
