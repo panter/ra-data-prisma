@@ -23,6 +23,8 @@ export interface Query {
 
 export const buildFields = (introspectionResults: IntrospectionResult) => (
   fields: IntrospectionField[],
+  maxNestingDepth = 1,
+  depth = 0,
 ): FieldNode[] => {
   return fields.reduce((acc: FieldNode[], field) => {
     const type = getFinalType(field.type);
@@ -53,25 +55,28 @@ export const buildFields = (introspectionResults: IntrospectionResult) => (
       ];
     }
 
-    // currently disabled to fetch non resource-objects
-
     const linkedType = introspectionResults.types.find(
       (t) => t.name === type.name,
     );
 
-    if (linkedType) {
+    // linkedtypes  (= nested objects) are currently a bit problematic
+    // it is handy to have them, but they be slow to fetch
+    // we therefore limit the depth
+    if (linkedType && depth < maxNestingDepth) {
       return [
         ...acc,
         gqlTypes.field(gqlTypes.name(field.name), {
           selectionSet: gqlTypes.selectionSet(
-            buildFields(introspectionResults)((linkedType as any).fields),
+            buildFields(introspectionResults)(
+              (linkedType as any).fields,
+              maxNestingDepth,
+              depth + 1,
+            ),
           ),
         }),
       ];
     }
 
-    // NOTE: We might have to handle linked types which are not resources but will have to be careful about
-    // ending with endless circular dependencies
     return acc;
   }, [] as FieldNode[]);
 };
