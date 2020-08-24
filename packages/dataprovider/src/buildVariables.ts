@@ -7,6 +7,8 @@ import {
   IntrospectionNonNullTypeRef,
 } from "graphql";
 import isEqual from "lodash/isEqual";
+import isEmpty from "lodash/isEmpty";
+import omit from "lodash/omit";
 import isNil from "lodash/isNil";
 import isObject from "lodash/isObject";
 import {
@@ -27,6 +29,18 @@ export interface GetListParams {
   filter: { [key: string]: any };
   pagination: { page: number; perPage: number };
   sort: { field: string; order: string };
+}
+
+enum ModifiersParams {
+  connect = "connect",
+  create = "create",
+  delete = "delete",
+  deleteMany = "deleteMany",
+  disconnect = "disconnect",
+  set = "set",
+  update = "update",
+  updateMany = "updateMany",
+  upsert = "upsert",
 }
 
 const buildOrderBy = (
@@ -182,20 +196,23 @@ const buildNewInputValue = (
         (t) => t.name === fieldObjectType.name,
       ) as IntrospectionInputObjectType;
 
-      // if it has a set modifier, it is an update array
-      const createModifier = fullFieldObjectType?.inputFields.find(
-        (i) => i.name === "create",
-      );
-      const connectModifier = fullFieldObjectType?.inputFields.find(
-        (i) => i.name === "connect",
-      );
+      const isRelationship = fullFieldObjectType?.inputFields.every((i) => {
+        return Object.keys(ModifiersParams).includes(i.name);
+      });
+
       const setModifier = fullFieldObjectType?.inputFields.find(
-        (i) => i.name === "set",
+        (i) => i.name === ModifiersParams.set,
       );
+
       // is it a relation?
-      if (createModifier && connectModifier) {
+      if (isRelationship) {
+        // if it has a set modifier, it is an update array
+        const createModifier = fullFieldObjectType?.inputFields.find(
+          (i) => i.name === ModifiersParams.create,
+        );
+
         const updateModifier = fullFieldObjectType?.inputFields.find(
-          (i) => i.name === "update",
+          (i) => i.name === ModifiersParams.update,
         );
         if (createModifier.type.kind === "LIST") {
           if (Array.isArray(fieldData)) {
