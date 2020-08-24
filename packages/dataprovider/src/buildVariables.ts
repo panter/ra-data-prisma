@@ -7,8 +7,6 @@ import {
   IntrospectionNonNullTypeRef,
 } from "graphql";
 import isEqual from "lodash/isEqual";
-import isEmpty from "lodash/isEmpty";
-import omit from "lodash/omit";
 import isNil from "lodash/isNil";
 import isObject from "lodash/isObject";
 import {
