@@ -22,11 +22,24 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { buildWhere } from "./buildWhere";
 import exhaust from "./utils/exhaust";
 import getFinalType from "./utils/getFinalType";
+import { disconnect } from "process";
 
 export interface GetListParams {
   filter: { [key: string]: any };
   pagination: { page: number; perPage: number };
   sort: { field: string; order: string };
+}
+
+enum ModifiersParams {
+  connect = "connect",
+  create = "create",
+  delete = "delete",
+  deleteMany = "deleteMany",
+  disconnect = "disconnect",
+  set = "set",
+  update = "update",
+  updateMany = "updateMany",
+  upsert = "upsert",
 }
 
 const buildOrderBy = (
@@ -182,22 +195,42 @@ const buildNewInputValue = (
         (t) => t.name === fieldObjectType.name,
       ) as IntrospectionInputObjectType;
 
-      // if it has a set modifier, it is an update array
-      const createModifier = fullFieldObjectType?.inputFields.find(
-        (i) => i.name === "create",
-      );
-      const connectModifier = fullFieldObjectType?.inputFields.find(
-        (i) => i.name === "connect",
-      );
       const setModifier = fullFieldObjectType?.inputFields.find(
-        (i) => i.name === "set",
+        (i) => i.name === ModifiersParams.set,
       );
+
+      const connectModifier = fullFieldObjectType?.inputFields.find(
+        (i) => i.name === ModifiersParams.connect,
+      );
+
+      const disconnectModifier = fullFieldObjectType?.inputFields.find(
+        (i) => i.name === ModifiersParams.disconnect,
+      );
+
+      if (setModifier && !connectModifier && !disconnectModifier) {
+        return { set: fieldData };
+      }
+
+      const isRelationship = fullFieldObjectType?.inputFields.every((i) => {
+        return Object.keys(ModifiersParams).includes(i.name);
+      });
+
       // is it a relation?
-      if (createModifier && connectModifier) {
-        const updateModifier = fullFieldObjectType?.inputFields.find(
-          (i) => i.name === "update",
+      if (isRelationship) {
+        // if it has a set modifier, it is an update array
+        const createModifier = fullFieldObjectType?.inputFields.find(
+          (i) => i.name === ModifiersParams.create,
         );
-        if (createModifier.type.kind === "LIST") {
+
+        const updateModifier = fullFieldObjectType?.inputFields.find(
+          (i) => i.name === ModifiersParams.update,
+        );
+
+        const isList = fullFieldObjectType?.inputFields.some((i) => {
+          return i.type.kind === "LIST";
+        });
+
+        if (isList) {
           if (Array.isArray(fieldData)) {
             const createListInputType = getCreateInputDataTypeForList(
               createModifier,
@@ -300,7 +333,7 @@ const buildNewInputValue = (
                 }
                 return inputs;
               }, []);
-              if (disconnect.length) {
+              if (disconnect.length && disconnectModifier) {
                 variables.disconnect = disconnect;
               }
             }
@@ -310,12 +343,18 @@ const buildNewInputValue = (
           }
         } else {
           if (!fieldData) {
-            return {
-              disconnect: true,
-            };
+            return !disconnectModifier
+              ? undefined
+              : {
+                  disconnect: true,
+                };
           }
+
           if (isObject(fieldData)) {
             if (!isObjectWithId(fieldData)) {
+              if (!createModifier) {
+                return;
+              }
               // TODO: we assume ".id" to be the id
               const createObjectModifierType = getFinalType(
                 createModifier.type,
@@ -335,6 +374,9 @@ const buildNewInputValue = (
               return { create: data };
             } else {
               if (previousFieldData?.id === fieldData.id) {
+                if (!updateModifier) {
+                  return;
+                }
                 const updateObjectModifierType = getFinalType(
                   updateModifier.type,
                 );
@@ -353,16 +395,14 @@ const buildNewInputValue = (
                   introspectionResults,
                 );
                 return { update: data };
-              } else {
+              } else if (connectModifier) {
                 return { connect: { id: fieldData.id } };
               }
             }
-          } else {
+          } else if (connectModifier) {
             return { connect: { id: fieldData } };
           }
         }
-      } else if (setModifier) {
-        return { set: fieldData };
       }
       return;
     }

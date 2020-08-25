@@ -1,4 +1,9 @@
-import { makeSchema, objectType, stringArg } from "@nexus/schema";
+import {
+  makeSchema,
+  objectType,
+  stringArg,
+  inputObjectType,
+} from "@nexus/schema";
 import { nexusPrismaPlugin } from "nexus-prisma";
 import { join } from "path";
 import { addCrudResolvers } from "../../backend/src";
@@ -24,6 +29,9 @@ export const testSchema = (options: Options) => {
       t.model.wantsNewsletter();
       t.model.userSocialMedia(null);
       t.model.blogPosts(null);
+      t.model.comments(null);
+      t.model.interests();
+
       // add one field that needs arguments and therefore can't be used by react-admin
       t.list.field("logs", {
         type: "String",
@@ -34,6 +42,7 @@ export const testSchema = (options: Options) => {
       });
     },
   });
+
   const UserRole = objectType({
     name: "UserRole",
     definition(t) {
@@ -67,6 +76,31 @@ export const testSchema = (options: Options) => {
       t.model.title();
       t.model.text();
       t.model.author();
+      t.model.comments();
+    },
+  });
+
+  const BlogPostComment = objectType({
+    name: "BlogPostComment",
+    definition(t) {
+      t.model.id();
+      t.model.text();
+      t.model.post();
+      t.model.author();
+    },
+  });
+
+  /**
+   * A simple way to have a "connect-only" related input type.
+   * This is a simple hack until the nexus-plugin-prisma
+   * capabilities settings will be ready
+   *
+   * @see https://github.com/graphql-nexus/nexus-plugin-prisma/issues/598#issuecomment-614259385
+   */
+  const UserCreateOneWithoutCommentsInput = inputObjectType({
+    name: "UserCreateOneWithoutCommentsInput",
+    definition(t) {
+      t.field("connect", { type: "UserWhereUniqueInput" });
     },
   });
 
@@ -76,12 +110,16 @@ export const testSchema = (options: Options) => {
     UserSocialMedia,
     SomePublicRecordWithIntId,
     BlogPost,
+    BlogPostComment,
+    UserCreateOneWithoutCommentsInput,
 
     addCrudResolvers("User", options),
     addCrudResolvers("UserRole", options),
     addCrudResolvers("SomePublicRecordWithIntId", options),
     addCrudResolvers("BlogPost", options),
+    addCrudResolvers("BlogPostComment", options),
   ];
+
   return makeSchema({
     types,
     plugins: [

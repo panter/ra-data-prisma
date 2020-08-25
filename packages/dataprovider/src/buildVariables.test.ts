@@ -15,10 +15,15 @@ import { getTestIntrospection } from "./testUtils/getTestIntrospection";
 describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
+  let testBlogPostCommentResource: Resource;
+
   beforeAll(async () => {
     testIntrospection = await getTestIntrospection();
     testUserResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
+    );
+    testBlogPostCommentResource = testIntrospection.resources.find(
+      (r) => r.type.kind === "OBJECT" && r.type.name === "BlogPostComment",
     );
   });
 
@@ -304,6 +309,56 @@ describe("buildVariables", () => {
           roles: {
             create: [{ name: "User" }],
             connect: [{ id: "admin" }, { id: "coordinator" }],
+          },
+        },
+      });
+    });
+
+    it("create a new entity and connect an already existing related connect-only entity", () => {
+      const params = {
+        data: {
+          text: "The body of the comment",
+          post: { id: "postId" },
+          author: { id: "userId" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(
+          testBlogPostCommentResource,
+          CREATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneBlogPostComment"]>({
+        data: {
+          text: "The body of the comment",
+          post: { connect: { id: "postId" } },
+          author: { connect: { id: "userId" } },
+        },
+      });
+    });
+
+    it("create a new entity with an array of enum", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          interests: ["TOPIC_ONE", "TOPIC_TWO"],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          interests: {
+            set: ["TOPIC_ONE", "TOPIC_TWO"],
           },
         },
       });
@@ -597,6 +652,29 @@ describe("buildVariables", () => {
             update: [
               { where: { id: "manul" }, data: { name: "Manul is a cat" } },
             ],
+          },
+        },
+      });
+    });
+
+    it("update an entity with an array of enum", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          interests: ["TOPIC_THREE"],
+        },
+        previousData: {
+          interests: ["TOPIC_ONE", "TOPIC_TWO"],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          interests: {
+            set: ["TOPIC_THREE"],
           },
         },
       });
