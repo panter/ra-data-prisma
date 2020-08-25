@@ -403,7 +403,10 @@ const buildNewInputValue = (
             return { connect: { id: fieldData } };
           }
         }
+      } else {
+        return fieldData;
       }
+
       return;
     }
     case "LIST":

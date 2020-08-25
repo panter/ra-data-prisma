@@ -31,6 +31,7 @@ export const testSchema = (options: Options) => {
       t.model.blogPosts(null);
       t.model.comments(null);
       t.model.interests();
+      t.model.address({ type: "Address" });
 
       // add one field that needs arguments and therefore can't be used by react-admin
       t.list.field("logs", {
@@ -48,6 +49,15 @@ export const testSchema = (options: Options) => {
     definition(t) {
       t.model.id();
       t.model.name();
+    },
+  });
+
+  const Address = objectType({
+    name: "Address",
+    definition(t) {
+      t.string("street");
+      t.string("city");
+      t.string("countryCode");
     },
   });
 
@@ -108,6 +118,7 @@ export const testSchema = (options: Options) => {
     User,
     UserRole,
     UserSocialMedia,
+    Address,
     SomePublicRecordWithIntId,
     BlogPost,
     BlogPostComment,

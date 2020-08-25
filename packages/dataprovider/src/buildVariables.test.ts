@@ -363,6 +363,38 @@ describe("buildVariables", () => {
         },
       });
     });
+
+    it("create a new entity with a custom json input type", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          address: {
+            street: "Fifth Avenue",
+            city: "Ney York",
+            countryCode: "US",
+          },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          address: {
+            street: "Fifth Avenue",
+            city: "Ney York",
+            countryCode: "US",
+          },
+        },
+      });
+    });
   });
 
   describe("UPDATE", () => {
@@ -675,6 +707,39 @@ describe("buildVariables", () => {
         data: {
           interests: {
             set: ["TOPIC_THREE"],
+          },
+        },
+      });
+    });
+
+    it("update an entity with custom json input type", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          address: {
+            street: "Forth Avenue",
+            city: "Ney York",
+            countryCode: "US",
+          },
+        },
+        previousData: {
+          address: {
+            street: "Fifth Avenue",
+            city: "Ney York",
+            countryCode: "US",
+          },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          address: {
+            street: "Forth Avenue",
+            city: "Ney York",
+            countryCode: "US",
           },
         },
       });
