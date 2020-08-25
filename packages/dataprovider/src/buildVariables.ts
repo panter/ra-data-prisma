@@ -195,13 +195,25 @@ const buildNewInputValue = (
         (t) => t.name === fieldObjectType.name,
       ) as IntrospectionInputObjectType;
 
-      const isRelationship = fullFieldObjectType?.inputFields.every((i) => {
-        return Object.keys(ModifiersParams).includes(i.name);
-      });
-
       const setModifier = fullFieldObjectType?.inputFields.find(
         (i) => i.name === ModifiersParams.set,
       );
+
+      const connectModifier = fullFieldObjectType?.inputFields.find(
+        (i) => i.name === ModifiersParams.connect,
+      );
+
+      const disconnectModifier = fullFieldObjectType?.inputFields.find(
+        (i) => i.name === ModifiersParams.disconnect,
+      );
+
+      if (setModifier && !connectModifier && !disconnectModifier) {
+        return { set: fieldData };
+      }
+
+      const isRelationship = fullFieldObjectType?.inputFields.every((i) => {
+        return Object.keys(ModifiersParams).includes(i.name);
+      });
 
       // is it a relation?
       if (isRelationship) {
@@ -214,15 +226,11 @@ const buildNewInputValue = (
           (i) => i.name === ModifiersParams.update,
         );
 
-        const connectModifier = fullFieldObjectType?.inputFields.find(
-          (i) => i.name === ModifiersParams.connect,
-        );
+        const isList = fullFieldObjectType?.inputFields.some((i) => {
+          return i.type.kind === "LIST";
+        });
 
-        const disconnectModifier = fullFieldObjectType?.inputFields.find(
-          (i) => i.name === ModifiersParams.disconnect,
-        );
-
-        if (createModifier?.type.kind === "LIST") {
+        if (isList) {
           if (Array.isArray(fieldData)) {
             const createListInputType = getCreateInputDataTypeForList(
               createModifier,
@@ -395,8 +403,6 @@ const buildNewInputValue = (
             return { connect: { id: fieldData } };
           }
         }
-      } else if (setModifier) {
-        return { set: fieldData };
       }
       return;
     }
