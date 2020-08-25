@@ -233,6 +233,7 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              interests
             }
             total: usersCount(where: $where)
           }
@@ -305,6 +306,7 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              interests
             }
             total: usersCount(where: $where)
           }
@@ -347,6 +349,7 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              interests
             }
             total: usersCount(where: $where)
           }
@@ -390,6 +393,7 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              interests
             }
           }
         `,
@@ -434,6 +438,7 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              interests
             }
           }
         `,
@@ -475,6 +480,7 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              interests
             }
           }
         `,
@@ -545,6 +551,7 @@ describe("buildGqlQuery", () => {
                 comments {
                   id
                 }
+                interests
               }
               total: adminUsersCount(where: $where)
             }
