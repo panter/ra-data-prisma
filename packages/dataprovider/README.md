@@ -36,7 +36,6 @@ const AdminApp = () => {
     <Admin
       dataProvider={dataProvider}
       authProvider={authProvider}
-
     >
       <Resource
         name="User"
@@ -44,7 +43,6 @@ const AdminApp = () => {
         edit={UserEdit}
         create={UserCreate}
       />
-
     </Admin>
   )
 }
