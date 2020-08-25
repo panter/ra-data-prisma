@@ -15,10 +15,15 @@ import { getTestIntrospection } from "./testUtils/getTestIntrospection";
 describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
+  let testBlogPostCommentResource: Resource;
+
   beforeAll(async () => {
     testIntrospection = await getTestIntrospection();
     testUserResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
+    );
+    testBlogPostCommentResource = testIntrospection.resources.find(
+      (r) => r.type.kind === "OBJECT" && r.type.name === "BlogPostComment",
     );
   });
 
@@ -305,6 +310,30 @@ describe("buildVariables", () => {
             create: [{ name: "User" }],
             connect: [{ id: "admin" }, { id: "coordinator" }],
           },
+        },
+      });
+    });
+
+    it("create a new entity and connect an already existing related connect-only entity", () => {
+      const params = {
+        data: {
+          text: "The body of the comment",
+          post: { id: "postId" },
+          author: { id: "userId" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(
+          testBlogPostCommentResource,
+          CREATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneBlogPostComment"]>({
+        data: {
+          text: "The body of the comment",
+          post: { connect: { id: "postId" } },
+          author: { connect: { id: "userId" } },
         },
       });
     });

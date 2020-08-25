@@ -22,10 +22,20 @@ model UserSocialMedia {
 }
 
 model BlogPost {
-  id       String  @default(uuid()) @id
+  id       String            @default(uuid()) @id
   title    String
   text     String
-  author   User?   @relation(fields: [authorId], references: [id])
+  author   User?             @relation(fields: [authorId], references: [id])
+  authorId String?
+  comments BlogPostComment[]
+}
+
+model BlogPostComment {
+  id       String    @default(uuid()) @id
+  text     String
+  post     BlogPost? @relation(fields: [postId], references: [id])
+  postId   String?
+  author   User?     @relation(fields: [authorId], references: [id])
   authorId String?
 }
 
@@ -36,9 +46,9 @@ enum Gender {
 }
 
 model User {
-  id              String           @default(uuid()) @id
-  email           String           @unique
-  roles           UserRole[]       @relation(references: [id])
+  id              String            @default(uuid()) @id
+  email           String            @unique
+  roles           UserRole[]        @relation(references: [id])
   firstName       String?
   lastName        String?
   gender          Gender?
@@ -46,6 +56,7 @@ model User {
   wantsNewsletter Boolean
   userSocialMedia UserSocialMedia?
   blogPosts       BlogPost[]
+  comments        BlogPostComment[]
 }
 
 model SomePublicRecordWithIntId {

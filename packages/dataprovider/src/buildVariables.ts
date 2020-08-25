@@ -22,6 +22,7 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { buildWhere } from "./buildWhere";
 import exhaust from "./utils/exhaust";
 import getFinalType from "./utils/getFinalType";
+import { disconnect } from "process";
 
 export interface GetListParams {
   filter: { [key: string]: any };
@@ -212,7 +213,16 @@ const buildNewInputValue = (
         const updateModifier = fullFieldObjectType?.inputFields.find(
           (i) => i.name === ModifiersParams.update,
         );
-        if (createModifier.type.kind === "LIST") {
+
+        const connectModifier = fullFieldObjectType?.inputFields.find(
+          (i) => i.name === ModifiersParams.connect,
+        );
+
+        const disconnectModifier = fullFieldObjectType?.inputFields.find(
+          (i) => i.name === ModifiersParams.disconnect,
+        );
+
+        if (createModifier?.type.kind === "LIST") {
           if (Array.isArray(fieldData)) {
             const createListInputType = getCreateInputDataTypeForList(
               createModifier,
@@ -315,7 +325,7 @@ const buildNewInputValue = (
                 }
                 return inputs;
               }, []);
-              if (disconnect.length) {
+              if (disconnect.length && disconnectModifier) {
                 variables.disconnect = disconnect;
               }
             }
@@ -325,12 +335,18 @@ const buildNewInputValue = (
           }
         } else {
           if (!fieldData) {
-            return {
-              disconnect: true,
-            };
+            return !disconnectModifier
+              ? undefined
+              : {
+                  disconnect: true,
+                };
           }
+
           if (isObject(fieldData)) {
             if (!isObjectWithId(fieldData)) {
+              if (!createModifier) {
+                return;
+              }
               // TODO: we assume ".id" to be the id
               const createObjectModifierType = getFinalType(
                 createModifier.type,
@@ -350,6 +366,9 @@ const buildNewInputValue = (
               return { create: data };
             } else {
               if (previousFieldData?.id === fieldData.id) {
+                if (!updateModifier) {
+                  return;
+                }
                 const updateObjectModifierType = getFinalType(
                   updateModifier.type,
                 );
@@ -368,11 +387,11 @@ const buildNewInputValue = (
                   introspectionResults,
                 );
                 return { update: data };
-              } else {
+              } else if (connectModifier) {
                 return { connect: { id: fieldData.id } };
               }
             }
-          } else {
+          } else if (connectModifier) {
             return { connect: { id: fieldData } };
           }
         }
