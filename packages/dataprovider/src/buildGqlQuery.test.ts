@@ -234,6 +234,11 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              address {
+                street
+                city
+                countryCode
+              }
             }
             total: usersCount(where: $where)
           }
@@ -307,6 +312,11 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              address {
+                street
+                city
+                countryCode
+              }
             }
             total: usersCount(where: $where)
           }
@@ -350,6 +360,11 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              address {
+                street
+                city
+                countryCode
+              }
             }
             total: usersCount(where: $where)
           }
@@ -394,6 +409,11 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              address {
+                street
+                city
+                countryCode
+              }
             }
           }
         `,
@@ -439,6 +459,11 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              address {
+                street
+                city
+                countryCode
+              }
             }
           }
         `,
@@ -481,6 +506,11 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              address {
+                street
+                city
+                countryCode
+              }
             }
           }
         `,
@@ -552,6 +582,11 @@ describe("buildGqlQuery", () => {
                   id
                 }
                 interests
+                address {
+                  street
+                  city
+                  countryCode
+                }
               }
               total: adminUsersCount(where: $where)
             }

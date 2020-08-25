@@ -56,6 +56,7 @@ model User {
   wantsNewsletter Boolean
   interests       Topic[]
   userSocialMedia UserSocialMedia?
+  address         Json?
   blogPosts       BlogPost[]
   comments        BlogPostComment[]
 }
