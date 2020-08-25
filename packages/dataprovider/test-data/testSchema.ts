@@ -30,6 +30,7 @@ export const testSchema = (options: Options) => {
       t.model.userSocialMedia(null);
       t.model.blogPosts(null);
       t.model.comments(null);
+      t.model.interests();
 
       // add one field that needs arguments and therefore can't be used by react-admin
       t.list.field("logs", {

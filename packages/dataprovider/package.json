@@ -28,7 +28,7 @@
     "prepare": "yarn generate:test && yarn build",
     "generate:test": "yarn generate:test:prisma && yarn generate:test:nexus",
     "generate:test:prisma": "yarn prisma generate --schema test-data/datamodel.prisma",
-    "generate:test:nexus": "yarn ts-node --project test-data/tsconfig.json  --transpile-only test-data/testSchema.ts"
+    "generate:test:nexus": "yarn ts-node --project test-data/tsconfig.json  --transpile-only test-data/buildTestSchema.ts"
   },
   "devDependencies": {
     "@prisma/cli": "^2.0.0",

@@ -54,6 +54,7 @@ model User {
   gender          Gender?
   yearOfBirth     Int?
   wantsNewsletter Boolean
+  interests       Topic[]
   userSocialMedia UserSocialMedia?
   blogPosts       BlogPost[]
   comments        BlogPostComment[]
@@ -62,4 +63,10 @@ model User {
 model SomePublicRecordWithIntId {
   id    Int    @default(autoincrement()) @id
   title String
+}
+
+enum Topic {
+  TOPIC_ONE
+  TOPIC_TWO
+  TOPIC_THREE
 }

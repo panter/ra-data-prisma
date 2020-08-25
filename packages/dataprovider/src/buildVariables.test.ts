@@ -337,6 +337,32 @@ describe("buildVariables", () => {
         },
       });
     });
+
+    it("create a new entity with an array of enum", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          interests: ["TOPIC_ONE", "TOPIC_TWO"],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          interests: {
+            set: ["TOPIC_ONE", "TOPIC_TWO"],
+          },
+        },
+      });
+    });
   });
 
   describe("UPDATE", () => {
@@ -626,6 +652,29 @@ describe("buildVariables", () => {
             update: [
               { where: { id: "manul" }, data: { name: "Manul is a cat" } },
             ],
+          },
+        },
+      });
+    });
+
+    it("update an entity with an array of enum", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          interests: ["TOPIC_THREE"],
+        },
+        previousData: {
+          interests: ["TOPIC_ONE", "TOPIC_TWO"],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          interests: {
+            set: ["TOPIC_THREE"],
           },
         },
       });

@@ -252,6 +252,7 @@ interface ModelTypes {
   UserRole: prisma.UserRole
   UserSocialMedia: prisma.UserSocialMedia
   BlogPost: prisma.BlogPost
+  BlogPostComment: prisma.BlogPostComment
   User: prisma.User
   SomePublicRecordWithIntId: prisma.SomePublicRecordWithIntId
 }
@@ -267,11 +268,15 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'instagram' | 'twitter' | 'userId'
 }
     blogPosts: {
-  filtering: 'id' | 'title' | 'text' | 'authorId' | 'AND' | 'OR' | 'NOT' | 'author'
+  filtering: 'id' | 'title' | 'text' | 'authorId' | 'comments' | 'AND' | 'OR' | 'NOT' | 'author'
   ordering: 'id' | 'title' | 'text' | 'authorId'
 }
+    blogPostComments: {
+  filtering: 'id' | 'text' | 'postId' | 'authorId' | 'AND' | 'OR' | 'NOT' | 'post' | 'author'
+  ordering: 'id' | 'text' | 'postId' | 'authorId'
+}
     users: {
-  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'blogPosts' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
+  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'blogPosts' | 'comments' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
   ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
 }
     somePublicRecordWithIntIds: {
@@ -282,7 +287,7 @@ interface NexusPrismaInputs {
   },
     UserRole: {
     users: {
-  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'blogPosts' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
+  filtering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'blogPosts' | 'comments' | 'AND' | 'OR' | 'NOT' | 'userSocialMedia'
   ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter'
 }
 
@@ -290,6 +295,12 @@ interface NexusPrismaInputs {
 
 
   },  BlogPost: {
+    comments: {
+  filtering: 'id' | 'text' | 'postId' | 'authorId' | 'AND' | 'OR' | 'NOT' | 'post' | 'author'
+  ordering: 'id' | 'text' | 'postId' | 'authorId'
+}
+
+  },  BlogPostComment: {
 
 
   },  User: {
@@ -298,8 +309,12 @@ interface NexusPrismaInputs {
   ordering: 'id' | 'name'
 }
     blogPosts: {
-  filtering: 'id' | 'title' | 'text' | 'authorId' | 'AND' | 'OR' | 'NOT' | 'author'
+  filtering: 'id' | 'title' | 'text' | 'authorId' | 'comments' | 'AND' | 'OR' | 'NOT' | 'author'
   ordering: 'id' | 'title' | 'text' | 'authorId'
+}
+    comments: {
+  filtering: 'id' | 'text' | 'postId' | 'authorId' | 'AND' | 'OR' | 'NOT' | 'post' | 'author'
+  ordering: 'id' | 'text' | 'postId' | 'authorId'
 }
 
   },  SomePublicRecordWithIntId: {
@@ -316,6 +331,8 @@ interface NexusPrismaTypes {
     userSocialMedias: 'UserSocialMedia'
     blogPost: 'BlogPost'
     blogPosts: 'BlogPost'
+    blogPostComment: 'BlogPostComment'
+    blogPostComments: 'BlogPostComment'
     user: 'User'
     users: 'User'
     somePublicRecordWithIntId: 'SomePublicRecordWithIntId'
@@ -341,6 +358,12 @@ interface NexusPrismaTypes {
     deleteOneBlogPost: 'BlogPost'
     deleteManyBlogPost: 'BatchPayload'
     upsertOneBlogPost: 'BlogPost'
+    createOneBlogPostComment: 'BlogPostComment'
+    updateOneBlogPostComment: 'BlogPostComment'
+    updateManyBlogPostComment: 'BatchPayload'
+    deleteOneBlogPostComment: 'BlogPostComment'
+    deleteManyBlogPostComment: 'BatchPayload'
+    upsertOneBlogPostComment: 'BlogPostComment'
     createOneUser: 'User'
     updateOneUser: 'User'
     updateManyUser: 'BatchPayload'
@@ -373,6 +396,15 @@ interface NexusPrismaTypes {
     text: 'String'
     author: 'User'
     authorId: 'String'
+    comments: 'BlogPostComment'
+
+},  BlogPostComment: {
+    id: 'String'
+    text: 'String'
+    post: 'BlogPost'
+    postId: 'String'
+    author: 'User'
+    authorId: 'String'
 
 },  User: {
     id: 'String'
@@ -383,8 +415,10 @@ interface NexusPrismaTypes {
     gender: 'Gender'
     yearOfBirth: 'Int'
     wantsNewsletter: 'Boolean'
+    interests: 'Topic'
     userSocialMedia: 'UserSocialMedia'
     blogPosts: 'BlogPost'
+    comments: 'BlogPostComment'
 
 },  SomePublicRecordWithIntId: {
     id: 'Int'
@@ -397,6 +431,7 @@ interface NexusPrismaMethods {
   UserRole: NexusPrismaFields<'UserRole'>
   UserSocialMedia: NexusPrismaFields<'UserSocialMedia'>
   BlogPost: NexusPrismaFields<'BlogPost'>
+  BlogPostComment: NexusPrismaFields<'BlogPostComment'>
   User: NexusPrismaFields<'User'>
   SomePublicRecordWithIntId: NexusPrismaFields<'SomePublicRecordWithIntId'>
   Query: NexusPrismaFields<'Query'>
