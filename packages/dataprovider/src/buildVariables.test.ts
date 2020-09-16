@@ -75,9 +75,11 @@ describe("buildVariables", () => {
           ],
         },
         take: 10,
-        orderBy: {
-          email: "asc",
-        },
+        orderBy: [
+          {
+            email: "asc",
+          },
+        ],
         skip: 90,
       });
     });
@@ -416,7 +418,7 @@ describe("buildVariables", () => {
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
-          lastName: "Zweistein",
+          lastName: { set: "Zweistein" },
         },
       });
     });
@@ -472,8 +474,12 @@ describe("buildVariables", () => {
         data: {
           userSocialMedia: {
             update: {
-              twitter: "another-twitter",
-              instagram: "another-instagram",
+              twitter: {
+                set: "another-twitter",
+              },
+              instagram: {
+                set: "another-instagram",
+              },
             },
           },
         },
@@ -589,7 +595,14 @@ describe("buildVariables", () => {
         data: {
           roles: {
             update: [
-              { where: { id: "student" }, data: { name: "Student Role" } },
+              {
+                where: { id: "student" },
+                data: {
+                  name: {
+                    set: "Student Role",
+                  },
+                },
+              },
             ],
           },
         },
@@ -647,7 +660,14 @@ describe("buildVariables", () => {
             create: [{ name: "Student Role" }],
             disconnect: [{ id: "human" }],
             update: [
-              { where: { id: "manul" }, data: { name: "Manul is a cat" } },
+              {
+                where: { id: "manul" },
+                data: {
+                  name: {
+                    set: "Manul is a cat",
+                  },
+                },
+              },
             ],
           },
         },
@@ -682,7 +702,14 @@ describe("buildVariables", () => {
             connect: [{ id: "panter" }],
             disconnect: [{ id: "human" }],
             update: [
-              { where: { id: "manul" }, data: { name: "Manul is a cat" } },
+              {
+                where: { id: "manul" },
+                data: {
+                  name: {
+                    set: "Manul is a cat",
+                  },
+                },
+              },
             ],
           },
         },
@@ -827,7 +854,7 @@ describe("buildVariables", () => {
       ).toEqual<NexusGenArgTypes["Query"]["users"]>({
         skip: 90,
         take: 10,
-        orderBy: { email: "asc" },
+        orderBy: [{ email: "asc" }],
         where: { roles: { some: { id: { equals: "roleId" } } } },
       });
     });

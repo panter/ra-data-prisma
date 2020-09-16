@@ -31,7 +31,7 @@
     "generate:test:nexus": "yarn ts-node --project test-data/tsconfig.json  --transpile-only test-data/buildTestSchema.ts"
   },
   "devDependencies": {
-    "@prisma/cli": "^2.0.0",
+    "@prisma/cli": "2.6.2",
     "rimraf": "^3.0.2",
     "ts-node": "~8.9.1",
     "typescript": "^3.8.3"
@@ -43,8 +43,8 @@
   },
   "peerDependencies": {
     "graphql": ">=14.0.0",
+    "nexus-plugin-prisma": "^0.18.2",
     "react": "*",
-    "react-admin": "*",
-    "nexus-prisma": ">= 0.15.0 || >= 0.15.0-next"
+    "react-admin": "*"
   }
 }
