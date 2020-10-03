@@ -43,39 +43,39 @@ export interface NexusGenInputs {
     id?: string | null; // String
     text: string; // String!
   }
-  BlogPostCommentFilter: { // input type
+  BlogPostCommentListRelationFilter: { // input type
     every?: NexusGenInputs['BlogPostCommentWhereInput'] | null; // BlogPostCommentWhereInput
     none?: NexusGenInputs['BlogPostCommentWhereInput'] | null; // BlogPostCommentWhereInput
     some?: NexusGenInputs['BlogPostCommentWhereInput'] | null; // BlogPostCommentWhereInput
   }
   BlogPostCommentOrderByInput: { // input type
-    authorId?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    id?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    postId?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    text?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
+    authorId?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    id?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    postId?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    text?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   BlogPostCommentScalarWhereInput: { // input type
     AND?: NexusGenInputs['BlogPostCommentScalarWhereInput'][] | null; // [BlogPostCommentScalarWhereInput!]
-    authorId?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    authorId?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['BlogPostCommentScalarWhereInput'][] | null; // [BlogPostCommentScalarWhereInput!]
     OR?: NexusGenInputs['BlogPostCommentScalarWhereInput'][] | null; // [BlogPostCommentScalarWhereInput!]
-    postId?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
+    postId?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     text?: NexusGenInputs['StringFilter'] | null; // StringFilter
   }
   BlogPostCommentUpdateInput: { // input type
     author?: NexusGenInputs['UserUpdateOneWithoutCommentsInput'] | null; // UserUpdateOneWithoutCommentsInput
-    id?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     post?: NexusGenInputs['BlogPostUpdateOneWithoutCommentsInput'] | null; // BlogPostUpdateOneWithoutCommentsInput
-    text?: string | null; // String
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostCommentUpdateManyDataInput: { // input type
-    id?: string | null; // String
-    text?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostCommentUpdateManyMutationInput: { // input type
-    id?: string | null; // String
-    text?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostCommentUpdateManyWithWhereNestedInput: { // input type
     data: NexusGenInputs['BlogPostCommentUpdateManyDataInput']; // BlogPostCommentUpdateManyDataInput!
@@ -112,14 +112,14 @@ export interface NexusGenInputs {
     where: NexusGenInputs['BlogPostCommentWhereUniqueInput']; // BlogPostCommentWhereUniqueInput!
   }
   BlogPostCommentUpdateWithoutAuthorDataInput: { // input type
-    id?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     post?: NexusGenInputs['BlogPostUpdateOneWithoutCommentsInput'] | null; // BlogPostUpdateOneWithoutCommentsInput
-    text?: string | null; // String
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostCommentUpdateWithoutPostDataInput: { // input type
     author?: NexusGenInputs['UserUpdateOneWithoutCommentsInput'] | null; // UserUpdateOneWithoutCommentsInput
-    id?: string | null; // String
-    text?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostCommentUpsertWithWhereUniqueWithoutAuthorInput: { // input type
     create: NexusGenInputs['BlogPostCommentCreateWithoutAuthorInput']; // BlogPostCommentCreateWithoutAuthorInput!
@@ -134,12 +134,12 @@ export interface NexusGenInputs {
   BlogPostCommentWhereInput: { // input type
     AND?: NexusGenInputs['BlogPostCommentWhereInput'][] | null; // [BlogPostCommentWhereInput!]
     author?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
-    authorId?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    authorId?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['BlogPostCommentWhereInput'][] | null; // [BlogPostCommentWhereInput!]
     OR?: NexusGenInputs['BlogPostCommentWhereInput'][] | null; // [BlogPostCommentWhereInput!]
     post?: NexusGenInputs['BlogPostWhereInput'] | null; // BlogPostWhereInput
-    postId?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
+    postId?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     text?: NexusGenInputs['StringFilter'] | null; // StringFilter
   }
   BlogPostCommentWhereUniqueInput: { // input type
@@ -172,22 +172,21 @@ export interface NexusGenInputs {
     text: string; // String!
     title: string; // String!
   }
-  BlogPostFilter: { // input type
+  BlogPostListRelationFilter: { // input type
     every?: NexusGenInputs['BlogPostWhereInput'] | null; // BlogPostWhereInput
     none?: NexusGenInputs['BlogPostWhereInput'] | null; // BlogPostWhereInput
     some?: NexusGenInputs['BlogPostWhereInput'] | null; // BlogPostWhereInput
   }
   BlogPostOrderByInput: { // input type
-    authorId?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    id?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    text?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    title?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
+    authorId?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    id?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    text?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    title?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   BlogPostScalarWhereInput: { // input type
     AND?: NexusGenInputs['BlogPostScalarWhereInput'][] | null; // [BlogPostScalarWhereInput!]
-    authorId?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
-    comments?: NexusGenInputs['BlogPostCommentFilter'] | null; // BlogPostCommentFilter
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    authorId?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['BlogPostScalarWhereInput'][] | null; // [BlogPostScalarWhereInput!]
     OR?: NexusGenInputs['BlogPostScalarWhereInput'][] | null; // [BlogPostScalarWhereInput!]
     text?: NexusGenInputs['StringFilter'] | null; // StringFilter
@@ -196,19 +195,19 @@ export interface NexusGenInputs {
   BlogPostUpdateInput: { // input type
     author?: NexusGenInputs['UserUpdateOneWithoutBlogPostsInput'] | null; // UserUpdateOneWithoutBlogPostsInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutPostInput'] | null; // BlogPostCommentUpdateManyWithoutPostInput
-    id?: string | null; // String
-    text?: string | null; // String
-    title?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    title?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostUpdateManyDataInput: { // input type
-    id?: string | null; // String
-    text?: string | null; // String
-    title?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    title?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostUpdateManyMutationInput: { // input type
-    id?: string | null; // String
-    text?: string | null; // String
-    title?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    title?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostUpdateManyWithWhereNestedInput: { // input type
     data: NexusGenInputs['BlogPostUpdateManyDataInput']; // BlogPostUpdateManyDataInput!
@@ -239,15 +238,15 @@ export interface NexusGenInputs {
   }
   BlogPostUpdateWithoutAuthorDataInput: { // input type
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutPostInput'] | null; // BlogPostCommentUpdateManyWithoutPostInput
-    id?: string | null; // String
-    text?: string | null; // String
-    title?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    title?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostUpdateWithoutCommentsDataInput: { // input type
     author?: NexusGenInputs['UserUpdateOneWithoutBlogPostsInput'] | null; // UserUpdateOneWithoutBlogPostsInput
-    id?: string | null; // String
-    text?: string | null; // String
-    title?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    text?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    title?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   BlogPostUpsertWithWhereUniqueWithoutAuthorInput: { // input type
     create: NexusGenInputs['BlogPostCreateWithoutAuthorInput']; // BlogPostCreateWithoutAuthorInput!
@@ -261,9 +260,9 @@ export interface NexusGenInputs {
   BlogPostWhereInput: { // input type
     AND?: NexusGenInputs['BlogPostWhereInput'][] | null; // [BlogPostWhereInput!]
     author?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
-    authorId?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
-    comments?: NexusGenInputs['BlogPostCommentFilter'] | null; // BlogPostCommentFilter
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    authorId?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
+    comments?: NexusGenInputs['BlogPostCommentListRelationFilter'] | null; // BlogPostCommentListRelationFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['BlogPostWhereInput'][] | null; // [BlogPostWhereInput!]
     OR?: NexusGenInputs['BlogPostWhereInput'][] | null; // [BlogPostWhereInput!]
     text?: NexusGenInputs['StringFilter'] | null; // StringFilter
@@ -272,9 +271,12 @@ export interface NexusGenInputs {
   BlogPostWhereUniqueInput: { // input type
     id?: string | null; // String
   }
-  BooleanFilter: { // input type
+  BoolFieldUpdateOperationsInput: { // input type
+    set?: boolean | null; // Boolean
+  }
+  BoolFilter: { // input type
     equals?: boolean | null; // Boolean
-    not?: boolean | null; // Boolean
+    not?: NexusGenInputs['NestedBoolFilter'] | null; // NestedBoolFilter
   }
   IntFilter: { // input type
     equals?: number | null; // Int
@@ -283,20 +285,48 @@ export interface NexusGenInputs {
     in?: number[] | null; // [Int!]
     lt?: number | null; // Int
     lte?: number | null; // Int
-    not?: number | null; // Int
+    not?: NexusGenInputs['NestedIntFilter'] | null; // NestedIntFilter
     notIn?: number[] | null; // [Int!]
   }
-  NullableIntFilter: { // input type
+  IntNullableFilter: { // input type
     equals?: number | null; // Int
     gt?: number | null; // Int
     gte?: number | null; // Int
     in?: number[] | null; // [Int!]
     lt?: number | null; // Int
     lte?: number | null; // Int
-    not?: number | null; // Int
+    not?: NexusGenInputs['NestedIntNullableFilter'] | null; // NestedIntNullableFilter
     notIn?: number[] | null; // [Int!]
   }
-  NullableStringFilter: { // input type
+  JsonNullableFilter: { // input type
+    equals?: NexusGenScalars['Json'] | null; // Json
+    not?: NexusGenScalars['Json'] | null; // Json
+  }
+  NestedBoolFilter: { // input type
+    equals?: boolean | null; // Boolean
+    not?: NexusGenInputs['NestedBoolFilter'] | null; // NestedBoolFilter
+  }
+  NestedIntFilter: { // input type
+    equals?: number | null; // Int
+    gt?: number | null; // Int
+    gte?: number | null; // Int
+    in?: number[] | null; // [Int!]
+    lt?: number | null; // Int
+    lte?: number | null; // Int
+    not?: NexusGenInputs['NestedIntFilter'] | null; // NestedIntFilter
+    notIn?: number[] | null; // [Int!]
+  }
+  NestedIntNullableFilter: { // input type
+    equals?: number | null; // Int
+    gt?: number | null; // Int
+    gte?: number | null; // Int
+    in?: number[] | null; // [Int!]
+    lt?: number | null; // Int
+    lte?: number | null; // Int
+    not?: NexusGenInputs['NestedIntNullableFilter'] | null; // NestedIntNullableFilter
+    notIn?: number[] | null; // [Int!]
+  }
+  NestedStringFilter: { // input type
     contains?: string | null; // String
     endsWith?: string | null; // String
     equals?: string | null; // String
@@ -305,24 +335,41 @@ export interface NexusGenInputs {
     in?: string[] | null; // [String!]
     lt?: string | null; // String
     lte?: string | null; // String
-    not?: string | null; // String
+    not?: NexusGenInputs['NestedStringFilter'] | null; // NestedStringFilter
     notIn?: string[] | null; // [String!]
     startsWith?: string | null; // String
+  }
+  NestedStringNullableFilter: { // input type
+    contains?: string | null; // String
+    endsWith?: string | null; // String
+    equals?: string | null; // String
+    gt?: string | null; // String
+    gte?: string | null; // String
+    in?: string[] | null; // [String!]
+    lt?: string | null; // String
+    lte?: string | null; // String
+    not?: NexusGenInputs['NestedStringNullableFilter'] | null; // NestedStringNullableFilter
+    notIn?: string[] | null; // [String!]
+    startsWith?: string | null; // String
+  }
+  NullableIntFieldUpdateOperationsInput: { // input type
+    set?: number | null; // Int
+  }
+  NullableStringFieldUpdateOperationsInput: { // input type
+    set?: string | null; // String
   }
   SomePublicRecordWithIntIdCreateInput: { // input type
     title: string; // String!
   }
   SomePublicRecordWithIntIdOrderByInput: { // input type
-    id?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    title?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
+    id?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    title?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   SomePublicRecordWithIntIdUpdateInput: { // input type
-    id?: number | null; // Int
-    title?: string | null; // String
+    title?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   SomePublicRecordWithIntIdUpdateManyMutationInput: { // input type
-    id?: number | null; // Int
-    title?: string | null; // String
+    title?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   SomePublicRecordWithIntIdWhereInput: { // input type
     AND?: NexusGenInputs['SomePublicRecordWithIntIdWhereInput'][] | null; // [SomePublicRecordWithIntIdWhereInput!]
@@ -334,6 +381,9 @@ export interface NexusGenInputs {
   SomePublicRecordWithIntIdWhereUniqueInput: { // input type
     id?: number | null; // Int
   }
+  StringFieldUpdateOperationsInput: { // input type
+    set?: string | null; // String
+  }
   StringFilter: { // input type
     contains?: string | null; // String
     endsWith?: string | null; // String
@@ -343,25 +393,25 @@ export interface NexusGenInputs {
     in?: string[] | null; // [String!]
     lt?: string | null; // String
     lte?: string | null; // String
-    not?: string | null; // String
+    not?: NexusGenInputs['NestedStringFilter'] | null; // NestedStringFilter
     notIn?: string[] | null; // [String!]
     startsWith?: string | null; // String
   }
-  UUIDFilter: { // input type
-    contains?: any | null; // UUID
-    endsWith?: any | null; // UUID
-    equals?: any | null; // UUID
-    gt?: any | null; // UUID
-    gte?: any | null; // UUID
-    in?: any[] | null; // [UUID!]
-    lt?: any | null; // UUID
-    lte?: any | null; // UUID
-    not?: any | null; // UUID
-    notIn?: any[] | null; // [UUID!]
-    startsWith?: any | null; // UUID
+  StringNullableFilter: { // input type
+    contains?: string | null; // String
+    endsWith?: string | null; // String
+    equals?: string | null; // String
+    gt?: string | null; // String
+    gte?: string | null; // String
+    in?: string[] | null; // [String!]
+    lt?: string | null; // String
+    lte?: string | null; // String
+    not?: NexusGenInputs['NestedStringNullableFilter'] | null; // NestedStringNullableFilter
+    notIn?: string[] | null; // [String!]
+    startsWith?: string | null; // String
   }
   UserCreateInput: { // input type
-    address?: any | null; // Json
+    address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostCreateManyWithoutAuthorInput'] | null; // BlogPostCreateManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentCreateManyWithoutAuthorInput'] | null; // BlogPostCommentCreateManyWithoutAuthorInput
     email: string; // String!
@@ -387,7 +437,7 @@ export interface NexusGenInputs {
     connect?: NexusGenInputs['UserWhereUniqueInput'] | null; // UserWhereUniqueInput
   }
   UserCreateWithoutBlogPostsInput: { // input type
-    address?: any | null; // Json
+    address?: NexusGenScalars['Json'] | null; // Json
     comments?: NexusGenInputs['BlogPostCommentCreateManyWithoutAuthorInput'] | null; // BlogPostCommentCreateManyWithoutAuthorInput
     email: string; // String!
     firstName?: string | null; // String
@@ -401,7 +451,7 @@ export interface NexusGenInputs {
     yearOfBirth?: number | null; // Int
   }
   UserCreateWithoutCommentsInput: { // input type
-    address?: any | null; // Json
+    address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostCreateManyWithoutAuthorInput'] | null; // BlogPostCreateManyWithoutAuthorInput
     email: string; // String!
     firstName?: string | null; // String
@@ -415,7 +465,7 @@ export interface NexusGenInputs {
     yearOfBirth?: number | null; // Int
   }
   UserCreateWithoutRolesInput: { // input type
-    address?: any | null; // Json
+    address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostCreateManyWithoutAuthorInput'] | null; // BlogPostCreateManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentCreateManyWithoutAuthorInput'] | null; // BlogPostCommentCreateManyWithoutAuthorInput
     email: string; // String!
@@ -431,20 +481,21 @@ export interface NexusGenInputs {
   UserCreateinterestsInput: { // input type
     set?: NexusGenEnums['Topic'][] | null; // [Topic!]
   }
-  UserFilter: { // input type
+  UserListRelationFilter: { // input type
     every?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
     none?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
     some?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
   }
   UserOrderByInput: { // input type
-    address?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    email?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    firstName?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    gender?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    id?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    lastName?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    wantsNewsletter?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    yearOfBirth?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
+    address?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    email?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    firstName?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    gender?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    id?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    interests?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    lastName?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    wantsNewsletter?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    yearOfBirth?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   UserRoleCreateInput: { // input type
     id?: string | null; // String
@@ -459,35 +510,34 @@ export interface NexusGenInputs {
     id?: string | null; // String
     name: string; // String!
   }
-  UserRoleFilter: { // input type
+  UserRoleListRelationFilter: { // input type
     every?: NexusGenInputs['UserRoleWhereInput'] | null; // UserRoleWhereInput
     none?: NexusGenInputs['UserRoleWhereInput'] | null; // UserRoleWhereInput
     some?: NexusGenInputs['UserRoleWhereInput'] | null; // UserRoleWhereInput
   }
   UserRoleOrderByInput: { // input type
-    id?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    name?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
+    id?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    name?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   UserRoleScalarWhereInput: { // input type
     AND?: NexusGenInputs['UserRoleScalarWhereInput'][] | null; // [UserRoleScalarWhereInput!]
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
     name?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['UserRoleScalarWhereInput'][] | null; // [UserRoleScalarWhereInput!]
     OR?: NexusGenInputs['UserRoleScalarWhereInput'][] | null; // [UserRoleScalarWhereInput!]
-    users?: NexusGenInputs['UserFilter'] | null; // UserFilter
   }
   UserRoleUpdateInput: { // input type
-    id?: string | null; // String
-    name?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    name?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     users?: NexusGenInputs['UserUpdateManyWithoutRolesInput'] | null; // UserUpdateManyWithoutRolesInput
   }
   UserRoleUpdateManyDataInput: { // input type
-    id?: string | null; // String
-    name?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    name?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   UserRoleUpdateManyMutationInput: { // input type
-    id?: string | null; // String
-    name?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    name?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   UserRoleUpdateManyWithWhereNestedInput: { // input type
     data: NexusGenInputs['UserRoleUpdateManyDataInput']; // UserRoleUpdateManyDataInput!
@@ -509,8 +559,8 @@ export interface NexusGenInputs {
     where: NexusGenInputs['UserRoleWhereUniqueInput']; // UserRoleWhereUniqueInput!
   }
   UserRoleUpdateWithoutUsersDataInput: { // input type
-    id?: string | null; // String
-    name?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    name?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   UserRoleUpsertWithWhereUniqueWithoutUsersInput: { // input type
     create: NexusGenInputs['UserRoleCreateWithoutUsersInput']; // UserRoleCreateWithoutUsersInput!
@@ -519,29 +569,28 @@ export interface NexusGenInputs {
   }
   UserRoleWhereInput: { // input type
     AND?: NexusGenInputs['UserRoleWhereInput'][] | null; // [UserRoleWhereInput!]
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
     name?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['UserRoleWhereInput'][] | null; // [UserRoleWhereInput!]
     OR?: NexusGenInputs['UserRoleWhereInput'][] | null; // [UserRoleWhereInput!]
-    users?: NexusGenInputs['UserFilter'] | null; // UserFilter
+    users?: NexusGenInputs['UserListRelationFilter'] | null; // UserListRelationFilter
   }
   UserRoleWhereUniqueInput: { // input type
     id?: string | null; // String
   }
   UserScalarWhereInput: { // input type
+    address?: NexusGenInputs['JsonNullableFilter'] | null; // JsonNullableFilter
     AND?: NexusGenInputs['UserScalarWhereInput'][] | null; // [UserScalarWhereInput!]
-    blogPosts?: NexusGenInputs['BlogPostFilter'] | null; // BlogPostFilter
-    comments?: NexusGenInputs['BlogPostCommentFilter'] | null; // BlogPostCommentFilter
     email?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    firstName?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
+    firstName?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     gender?: NexusGenEnums['Gender'] | null; // Gender
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
-    lastName?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    interests?: NexusGenEnums['Topic'][] | null; // [Topic!]
+    lastName?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     NOT?: NexusGenInputs['UserScalarWhereInput'][] | null; // [UserScalarWhereInput!]
     OR?: NexusGenInputs['UserScalarWhereInput'][] | null; // [UserScalarWhereInput!]
-    roles?: NexusGenInputs['UserRoleFilter'] | null; // UserRoleFilter
-    wantsNewsletter?: NexusGenInputs['BooleanFilter'] | null; // BooleanFilter
-    yearOfBirth?: NexusGenInputs['NullableIntFilter'] | null; // NullableIntFilter
+    wantsNewsletter?: NexusGenInputs['BoolFilter'] | null; // BoolFilter
+    yearOfBirth?: NexusGenInputs['IntNullableFilter'] | null; // IntNullableFilter
   }
   UserSocialMediaCreateOneWithoutUserInput: { // input type
     connect?: NexusGenInputs['UserSocialMediaWhereUniqueInput'] | null; // UserSocialMediaWhereUniqueInput
@@ -561,9 +610,9 @@ export interface NexusGenInputs {
     upsert?: NexusGenInputs['UserSocialMediaUpsertWithoutUserInput'] | null; // UserSocialMediaUpsertWithoutUserInput
   }
   UserSocialMediaUpdateWithoutUserDataInput: { // input type
-    id?: string | null; // String
-    instagram?: string | null; // String
-    twitter?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    instagram?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    twitter?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
   }
   UserSocialMediaUpsertWithoutUserInput: { // input type
     create: NexusGenInputs['UserSocialMediaCreateWithoutUserInput']; // UserSocialMediaCreateWithoutUserInput!
@@ -571,7 +620,7 @@ export interface NexusGenInputs {
   }
   UserSocialMediaWhereInput: { // input type
     AND?: NexusGenInputs['UserSocialMediaWhereInput'][] | null; // [UserSocialMediaWhereInput!]
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
     instagram?: NexusGenInputs['StringFilter'] | null; // StringFilter
     NOT?: NexusGenInputs['UserSocialMediaWhereInput'][] | null; // [UserSocialMediaWhereInput!]
     OR?: NexusGenInputs['UserSocialMediaWhereInput'][] | null; // [UserSocialMediaWhereInput!]
@@ -583,41 +632,41 @@ export interface NexusGenInputs {
     id?: string | null; // String
   }
   UserUpdateInput: { // input type
-    address?: any | null; // Json
+    address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
-    email?: string | null; // String
-    firstName?: string | null; // String
+    email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     gender?: NexusGenEnums['Gender'] | null; // Gender
-    id?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
-    lastName?: string | null; // String
+    lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
-    wantsNewsletter?: boolean | null; // Boolean
-    yearOfBirth?: number | null; // Int
+    wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
+    yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateManyDataInput: { // input type
-    address?: any | null; // Json
-    email?: string | null; // String
-    firstName?: string | null; // String
+    address?: NexusGenScalars['Json'] | null; // Json
+    email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     gender?: NexusGenEnums['Gender'] | null; // Gender
-    id?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
-    lastName?: string | null; // String
-    wantsNewsletter?: boolean | null; // Boolean
-    yearOfBirth?: number | null; // Int
+    lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
+    wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
+    yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateManyMutationInput: { // input type
-    address?: any | null; // Json
-    email?: string | null; // String
-    firstName?: string | null; // String
+    address?: NexusGenScalars['Json'] | null; // Json
+    email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     gender?: NexusGenEnums['Gender'] | null; // Gender
-    id?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
-    lastName?: string | null; // String
-    wantsNewsletter?: boolean | null; // Boolean
-    yearOfBirth?: number | null; // Int
+    lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
+    wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
+    yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateManyWithWhereNestedInput: { // input type
     data: NexusGenInputs['UserUpdateManyDataInput']; // UserUpdateManyDataInput!
@@ -655,46 +704,46 @@ export interface NexusGenInputs {
     where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
   }
   UserUpdateWithoutBlogPostsDataInput: { // input type
-    address?: any | null; // Json
+    address?: NexusGenScalars['Json'] | null; // Json
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
-    email?: string | null; // String
-    firstName?: string | null; // String
+    email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     gender?: NexusGenEnums['Gender'] | null; // Gender
-    id?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
-    lastName?: string | null; // String
+    lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
-    wantsNewsletter?: boolean | null; // Boolean
-    yearOfBirth?: number | null; // Int
+    wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
+    yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateWithoutCommentsDataInput: { // input type
-    address?: any | null; // Json
+    address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
-    email?: string | null; // String
-    firstName?: string | null; // String
+    email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     gender?: NexusGenEnums['Gender'] | null; // Gender
-    id?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
-    lastName?: string | null; // String
+    lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
-    wantsNewsletter?: boolean | null; // Boolean
-    yearOfBirth?: number | null; // Int
+    wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
+    yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateWithoutRolesDataInput: { // input type
-    address?: any | null; // Json
+    address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
-    email?: string | null; // String
-    firstName?: string | null; // String
+    email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     gender?: NexusGenEnums['Gender'] | null; // Gender
-    id?: string | null; // String
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
-    lastName?: string | null; // String
+    lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
-    wantsNewsletter?: boolean | null; // Boolean
-    yearOfBirth?: number | null; // Int
+    wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
+    yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateinterestsInput: { // input type
     set?: NexusGenEnums['Topic'][] | null; // [Topic!]
@@ -713,20 +762,22 @@ export interface NexusGenInputs {
     update: NexusGenInputs['UserUpdateWithoutCommentsDataInput']; // UserUpdateWithoutCommentsDataInput!
   }
   UserWhereInput: { // input type
+    address?: NexusGenInputs['JsonNullableFilter'] | null; // JsonNullableFilter
     AND?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
-    blogPosts?: NexusGenInputs['BlogPostFilter'] | null; // BlogPostFilter
-    comments?: NexusGenInputs['BlogPostCommentFilter'] | null; // BlogPostCommentFilter
+    blogPosts?: NexusGenInputs['BlogPostListRelationFilter'] | null; // BlogPostListRelationFilter
+    comments?: NexusGenInputs['BlogPostCommentListRelationFilter'] | null; // BlogPostCommentListRelationFilter
     email?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    firstName?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
+    firstName?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     gender?: NexusGenEnums['Gender'] | null; // Gender
-    id?: NexusGenInputs['UUIDFilter'] | null; // UUIDFilter
-    lastName?: NexusGenInputs['NullableStringFilter'] | null; // NullableStringFilter
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    interests?: NexusGenEnums['Topic'][] | null; // [Topic!]
+    lastName?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     NOT?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
     OR?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
-    roles?: NexusGenInputs['UserRoleFilter'] | null; // UserRoleFilter
+    roles?: NexusGenInputs['UserRoleListRelationFilter'] | null; // UserRoleListRelationFilter
     userSocialMedia?: NexusGenInputs['UserSocialMediaWhereInput'] | null; // UserSocialMediaWhereInput
-    wantsNewsletter?: NexusGenInputs['BooleanFilter'] | null; // BooleanFilter
-    yearOfBirth?: NexusGenInputs['NullableIntFilter'] | null; // NullableIntFilter
+    wantsNewsletter?: NexusGenInputs['BoolFilter'] | null; // BoolFilter
+    yearOfBirth?: NexusGenInputs['IntNullableFilter'] | null; // IntNullableFilter
   }
   UserWhereUniqueInput: { // input type
     email?: string | null; // String
@@ -736,8 +787,17 @@ export interface NexusGenInputs {
 
 export interface NexusGenEnums {
   Gender: "FEMALE" | "MALE" | "OTHER"
-  OrderByArg: "asc" | "desc"
+  SortOrder: "asc" | "desc"
   Topic: "TOPIC_ONE" | "TOPIC_THREE" | "TOPIC_TWO"
+}
+
+export interface NexusGenScalars {
+  String: string
+  Int: number
+  Float: number
+  Boolean: boolean
+  ID: string
+  Json: any
 }
 
 export interface NexusGenRootTypes {
@@ -765,7 +825,7 @@ export interface NexusGenRootTypes {
     title: string; // String!
   }
   User: { // root type
-    address?: NexusGenRootTypes['Address'] | null; // Address
+    address: NexusGenRootTypes['Address']; // Address!
     email: string; // String!
     firstName?: string | null; // String
     gender?: NexusGenEnums['Gender'] | null; // Gender
@@ -785,13 +845,6 @@ export interface NexusGenRootTypes {
     instagram: string; // String!
     twitter: string; // String!
   }
-  String: string;
-  Int: number;
-  Float: number;
-  Boolean: boolean;
-  ID: string;
-  Json: any;
-  UUID: any;
 }
 
 export interface NexusGenAllTypes extends NexusGenRootTypes {
@@ -800,7 +853,7 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   BlogPostCommentCreateManyWithoutPostInput: NexusGenInputs['BlogPostCommentCreateManyWithoutPostInput'];
   BlogPostCommentCreateWithoutAuthorInput: NexusGenInputs['BlogPostCommentCreateWithoutAuthorInput'];
   BlogPostCommentCreateWithoutPostInput: NexusGenInputs['BlogPostCommentCreateWithoutPostInput'];
-  BlogPostCommentFilter: NexusGenInputs['BlogPostCommentFilter'];
+  BlogPostCommentListRelationFilter: NexusGenInputs['BlogPostCommentListRelationFilter'];
   BlogPostCommentOrderByInput: NexusGenInputs['BlogPostCommentOrderByInput'];
   BlogPostCommentScalarWhereInput: NexusGenInputs['BlogPostCommentScalarWhereInput'];
   BlogPostCommentUpdateInput: NexusGenInputs['BlogPostCommentUpdateInput'];
@@ -822,7 +875,7 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   BlogPostCreateOneWithoutCommentsInput: NexusGenInputs['BlogPostCreateOneWithoutCommentsInput'];
   BlogPostCreateWithoutAuthorInput: NexusGenInputs['BlogPostCreateWithoutAuthorInput'];
   BlogPostCreateWithoutCommentsInput: NexusGenInputs['BlogPostCreateWithoutCommentsInput'];
-  BlogPostFilter: NexusGenInputs['BlogPostFilter'];
+  BlogPostListRelationFilter: NexusGenInputs['BlogPostListRelationFilter'];
   BlogPostOrderByInput: NexusGenInputs['BlogPostOrderByInput'];
   BlogPostScalarWhereInput: NexusGenInputs['BlogPostScalarWhereInput'];
   BlogPostUpdateInput: NexusGenInputs['BlogPostUpdateInput'];
@@ -838,18 +891,27 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   BlogPostUpsertWithoutCommentsInput: NexusGenInputs['BlogPostUpsertWithoutCommentsInput'];
   BlogPostWhereInput: NexusGenInputs['BlogPostWhereInput'];
   BlogPostWhereUniqueInput: NexusGenInputs['BlogPostWhereUniqueInput'];
-  BooleanFilter: NexusGenInputs['BooleanFilter'];
+  BoolFieldUpdateOperationsInput: NexusGenInputs['BoolFieldUpdateOperationsInput'];
+  BoolFilter: NexusGenInputs['BoolFilter'];
   IntFilter: NexusGenInputs['IntFilter'];
-  NullableIntFilter: NexusGenInputs['NullableIntFilter'];
-  NullableStringFilter: NexusGenInputs['NullableStringFilter'];
+  IntNullableFilter: NexusGenInputs['IntNullableFilter'];
+  JsonNullableFilter: NexusGenInputs['JsonNullableFilter'];
+  NestedBoolFilter: NexusGenInputs['NestedBoolFilter'];
+  NestedIntFilter: NexusGenInputs['NestedIntFilter'];
+  NestedIntNullableFilter: NexusGenInputs['NestedIntNullableFilter'];
+  NestedStringFilter: NexusGenInputs['NestedStringFilter'];
+  NestedStringNullableFilter: NexusGenInputs['NestedStringNullableFilter'];
+  NullableIntFieldUpdateOperationsInput: NexusGenInputs['NullableIntFieldUpdateOperationsInput'];
+  NullableStringFieldUpdateOperationsInput: NexusGenInputs['NullableStringFieldUpdateOperationsInput'];
   SomePublicRecordWithIntIdCreateInput: NexusGenInputs['SomePublicRecordWithIntIdCreateInput'];
   SomePublicRecordWithIntIdOrderByInput: NexusGenInputs['SomePublicRecordWithIntIdOrderByInput'];
   SomePublicRecordWithIntIdUpdateInput: NexusGenInputs['SomePublicRecordWithIntIdUpdateInput'];
   SomePublicRecordWithIntIdUpdateManyMutationInput: NexusGenInputs['SomePublicRecordWithIntIdUpdateManyMutationInput'];
   SomePublicRecordWithIntIdWhereInput: NexusGenInputs['SomePublicRecordWithIntIdWhereInput'];
   SomePublicRecordWithIntIdWhereUniqueInput: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput'];
+  StringFieldUpdateOperationsInput: NexusGenInputs['StringFieldUpdateOperationsInput'];
   StringFilter: NexusGenInputs['StringFilter'];
-  UUIDFilter: NexusGenInputs['UUIDFilter'];
+  StringNullableFilter: NexusGenInputs['StringNullableFilter'];
   UserCreateInput: NexusGenInputs['UserCreateInput'];
   UserCreateManyWithoutRolesInput: NexusGenInputs['UserCreateManyWithoutRolesInput'];
   UserCreateOneWithoutBlogPostsInput: NexusGenInputs['UserCreateOneWithoutBlogPostsInput'];
@@ -858,12 +920,12 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   UserCreateWithoutCommentsInput: NexusGenInputs['UserCreateWithoutCommentsInput'];
   UserCreateWithoutRolesInput: NexusGenInputs['UserCreateWithoutRolesInput'];
   UserCreateinterestsInput: NexusGenInputs['UserCreateinterestsInput'];
-  UserFilter: NexusGenInputs['UserFilter'];
+  UserListRelationFilter: NexusGenInputs['UserListRelationFilter'];
   UserOrderByInput: NexusGenInputs['UserOrderByInput'];
   UserRoleCreateInput: NexusGenInputs['UserRoleCreateInput'];
   UserRoleCreateManyWithoutUsersInput: NexusGenInputs['UserRoleCreateManyWithoutUsersInput'];
   UserRoleCreateWithoutUsersInput: NexusGenInputs['UserRoleCreateWithoutUsersInput'];
-  UserRoleFilter: NexusGenInputs['UserRoleFilter'];
+  UserRoleListRelationFilter: NexusGenInputs['UserRoleListRelationFilter'];
   UserRoleOrderByInput: NexusGenInputs['UserRoleOrderByInput'];
   UserRoleScalarWhereInput: NexusGenInputs['UserRoleScalarWhereInput'];
   UserRoleUpdateInput: NexusGenInputs['UserRoleUpdateInput'];
@@ -902,8 +964,14 @@ export interface NexusGenAllTypes extends NexusGenRootTypes {
   UserWhereInput: NexusGenInputs['UserWhereInput'];
   UserWhereUniqueInput: NexusGenInputs['UserWhereUniqueInput'];
   Gender: NexusGenEnums['Gender'];
-  OrderByArg: NexusGenEnums['OrderByArg'];
+  SortOrder: NexusGenEnums['SortOrder'];
   Topic: NexusGenEnums['Topic'];
+  String: NexusGenScalars['String'];
+  Int: NexusGenScalars['Int'];
+  Float: NexusGenScalars['Float'];
+  Boolean: NexusGenScalars['Boolean'];
+  ID: NexusGenScalars['ID'];
+  Json: NexusGenScalars['Json'];
 }
 
 export interface NexusGenFieldTypes {
@@ -982,7 +1050,7 @@ export interface NexusGenFieldTypes {
     title: string; // String!
   }
   User: { // field return type
-    address: NexusGenRootTypes['Address'] | null; // Address
+    address: NexusGenRootTypes['Address']; // Address!
     blogPosts: NexusGenRootTypes['BlogPost'][]; // [BlogPost!]!
     comments: NexusGenRootTypes['BlogPostComment'][]; // [BlogPostComment!]!
     email: string; // String!
@@ -1138,7 +1206,7 @@ export interface NexusGenArgTypes {
     }
     blogPostComments: { // args
       cursor?: NexusGenInputs['BlogPostCommentWhereUniqueInput'] | null; // BlogPostCommentWhereUniqueInput
-      orderBy?: NexusGenInputs['BlogPostCommentOrderByInput'] | null; // BlogPostCommentOrderByInput
+      orderBy?: NexusGenInputs['BlogPostCommentOrderByInput'][] | null; // [BlogPostCommentOrderByInput!]
       skip?: number | null; // Int
       take?: number | null; // Int
       where?: NexusGenInputs['BlogPostCommentWhereInput'] | null; // BlogPostCommentWhereInput
@@ -1152,7 +1220,7 @@ export interface NexusGenArgTypes {
     }
     blogPosts: { // args
       cursor?: NexusGenInputs['BlogPostWhereUniqueInput'] | null; // BlogPostWhereUniqueInput
-      orderBy?: NexusGenInputs['BlogPostOrderByInput'] | null; // BlogPostOrderByInput
+      orderBy?: NexusGenInputs['BlogPostOrderByInput'][] | null; // [BlogPostOrderByInput!]
       skip?: number | null; // Int
       take?: number | null; // Int
       where?: NexusGenInputs['BlogPostWhereInput'] | null; // BlogPostWhereInput
@@ -1169,7 +1237,7 @@ export interface NexusGenArgTypes {
     }
     somePublicRecordWithIntIds: { // args
       cursor?: NexusGenInputs['SomePublicRecordWithIntIdWhereUniqueInput'] | null; // SomePublicRecordWithIntIdWhereUniqueInput
-      orderBy?: NexusGenInputs['SomePublicRecordWithIntIdOrderByInput'] | null; // SomePublicRecordWithIntIdOrderByInput
+      orderBy?: NexusGenInputs['SomePublicRecordWithIntIdOrderByInput'][] | null; // [SomePublicRecordWithIntIdOrderByInput!]
       skip?: number | null; // Int
       take?: number | null; // Int
       where?: NexusGenInputs['SomePublicRecordWithIntIdWhereInput'] | null; // SomePublicRecordWithIntIdWhereInput
@@ -1189,7 +1257,7 @@ export interface NexusGenArgTypes {
     }
     userRoles: { // args
       cursor?: NexusGenInputs['UserRoleWhereUniqueInput'] | null; // UserRoleWhereUniqueInput
-      orderBy?: NexusGenInputs['UserRoleOrderByInput'] | null; // UserRoleOrderByInput
+      orderBy?: NexusGenInputs['UserRoleOrderByInput'][] | null; // [UserRoleOrderByInput!]
       skip?: number | null; // Int
       take?: number | null; // Int
       where?: NexusGenInputs['UserRoleWhereInput'] | null; // UserRoleWhereInput
@@ -1203,7 +1271,7 @@ export interface NexusGenArgTypes {
     }
     users: { // args
       cursor?: NexusGenInputs['UserWhereUniqueInput'] | null; // UserWhereUniqueInput
-      orderBy?: NexusGenInputs['UserOrderByInput'] | null; // UserOrderByInput
+      orderBy?: NexusGenInputs['UserOrderByInput'][] | null; // [UserOrderByInput!]
       skip?: number | null; // Int
       take?: number | null; // Int
       where?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
@@ -1247,13 +1315,13 @@ export interface NexusGenInheritedFields {}
 
 export type NexusGenObjectNames = "Address" | "BatchPayload" | "BlogPost" | "BlogPostComment" | "Mutation" | "Query" | "SomePublicRecordWithIntId" | "User" | "UserRole" | "UserSocialMedia";
 
-export type NexusGenInputNames = "BlogPostCommentCreateInput" | "BlogPostCommentCreateManyWithoutAuthorInput" | "BlogPostCommentCreateManyWithoutPostInput" | "BlogPostCommentCreateWithoutAuthorInput" | "BlogPostCommentCreateWithoutPostInput" | "BlogPostCommentFilter" | "BlogPostCommentOrderByInput" | "BlogPostCommentScalarWhereInput" | "BlogPostCommentUpdateInput" | "BlogPostCommentUpdateManyDataInput" | "BlogPostCommentUpdateManyMutationInput" | "BlogPostCommentUpdateManyWithWhereNestedInput" | "BlogPostCommentUpdateManyWithoutAuthorInput" | "BlogPostCommentUpdateManyWithoutPostInput" | "BlogPostCommentUpdateWithWhereUniqueWithoutAuthorInput" | "BlogPostCommentUpdateWithWhereUniqueWithoutPostInput" | "BlogPostCommentUpdateWithoutAuthorDataInput" | "BlogPostCommentUpdateWithoutPostDataInput" | "BlogPostCommentUpsertWithWhereUniqueWithoutAuthorInput" | "BlogPostCommentUpsertWithWhereUniqueWithoutPostInput" | "BlogPostCommentWhereInput" | "BlogPostCommentWhereUniqueInput" | "BlogPostCreateInput" | "BlogPostCreateManyWithoutAuthorInput" | "BlogPostCreateOneWithoutCommentsInput" | "BlogPostCreateWithoutAuthorInput" | "BlogPostCreateWithoutCommentsInput" | "BlogPostFilter" | "BlogPostOrderByInput" | "BlogPostScalarWhereInput" | "BlogPostUpdateInput" | "BlogPostUpdateManyDataInput" | "BlogPostUpdateManyMutationInput" | "BlogPostUpdateManyWithWhereNestedInput" | "BlogPostUpdateManyWithoutAuthorInput" | "BlogPostUpdateOneWithoutCommentsInput" | "BlogPostUpdateWithWhereUniqueWithoutAuthorInput" | "BlogPostUpdateWithoutAuthorDataInput" | "BlogPostUpdateWithoutCommentsDataInput" | "BlogPostUpsertWithWhereUniqueWithoutAuthorInput" | "BlogPostUpsertWithoutCommentsInput" | "BlogPostWhereInput" | "BlogPostWhereUniqueInput" | "BooleanFilter" | "IntFilter" | "NullableIntFilter" | "NullableStringFilter" | "SomePublicRecordWithIntIdCreateInput" | "SomePublicRecordWithIntIdOrderByInput" | "SomePublicRecordWithIntIdUpdateInput" | "SomePublicRecordWithIntIdUpdateManyMutationInput" | "SomePublicRecordWithIntIdWhereInput" | "SomePublicRecordWithIntIdWhereUniqueInput" | "StringFilter" | "UUIDFilter" | "UserCreateInput" | "UserCreateManyWithoutRolesInput" | "UserCreateOneWithoutBlogPostsInput" | "UserCreateOneWithoutCommentsInput" | "UserCreateWithoutBlogPostsInput" | "UserCreateWithoutCommentsInput" | "UserCreateWithoutRolesInput" | "UserCreateinterestsInput" | "UserFilter" | "UserOrderByInput" | "UserRoleCreateInput" | "UserRoleCreateManyWithoutUsersInput" | "UserRoleCreateWithoutUsersInput" | "UserRoleFilter" | "UserRoleOrderByInput" | "UserRoleScalarWhereInput" | "UserRoleUpdateInput" | "UserRoleUpdateManyDataInput" | "UserRoleUpdateManyMutationInput" | "UserRoleUpdateManyWithWhereNestedInput" | "UserRoleUpdateManyWithoutUsersInput" | "UserRoleUpdateWithWhereUniqueWithoutUsersInput" | "UserRoleUpdateWithoutUsersDataInput" | "UserRoleUpsertWithWhereUniqueWithoutUsersInput" | "UserRoleWhereInput" | "UserRoleWhereUniqueInput" | "UserScalarWhereInput" | "UserSocialMediaCreateOneWithoutUserInput" | "UserSocialMediaCreateWithoutUserInput" | "UserSocialMediaUpdateOneWithoutUserInput" | "UserSocialMediaUpdateWithoutUserDataInput" | "UserSocialMediaUpsertWithoutUserInput" | "UserSocialMediaWhereInput" | "UserSocialMediaWhereUniqueInput" | "UserUpdateInput" | "UserUpdateManyDataInput" | "UserUpdateManyMutationInput" | "UserUpdateManyWithWhereNestedInput" | "UserUpdateManyWithoutRolesInput" | "UserUpdateOneWithoutBlogPostsInput" | "UserUpdateOneWithoutCommentsInput" | "UserUpdateWithWhereUniqueWithoutRolesInput" | "UserUpdateWithoutBlogPostsDataInput" | "UserUpdateWithoutCommentsDataInput" | "UserUpdateWithoutRolesDataInput" | "UserUpdateinterestsInput" | "UserUpsertWithWhereUniqueWithoutRolesInput" | "UserUpsertWithoutBlogPostsInput" | "UserUpsertWithoutCommentsInput" | "UserWhereInput" | "UserWhereUniqueInput";
+export type NexusGenInputNames = "BlogPostCommentCreateInput" | "BlogPostCommentCreateManyWithoutAuthorInput" | "BlogPostCommentCreateManyWithoutPostInput" | "BlogPostCommentCreateWithoutAuthorInput" | "BlogPostCommentCreateWithoutPostInput" | "BlogPostCommentListRelationFilter" | "BlogPostCommentOrderByInput" | "BlogPostCommentScalarWhereInput" | "BlogPostCommentUpdateInput" | "BlogPostCommentUpdateManyDataInput" | "BlogPostCommentUpdateManyMutationInput" | "BlogPostCommentUpdateManyWithWhereNestedInput" | "BlogPostCommentUpdateManyWithoutAuthorInput" | "BlogPostCommentUpdateManyWithoutPostInput" | "BlogPostCommentUpdateWithWhereUniqueWithoutAuthorInput" | "BlogPostCommentUpdateWithWhereUniqueWithoutPostInput" | "BlogPostCommentUpdateWithoutAuthorDataInput" | "BlogPostCommentUpdateWithoutPostDataInput" | "BlogPostCommentUpsertWithWhereUniqueWithoutAuthorInput" | "BlogPostCommentUpsertWithWhereUniqueWithoutPostInput" | "BlogPostCommentWhereInput" | "BlogPostCommentWhereUniqueInput" | "BlogPostCreateInput" | "BlogPostCreateManyWithoutAuthorInput" | "BlogPostCreateOneWithoutCommentsInput" | "BlogPostCreateWithoutAuthorInput" | "BlogPostCreateWithoutCommentsInput" | "BlogPostListRelationFilter" | "BlogPostOrderByInput" | "BlogPostScalarWhereInput" | "BlogPostUpdateInput" | "BlogPostUpdateManyDataInput" | "BlogPostUpdateManyMutationInput" | "BlogPostUpdateManyWithWhereNestedInput" | "BlogPostUpdateManyWithoutAuthorInput" | "BlogPostUpdateOneWithoutCommentsInput" | "BlogPostUpdateWithWhereUniqueWithoutAuthorInput" | "BlogPostUpdateWithoutAuthorDataInput" | "BlogPostUpdateWithoutCommentsDataInput" | "BlogPostUpsertWithWhereUniqueWithoutAuthorInput" | "BlogPostUpsertWithoutCommentsInput" | "BlogPostWhereInput" | "BlogPostWhereUniqueInput" | "BoolFieldUpdateOperationsInput" | "BoolFilter" | "IntFilter" | "IntNullableFilter" | "JsonNullableFilter" | "NestedBoolFilter" | "NestedIntFilter" | "NestedIntNullableFilter" | "NestedStringFilter" | "NestedStringNullableFilter" | "NullableIntFieldUpdateOperationsInput" | "NullableStringFieldUpdateOperationsInput" | "SomePublicRecordWithIntIdCreateInput" | "SomePublicRecordWithIntIdOrderByInput" | "SomePublicRecordWithIntIdUpdateInput" | "SomePublicRecordWithIntIdUpdateManyMutationInput" | "SomePublicRecordWithIntIdWhereInput" | "SomePublicRecordWithIntIdWhereUniqueInput" | "StringFieldUpdateOperationsInput" | "StringFilter" | "StringNullableFilter" | "UserCreateInput" | "UserCreateManyWithoutRolesInput" | "UserCreateOneWithoutBlogPostsInput" | "UserCreateOneWithoutCommentsInput" | "UserCreateWithoutBlogPostsInput" | "UserCreateWithoutCommentsInput" | "UserCreateWithoutRolesInput" | "UserCreateinterestsInput" | "UserListRelationFilter" | "UserOrderByInput" | "UserRoleCreateInput" | "UserRoleCreateManyWithoutUsersInput" | "UserRoleCreateWithoutUsersInput" | "UserRoleListRelationFilter" | "UserRoleOrderByInput" | "UserRoleScalarWhereInput" | "UserRoleUpdateInput" | "UserRoleUpdateManyDataInput" | "UserRoleUpdateManyMutationInput" | "UserRoleUpdateManyWithWhereNestedInput" | "UserRoleUpdateManyWithoutUsersInput" | "UserRoleUpdateWithWhereUniqueWithoutUsersInput" | "UserRoleUpdateWithoutUsersDataInput" | "UserRoleUpsertWithWhereUniqueWithoutUsersInput" | "UserRoleWhereInput" | "UserRoleWhereUniqueInput" | "UserScalarWhereInput" | "UserSocialMediaCreateOneWithoutUserInput" | "UserSocialMediaCreateWithoutUserInput" | "UserSocialMediaUpdateOneWithoutUserInput" | "UserSocialMediaUpdateWithoutUserDataInput" | "UserSocialMediaUpsertWithoutUserInput" | "UserSocialMediaWhereInput" | "UserSocialMediaWhereUniqueInput" | "UserUpdateInput" | "UserUpdateManyDataInput" | "UserUpdateManyMutationInput" | "UserUpdateManyWithWhereNestedInput" | "UserUpdateManyWithoutRolesInput" | "UserUpdateOneWithoutBlogPostsInput" | "UserUpdateOneWithoutCommentsInput" | "UserUpdateWithWhereUniqueWithoutRolesInput" | "UserUpdateWithoutBlogPostsDataInput" | "UserUpdateWithoutCommentsDataInput" | "UserUpdateWithoutRolesDataInput" | "UserUpdateinterestsInput" | "UserUpsertWithWhereUniqueWithoutRolesInput" | "UserUpsertWithoutBlogPostsInput" | "UserUpsertWithoutCommentsInput" | "UserWhereInput" | "UserWhereUniqueInput";
 
-export type NexusGenEnumNames = "Gender" | "OrderByArg" | "Topic";
+export type NexusGenEnumNames = "Gender" | "SortOrder" | "Topic";
 
 export type NexusGenInterfaceNames = never;
 
-export type NexusGenScalarNames = "Boolean" | "Float" | "ID" | "Int" | "Json" | "String" | "UUID";
+export type NexusGenScalarNames = "Boolean" | "Float" | "ID" | "Int" | "Json" | "String";
 
 export type NexusGenUnionNames = never;
 

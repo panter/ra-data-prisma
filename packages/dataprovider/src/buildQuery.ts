@@ -2,7 +2,6 @@ import buildVariables from "./buildVariables";
 import buildGqlQuery from "./buildGqlQuery";
 import getResponseParser from "./getResponseParser";
 import { IntrospectionResult } from "./constants/interfaces";
-import { DocumentNode } from "graphql";
 import { OurOptions } from "./types";
 
 export const buildQueryFactory = (

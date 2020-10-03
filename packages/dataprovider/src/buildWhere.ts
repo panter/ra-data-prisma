@@ -56,16 +56,15 @@ const getBooleanFilter = (key: string, value: any) => {
 };
 
 const isBooleanFilter = (type: IntrospectionInputTypeRef) =>
-  type.kind === "INPUT_OBJECT" &&
-  (type.name === "BooleanFilter" || type.name === "NullableBooleanFilter");
+  type.kind === "INPUT_OBJECT" && type.name === "BoolFilter";
 
 const isStringFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
-  (type.name === "StringFilter" || type.name === "NullableStringFilter");
+  (type.name === "StringFilter" || type.name === "StringNullableFilter");
 
 const isIntFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
-  (type.name === "IntFilter" || type.name === "NullableIntFilter");
+  (type.name === "IntFilter" || type.name === "IntNullableFilter");
 
 const getFilters = (
   key: string,
@@ -93,9 +92,9 @@ const getFilters = (
       const AND = value.split(" ").map((part: string) => ({
         OR: whereType.inputFields
           .map((f) =>
-            isStringFilter(f.type)
+            f.name !== "id" && isStringFilter(f.type)
               ? getStringFilter(f.name, part.trim())
-              : isIntFilter(f.type)
+              : f.name !== "id" && isIntFilter(f.type)
               ? getIntFilter(f.name, part.trim())
               : null,
           )

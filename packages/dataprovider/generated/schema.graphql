@@ -56,44 +56,44 @@ input BlogPostCommentCreateWithoutPostInput {
   text: String!
 }
 
-input BlogPostCommentFilter {
+input BlogPostCommentListRelationFilter {
   every: BlogPostCommentWhereInput
   none: BlogPostCommentWhereInput
   some: BlogPostCommentWhereInput
 }
 
 input BlogPostCommentOrderByInput {
-  authorId: OrderByArg
-  id: OrderByArg
-  postId: OrderByArg
-  text: OrderByArg
+  authorId: SortOrder
+  id: SortOrder
+  postId: SortOrder
+  text: SortOrder
 }
 
 input BlogPostCommentScalarWhereInput {
   AND: [BlogPostCommentScalarWhereInput!]
-  authorId: NullableStringFilter
-  id: UUIDFilter
+  authorId: StringNullableFilter
+  id: StringFilter
   NOT: [BlogPostCommentScalarWhereInput!]
   OR: [BlogPostCommentScalarWhereInput!]
-  postId: NullableStringFilter
+  postId: StringNullableFilter
   text: StringFilter
 }
 
 input BlogPostCommentUpdateInput {
   author: UserUpdateOneWithoutCommentsInput
-  id: String
+  id: StringFieldUpdateOperationsInput
   post: BlogPostUpdateOneWithoutCommentsInput
-  text: String
+  text: StringFieldUpdateOperationsInput
 }
 
 input BlogPostCommentUpdateManyDataInput {
-  id: String
-  text: String
+  id: StringFieldUpdateOperationsInput
+  text: StringFieldUpdateOperationsInput
 }
 
 input BlogPostCommentUpdateManyMutationInput {
-  id: String
-  text: String
+  id: StringFieldUpdateOperationsInput
+  text: StringFieldUpdateOperationsInput
 }
 
 input BlogPostCommentUpdateManyWithoutAuthorInput {
@@ -126,15 +126,15 @@ input BlogPostCommentUpdateManyWithWhereNestedInput {
 }
 
 input BlogPostCommentUpdateWithoutAuthorDataInput {
-  id: String
+  id: StringFieldUpdateOperationsInput
   post: BlogPostUpdateOneWithoutCommentsInput
-  text: String
+  text: StringFieldUpdateOperationsInput
 }
 
 input BlogPostCommentUpdateWithoutPostDataInput {
   author: UserUpdateOneWithoutCommentsInput
-  id: String
-  text: String
+  id: StringFieldUpdateOperationsInput
+  text: StringFieldUpdateOperationsInput
 }
 
 input BlogPostCommentUpdateWithWhereUniqueWithoutAuthorInput {
@@ -162,12 +162,12 @@ input BlogPostCommentUpsertWithWhereUniqueWithoutPostInput {
 input BlogPostCommentWhereInput {
   AND: [BlogPostCommentWhereInput!]
   author: UserWhereInput
-  authorId: NullableStringFilter
-  id: UUIDFilter
+  authorId: StringNullableFilter
+  id: StringFilter
   NOT: [BlogPostCommentWhereInput!]
   OR: [BlogPostCommentWhereInput!]
   post: BlogPostWhereInput
-  postId: NullableStringFilter
+  postId: StringNullableFilter
   text: StringFilter
 }
 
@@ -207,24 +207,23 @@ input BlogPostCreateWithoutCommentsInput {
   title: String!
 }
 
-input BlogPostFilter {
+input BlogPostListRelationFilter {
   every: BlogPostWhereInput
   none: BlogPostWhereInput
   some: BlogPostWhereInput
 }
 
 input BlogPostOrderByInput {
-  authorId: OrderByArg
-  id: OrderByArg
-  text: OrderByArg
-  title: OrderByArg
+  authorId: SortOrder
+  id: SortOrder
+  text: SortOrder
+  title: SortOrder
 }
 
 input BlogPostScalarWhereInput {
   AND: [BlogPostScalarWhereInput!]
-  authorId: NullableStringFilter
-  comments: BlogPostCommentFilter
-  id: UUIDFilter
+  authorId: StringNullableFilter
+  id: StringFilter
   NOT: [BlogPostScalarWhereInput!]
   OR: [BlogPostScalarWhereInput!]
   text: StringFilter
@@ -234,21 +233,21 @@ input BlogPostScalarWhereInput {
 input BlogPostUpdateInput {
   author: UserUpdateOneWithoutBlogPostsInput
   comments: BlogPostCommentUpdateManyWithoutPostInput
-  id: String
-  text: String
-  title: String
+  id: StringFieldUpdateOperationsInput
+  text: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
 }
 
 input BlogPostUpdateManyDataInput {
-  id: String
-  text: String
-  title: String
+  id: StringFieldUpdateOperationsInput
+  text: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
 }
 
 input BlogPostUpdateManyMutationInput {
-  id: String
-  text: String
-  title: String
+  id: StringFieldUpdateOperationsInput
+  text: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
 }
 
 input BlogPostUpdateManyWithoutAuthorInput {
@@ -279,16 +278,16 @@ input BlogPostUpdateOneWithoutCommentsInput {
 
 input BlogPostUpdateWithoutAuthorDataInput {
   comments: BlogPostCommentUpdateManyWithoutPostInput
-  id: String
-  text: String
-  title: String
+  id: StringFieldUpdateOperationsInput
+  text: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
 }
 
 input BlogPostUpdateWithoutCommentsDataInput {
   author: UserUpdateOneWithoutBlogPostsInput
-  id: String
-  text: String
-  title: String
+  id: StringFieldUpdateOperationsInput
+  text: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
 }
 
 input BlogPostUpdateWithWhereUniqueWithoutAuthorInput {
@@ -310,9 +309,9 @@ input BlogPostUpsertWithWhereUniqueWithoutAuthorInput {
 input BlogPostWhereInput {
   AND: [BlogPostWhereInput!]
   author: UserWhereInput
-  authorId: NullableStringFilter
-  comments: BlogPostCommentFilter
-  id: UUIDFilter
+  authorId: StringNullableFilter
+  comments: BlogPostCommentListRelationFilter
+  id: StringFilter
   NOT: [BlogPostWhereInput!]
   OR: [BlogPostWhereInput!]
   text: StringFilter
@@ -323,9 +322,13 @@ input BlogPostWhereUniqueInput {
   id: String
 }
 
-input BooleanFilter {
+input BoolFieldUpdateOperationsInput {
+  set: Boolean
+}
+
+input BoolFilter {
   equals: Boolean
-  not: Boolean
+  not: NestedBoolFilter
 }
 
 enum Gender {
@@ -341,11 +344,27 @@ input IntFilter {
   in: [Int!]
   lt: Int
   lte: Int
-  not: Int
+  not: NestedIntFilter
+  notIn: [Int!]
+}
+
+input IntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
   notIn: [Int!]
 }
 
 scalar Json
+
+input JsonNullableFilter {
+  equals: Json
+  not: Json
+}
 
 type Mutation {
   createOneBlogPost(data: BlogPostCreateInput!): BlogPost!
@@ -380,18 +399,34 @@ type Mutation {
   upsertOneUserRole(create: UserRoleCreateInput!, update: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole!
 }
 
-input NullableIntFilter {
+input NestedBoolFilter {
+  equals: Boolean
+  not: NestedBoolFilter
+}
+
+input NestedIntFilter {
   equals: Int
   gt: Int
   gte: Int
   in: [Int!]
   lt: Int
   lte: Int
-  not: Int
+  not: NestedIntFilter
   notIn: [Int!]
 }
 
-input NullableStringFilter {
+input NestedIntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
+input NestedStringFilter {
   contains: String
   endsWith: String
   equals: String
@@ -400,31 +435,48 @@ input NullableStringFilter {
   in: [String!]
   lt: String
   lte: String
-  not: String
+  not: NestedStringFilter
   notIn: [String!]
   startsWith: String
 }
 
-enum OrderByArg {
-  asc
-  desc
+input NestedStringNullableFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input NullableIntFieldUpdateOperationsInput {
+  set: Int
+}
+
+input NullableStringFieldUpdateOperationsInput {
+  set: String
 }
 
 type Query {
   blogPost(where: BlogPostWhereUniqueInput!): BlogPost
   blogPostComment(where: BlogPostCommentWhereUniqueInput!): BlogPostComment
-  blogPostComments(cursor: BlogPostCommentWhereUniqueInput, orderBy: BlogPostCommentOrderByInput, skip: Int, take: Int, where: BlogPostCommentWhereInput): [BlogPostComment!]!
+  blogPostComments(cursor: BlogPostCommentWhereUniqueInput, orderBy: [BlogPostCommentOrderByInput!], skip: Int, take: Int, where: BlogPostCommentWhereInput): [BlogPostComment!]!
   blogPostCommentsCount(cursor: BlogPostCommentWhereUniqueInput, orderBy: BlogPostCommentOrderByInput, skip: Int, take: Int, where: BlogPostCommentWhereInput): Int!
-  blogPosts(cursor: BlogPostWhereUniqueInput, orderBy: BlogPostOrderByInput, skip: Int, take: Int, where: BlogPostWhereInput): [BlogPost!]!
+  blogPosts(cursor: BlogPostWhereUniqueInput, orderBy: [BlogPostOrderByInput!], skip: Int, take: Int, where: BlogPostWhereInput): [BlogPost!]!
   blogPostsCount(cursor: BlogPostWhereUniqueInput, orderBy: BlogPostOrderByInput, skip: Int, take: Int, where: BlogPostWhereInput): Int!
   somePublicRecordWithIntId(where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId
-  somePublicRecordWithIntIds(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): [SomePublicRecordWithIntId!]!
+  somePublicRecordWithIntIds(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: [SomePublicRecordWithIntIdOrderByInput!], skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): [SomePublicRecordWithIntId!]!
   somePublicRecordWithIntIdsCount(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): Int!
   user(where: UserWhereUniqueInput!): User
   userRole(where: UserRoleWhereUniqueInput!): UserRole
-  userRoles(cursor: UserRoleWhereUniqueInput, orderBy: UserRoleOrderByInput, skip: Int, take: Int, where: UserRoleWhereInput): [UserRole!]!
+  userRoles(cursor: UserRoleWhereUniqueInput, orderBy: [UserRoleOrderByInput!], skip: Int, take: Int, where: UserRoleWhereInput): [UserRole!]!
   userRolesCount(cursor: UserRoleWhereUniqueInput, orderBy: UserRoleOrderByInput, skip: Int, take: Int, where: UserRoleWhereInput): Int!
-  users(cursor: UserWhereUniqueInput, orderBy: UserOrderByInput, skip: Int, take: Int, where: UserWhereInput): [User!]!
+  users(cursor: UserWhereUniqueInput, orderBy: [UserOrderByInput!], skip: Int, take: Int, where: UserWhereInput): [User!]!
   usersCount(cursor: UserWhereUniqueInput, orderBy: UserOrderByInput, skip: Int, take: Int, where: UserWhereInput): Int!
 }
 
@@ -438,18 +490,16 @@ input SomePublicRecordWithIntIdCreateInput {
 }
 
 input SomePublicRecordWithIntIdOrderByInput {
-  id: OrderByArg
-  title: OrderByArg
+  id: SortOrder
+  title: SortOrder
 }
 
 input SomePublicRecordWithIntIdUpdateInput {
-  id: Int
-  title: String
+  title: StringFieldUpdateOperationsInput
 }
 
 input SomePublicRecordWithIntIdUpdateManyMutationInput {
-  id: Int
-  title: String
+  title: StringFieldUpdateOperationsInput
 }
 
 input SomePublicRecordWithIntIdWhereInput {
@@ -464,6 +514,15 @@ input SomePublicRecordWithIntIdWhereUniqueInput {
   id: Int
 }
 
+enum SortOrder {
+  asc
+  desc
+}
+
+input StringFieldUpdateOperationsInput {
+  set: String
+}
+
 input StringFilter {
   contains: String
   endsWith: String
@@ -473,7 +532,21 @@ input StringFilter {
   in: [String!]
   lt: String
   lte: String
-  not: String
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input StringNullableFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilter
   notIn: [String!]
   startsWith: String
 }
@@ -485,7 +558,7 @@ enum Topic {
 }
 
 type User {
-  address: Address
+  address: Address!
   blogPosts(cursor: BlogPostWhereUniqueInput, skip: Int, take: Int): [BlogPost!]!
   comments(cursor: BlogPostCommentWhereUniqueInput, skip: Int, take: Int): [BlogPostComment!]!
   email: String!
@@ -580,21 +653,22 @@ input UserCreateWithoutRolesInput {
   yearOfBirth: Int
 }
 
-input UserFilter {
+input UserListRelationFilter {
   every: UserWhereInput
   none: UserWhereInput
   some: UserWhereInput
 }
 
 input UserOrderByInput {
-  address: OrderByArg
-  email: OrderByArg
-  firstName: OrderByArg
-  gender: OrderByArg
-  id: OrderByArg
-  lastName: OrderByArg
-  wantsNewsletter: OrderByArg
-  yearOfBirth: OrderByArg
+  address: SortOrder
+  email: SortOrder
+  firstName: SortOrder
+  gender: SortOrder
+  id: SortOrder
+  interests: SortOrder
+  lastName: SortOrder
+  wantsNewsletter: SortOrder
+  yearOfBirth: SortOrder
 }
 
 type UserRole {
@@ -618,40 +692,39 @@ input UserRoleCreateWithoutUsersInput {
   name: String!
 }
 
-input UserRoleFilter {
+input UserRoleListRelationFilter {
   every: UserRoleWhereInput
   none: UserRoleWhereInput
   some: UserRoleWhereInput
 }
 
 input UserRoleOrderByInput {
-  id: OrderByArg
-  name: OrderByArg
+  id: SortOrder
+  name: SortOrder
 }
 
 input UserRoleScalarWhereInput {
   AND: [UserRoleScalarWhereInput!]
-  id: UUIDFilter
+  id: StringFilter
   name: StringFilter
   NOT: [UserRoleScalarWhereInput!]
   OR: [UserRoleScalarWhereInput!]
-  users: UserFilter
 }
 
 input UserRoleUpdateInput {
-  id: String
-  name: String
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
   users: UserUpdateManyWithoutRolesInput
 }
 
 input UserRoleUpdateManyDataInput {
-  id: String
-  name: String
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
 }
 
 input UserRoleUpdateManyMutationInput {
-  id: String
-  name: String
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
 }
 
 input UserRoleUpdateManyWithoutUsersInput {
@@ -672,8 +745,8 @@ input UserRoleUpdateManyWithWhereNestedInput {
 }
 
 input UserRoleUpdateWithoutUsersDataInput {
-  id: String
-  name: String
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
 }
 
 input UserRoleUpdateWithWhereUniqueWithoutUsersInput {
@@ -689,11 +762,11 @@ input UserRoleUpsertWithWhereUniqueWithoutUsersInput {
 
 input UserRoleWhereInput {
   AND: [UserRoleWhereInput!]
-  id: UUIDFilter
+  id: StringFilter
   name: StringFilter
   NOT: [UserRoleWhereInput!]
   OR: [UserRoleWhereInput!]
-  users: UserFilter
+  users: UserListRelationFilter
 }
 
 input UserRoleWhereUniqueInput {
@@ -701,19 +774,18 @@ input UserRoleWhereUniqueInput {
 }
 
 input UserScalarWhereInput {
+  address: JsonNullableFilter
   AND: [UserScalarWhereInput!]
-  blogPosts: BlogPostFilter
-  comments: BlogPostCommentFilter
   email: StringFilter
-  firstName: NullableStringFilter
+  firstName: StringNullableFilter
   gender: Gender
-  id: UUIDFilter
-  lastName: NullableStringFilter
+  id: StringFilter
+  interests: [Topic!]
+  lastName: StringNullableFilter
   NOT: [UserScalarWhereInput!]
   OR: [UserScalarWhereInput!]
-  roles: UserRoleFilter
-  wantsNewsletter: BooleanFilter
-  yearOfBirth: NullableIntFilter
+  wantsNewsletter: BoolFilter
+  yearOfBirth: IntNullableFilter
 }
 
 type UserSocialMedia {
@@ -744,9 +816,9 @@ input UserSocialMediaUpdateOneWithoutUserInput {
 }
 
 input UserSocialMediaUpdateWithoutUserDataInput {
-  id: String
-  instagram: String
-  twitter: String
+  id: StringFieldUpdateOperationsInput
+  instagram: StringFieldUpdateOperationsInput
+  twitter: StringFieldUpdateOperationsInput
 }
 
 input UserSocialMediaUpsertWithoutUserInput {
@@ -756,7 +828,7 @@ input UserSocialMediaUpsertWithoutUserInput {
 
 input UserSocialMediaWhereInput {
   AND: [UserSocialMediaWhereInput!]
-  id: UUIDFilter
+  id: StringFilter
   instagram: StringFilter
   NOT: [UserSocialMediaWhereInput!]
   OR: [UserSocialMediaWhereInput!]
@@ -773,16 +845,16 @@ input UserUpdateInput {
   address: Json
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
-  email: String
-  firstName: String
+  email: StringFieldUpdateOperationsInput
+  firstName: NullableStringFieldUpdateOperationsInput
   gender: Gender
-  id: String
+  id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
-  lastName: String
+  lastName: NullableStringFieldUpdateOperationsInput
   roles: UserRoleUpdateManyWithoutUsersInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
-  wantsNewsletter: Boolean
-  yearOfBirth: Int
+  wantsNewsletter: BoolFieldUpdateOperationsInput
+  yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateinterestsInput {
@@ -791,26 +863,26 @@ input UserUpdateinterestsInput {
 
 input UserUpdateManyDataInput {
   address: Json
-  email: String
-  firstName: String
+  email: StringFieldUpdateOperationsInput
+  firstName: NullableStringFieldUpdateOperationsInput
   gender: Gender
-  id: String
+  id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
-  lastName: String
-  wantsNewsletter: Boolean
-  yearOfBirth: Int
+  lastName: NullableStringFieldUpdateOperationsInput
+  wantsNewsletter: BoolFieldUpdateOperationsInput
+  yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateManyMutationInput {
   address: Json
-  email: String
-  firstName: String
+  email: StringFieldUpdateOperationsInput
+  firstName: NullableStringFieldUpdateOperationsInput
   gender: Gender
-  id: String
+  id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
-  lastName: String
-  wantsNewsletter: Boolean
-  yearOfBirth: Int
+  lastName: NullableStringFieldUpdateOperationsInput
+  wantsNewsletter: BoolFieldUpdateOperationsInput
+  yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateManyWithoutRolesInput {
@@ -851,46 +923,46 @@ input UserUpdateOneWithoutCommentsInput {
 input UserUpdateWithoutBlogPostsDataInput {
   address: Json
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
-  email: String
-  firstName: String
+  email: StringFieldUpdateOperationsInput
+  firstName: NullableStringFieldUpdateOperationsInput
   gender: Gender
-  id: String
+  id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
-  lastName: String
+  lastName: NullableStringFieldUpdateOperationsInput
   roles: UserRoleUpdateManyWithoutUsersInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
-  wantsNewsletter: Boolean
-  yearOfBirth: Int
+  wantsNewsletter: BoolFieldUpdateOperationsInput
+  yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateWithoutCommentsDataInput {
   address: Json
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
-  email: String
-  firstName: String
+  email: StringFieldUpdateOperationsInput
+  firstName: NullableStringFieldUpdateOperationsInput
   gender: Gender
-  id: String
+  id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
-  lastName: String
+  lastName: NullableStringFieldUpdateOperationsInput
   roles: UserRoleUpdateManyWithoutUsersInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
-  wantsNewsletter: Boolean
-  yearOfBirth: Int
+  wantsNewsletter: BoolFieldUpdateOperationsInput
+  yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateWithoutRolesDataInput {
   address: Json
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
-  email: String
-  firstName: String
+  email: StringFieldUpdateOperationsInput
+  firstName: NullableStringFieldUpdateOperationsInput
   gender: Gender
-  id: String
+  id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
-  lastName: String
+  lastName: NullableStringFieldUpdateOperationsInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
-  wantsNewsletter: Boolean
-  yearOfBirth: Int
+  wantsNewsletter: BoolFieldUpdateOperationsInput
+  yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateWithWhereUniqueWithoutRolesInput {
@@ -915,39 +987,25 @@ input UserUpsertWithWhereUniqueWithoutRolesInput {
 }
 
 input UserWhereInput {
+  address: JsonNullableFilter
   AND: [UserWhereInput!]
-  blogPosts: BlogPostFilter
-  comments: BlogPostCommentFilter
+  blogPosts: BlogPostListRelationFilter
+  comments: BlogPostCommentListRelationFilter
   email: StringFilter
-  firstName: NullableStringFilter
+  firstName: StringNullableFilter
   gender: Gender
-  id: UUIDFilter
-  lastName: NullableStringFilter
+  id: StringFilter
+  interests: [Topic!]
+  lastName: StringNullableFilter
   NOT: [UserWhereInput!]
   OR: [UserWhereInput!]
-  roles: UserRoleFilter
+  roles: UserRoleListRelationFilter
   userSocialMedia: UserSocialMediaWhereInput
-  wantsNewsletter: BooleanFilter
-  yearOfBirth: NullableIntFilter
+  wantsNewsletter: BoolFilter
+  yearOfBirth: IntNullableFilter
 }
 
 input UserWhereUniqueInput {
   email: String
   id: String
-}
-
-scalar UUID
-
-input UUIDFilter {
-  contains: UUID
-  endsWith: UUID
-  equals: UUID
-  gt: UUID
-  gte: UUID
-  in: [UUID!]
-  lt: UUID
-  lte: UUID
-  not: UUID
-  notIn: [UUID!]
-  startsWith: UUID
 }

@@ -2,13 +2,13 @@
 
 this package makes your graphql-nexus api compatible with the dataprovider by exposing all needed Queries and Mutations.
 
-It can be used for nexus framework and @nexus/schema
+It can be used for nexus framework and @nexus/schema.
 
 ## Usage with nexus framework
 
 `yarn add @ra-data-prisma/backend`
 
-make sure to use `nexus-plugin-prisma`.
+make sure to use `nexus-plugin-prisma` version `^0.18.2`.
 
 **important: set `paginationStrategy: "prisma"` and `experimentalCRUD: true` as options for `nexus-plugin-prisma`**
 
@@ -56,7 +56,7 @@ _(using `import { schema } from "nexus"` directly inside the package here did no
 
 `yarn add @ra-data-prisma/backend`
 
-make sure that you use `@nexus/schema` version `^0.14.0` and `nexus-prisma` version `^0.15.0`.
+make sure that you use `@nexus/schema` version `^0.15.0` and `nexus-plugin-prisma` version `^0.18.2`.
 
 **important: set `paginationStrategy: "prisma"` and `experimentalCRUD: true` as options for nexusPrismaPlugin`**
 
@@ -66,7 +66,7 @@ make sure that you use `@nexus/schema` version `^0.14.0` and `nexus-prisma` vers
 
 import { addCrudResolvers } from '@ra-data-prisma/backend';
 import { makeSchema } from "@nexus/schema";
-import { nexusPrismaPlugin } from "nexus-prisma";
+import { nexusSchemaPrisma } from 'nexus-plugin-prisma/schema'
 
 type User = objectType({
   name: "User",
@@ -84,7 +84,7 @@ const schema = makeSchema({
     addCrudResolvers("User") // 👈 this will expose all required Query's and Mutation's.
   ],
   plugins: [
-    nexusPrismaPlugin({
+    nexusSchemaPrisma({
       experimentalCRUD: true, // required!
       paginationStrategy: "prisma", // required!
       outputs: {

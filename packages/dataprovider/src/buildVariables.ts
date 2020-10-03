@@ -62,9 +62,11 @@ const buildOrderBy = (
     return null;
   }
 
-  return {
-    [sort.field]: sort.order === "ASC" ? "asc" : "desc",
-  };
+  return [
+    {
+      [sort.field]: sort.order === "ASC" ? "asc" : "desc",
+    },
+  ];
 };
 
 const buildGetListVariables = (introspectionResults: IntrospectionResult) => (

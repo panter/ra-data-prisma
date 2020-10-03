@@ -86,7 +86,7 @@ describe("buildQueryFactory", () => {
       expect(query).toEqualGraphql(gql`
         query users(
           $where: UserWhereInput
-          $orderBy: UserOrderByInput
+          $orderBy: [UserOrderByInput!]
           $take: Int
           $skip: Int
         ) {
