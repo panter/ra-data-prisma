@@ -437,6 +437,7 @@ const buildData = (
       (params as UpdateParams)?.previousData?.[key] ?? null;
     // TODO in case the content of the array has changed but not the array itself?
     if (
+      !fieldData ||
       isEqual(fieldData, previousFieldData) ||
       (isNil(previousFieldData) && isNil(fieldData))
     ) {
