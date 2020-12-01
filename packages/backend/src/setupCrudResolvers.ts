@@ -73,23 +73,16 @@ const setupCrudResolvers = (
           args: {
             where: arg({
               type: `${typeName}WhereInput`,
-              required: false,
             }),
             orderBy: arg({
               type: `${typeName}OrderByInput`,
-              required: false,
             }),
-            skip: intArg({
-              required: false,
-            }),
+            skip: intArg({}),
 
             cursor: arg({
               type: `${typeName}WhereUniqueInput`,
-              required: false,
             }),
-            take: intArg({
-              required: false,
-            }),
+            take: intArg({}),
           },
 
           resolve(root, args, { prisma, db }) {
