@@ -3,6 +3,7 @@ import {
   objectType,
   stringArg,
   inputObjectType,
+  nonNull,
 } from "@nexus/schema";
 import { join } from "path";
 import { nexusSchemaPrisma } from "nexus-plugin-prisma/schema";
@@ -37,8 +38,8 @@ export const testSchema = (options: Options) => {
       t.list.field("logs", {
         type: "String",
         args: {
-          from: stringArg({ required: true }),
-          to: stringArg({ required: true }),
+          from: nonNull(stringArg()),
+          to: nonNull(stringArg()),
         },
       });
     },

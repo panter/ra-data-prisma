@@ -40,6 +40,7 @@ enum ModifiersParams {
   update = "update",
   updateMany = "updateMany",
   upsert = "upsert",
+  connectOrCreate = "connectOrCreate",
 }
 
 const buildOrderBy = (
