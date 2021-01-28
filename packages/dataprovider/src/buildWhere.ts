@@ -55,6 +55,25 @@ const getBooleanFilter = (key: string, value: any) => {
   };
 };
 
+const getDateTimeFilter = (key: string, value: any, comparator?: string) => {
+  if (comparator) {
+    return {
+      [key]: {
+        [comparator]: new Date(value),
+      },
+    };
+  }
+  return {
+    [key]: {
+      equals: new Date(value),
+    },
+  };
+};
+
+const isDateTimeFilter = (type: IntrospectionInputTypeRef) => 
+  type.kind === "INPUT_OBJECT" &&
+  (type.name === "DateTimeFilter" || type.name === "DateTimeNullableFilter");
+
 const isBooleanFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" && type.name === "BoolFilter";
 
@@ -67,12 +86,19 @@ const isIntFilter = (type: IntrospectionInputTypeRef) =>
   (type.name === "IntFilter" || type.name === "IntNullableFilter");
 
 const getFilters = (
-  key: string,
+  _key: string,
   value: any,
   whereType: IntrospectionInputObjectType,
 
   introspectionResults: IntrospectionResult,
 ) => {
+  // for parsing DateTime fields with comparators
+  // the original key should be captured in second match unchanged so it shouldn't break anything else
+  const keyRegex = /^([A-Za-z]+)(_(gt|gte|lt|lte))?$/;
+  const matches = _key.match(keyRegex);
+  const key = matches[1];
+  const comparator = matches[3]; // will be undefined if not matched, or should contain gt|gte|lt|lte
+
   if (key === "NOT" || key === "OR" || key === "AND") {
     return {
       [key]: value.map((f) =>
@@ -113,6 +139,11 @@ const getFilters = (
   if (!isObject(value) && isStringFilter(fieldType)) {
     return getStringFilter(key, value);
   }
+
+  if (!isObject(value) && isDateTimeFilter(fieldType)) {
+    return getDateTimeFilter(key, value, comparator);
+  }
+
   if (isArray(value) && isStringFilter(fieldType)) {
     return { OR: value.map((v) => getStringFilter(key, v)) };
   }
