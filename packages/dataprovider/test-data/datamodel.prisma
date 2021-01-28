@@ -25,6 +25,7 @@ model BlogPost {
   id       String            @default(uuid()) @id
   title    String
   text     String
+  createdAt DateTime
   author   User?             @relation(fields: [authorId], references: [id])
   authorId String?
   comments BlogPostComment[]

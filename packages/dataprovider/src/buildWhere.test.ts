@@ -43,6 +43,69 @@ describe("buildWhere", () => {
     });
   });
 
+  describe("can handle datetime values", () => {
+    it("equal comparison", async () => {
+      const filter = {
+        createdAt: "2020-12-30",
+      };
+      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
+        createdAt: {
+          equals: new Date("2020-12-30"),
+        },
+      });
+    });
+    it("greater than", async () => {
+      const filter = {
+        createdAt_gt: "2020-12-30",
+      };
+      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
+        createdAt: {
+          gt: new Date("2020-12-30"),
+        },
+      });
+    });
+    it("greater than or equal", async () => {
+      const filter = {
+        createdAt_gte: "2020-12-30",
+      };
+      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
+        createdAt: {
+          gte: new Date("2020-12-30"),
+        },
+      });
+    });
+    it("lesser than", async () => {
+      const filter = {
+        createdAt_lt: "2020-12-30",
+      };
+      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
+        createdAt: {
+          lt: new Date("2020-12-30"),
+        },
+      });
+    });
+    it("lesser than or equal", async () => {
+      const filter = {
+        createdAt_lte: "2020-12-30",
+      };
+      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
+        createdAt: {
+          lte: new Date("2020-12-30"),
+        },
+      });
+    });
+  });
+
   it("arrays are interpreted as or", async () => {
     const filter = {
       yearOfBirth: [1879, 1920],
