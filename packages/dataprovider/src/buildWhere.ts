@@ -8,11 +8,15 @@ import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 
-const getStringFilter = (key: string, value: any) => {
+const getStringFilter = (
+  key: string,
+  value: any,
+  comparator: string = "contains",
+) => {
   const OR = [
     {
       [key]: {
-        contains: value,
+        [comparator]: value,
       },
     },
   ];
@@ -20,7 +24,7 @@ const getStringFilter = (key: string, value: any) => {
   if (valueLowerCased !== value) {
     OR.push({
       [key]: {
-        contains: valueLowerCased,
+        [comparator]: valueLowerCased,
       },
     });
   }
@@ -29,20 +33,42 @@ const getStringFilter = (key: string, value: any) => {
   if (valueUpperFirst !== value) {
     OR.push({
       [key]: {
-        contains: valueUpperFirst,
+        [comparator]: valueUpperFirst,
       },
     });
   }
   return { OR };
 };
-const getIntFilter = (key: string, value: any) => {
+
+const getIntFilter = (
+  key: string,
+  value: any,
+  comparator: string = "equals",
+) => {
   const asNumber = parseInt(value, 10);
   if (isNaN(asNumber)) {
     return {};
   }
   return {
     [key]: {
-      equals: asNumber,
+      [comparator]: asNumber,
+    },
+  };
+};
+
+const getFloatFilter = (
+  key: string,
+  value: any,
+  comparator: string = "equals",
+) => {
+  // TODO: test
+  const asFloat = parseFloat(value);
+  if (isNaN(asFloat)) {
+    return {};
+  }
+  return {
+    [key]: {
+      [comparator]: asFloat,
     },
   };
 };
@@ -55,24 +81,80 @@ const getBooleanFilter = (key: string, value: any) => {
   };
 };
 
+const getDateTimeFilter = (
+  key: string,
+  value: any,
+  comparator: string = "equals",
+) => {
+  return {
+    [key]: {
+      [comparator]: new Date(value),
+    },
+  };
+};
+
+// all these variants have the same fields, and are just used in different places, hence different names
+const isDateTimeFilter = (type: IntrospectionInputTypeRef) =>
+  type.kind === "INPUT_OBJECT" &&
+  [
+    "DateTimeFilter",
+    "DateTimeNullableFilter",
+    "NestedDateTimeFilter",
+    "NestedDateTimeNullableFilter",
+  ].indexOf(type.name) !== -1;
+
 const isBooleanFilter = (type: IntrospectionInputTypeRef) =>
-  type.kind === "INPUT_OBJECT" && type.name === "BoolFilter";
+  type.kind === "INPUT_OBJECT" &&
+  [
+    "BoolFilter",
+    "BoolNullableFilter",
+    "NestedBoolFilter",
+    "NestedBoolNullableFilter",
+  ].indexOf(type.name) !== -1;
 
 const isStringFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
-  (type.name === "StringFilter" || type.name === "StringNullableFilter");
+  [
+    "StringFilter",
+    "StringNullableFilter",
+    "NestedStringFilter",
+    "NestedStringNullableFilter",
+  ].indexOf(type.name) !== -1;
 
 const isIntFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
-  (type.name === "IntFilter" || type.name === "IntNullableFilter");
+  [
+    "IntFilter",
+    "IntNullableFilter",
+    "NestedIntFilter",
+    "NestedIntNullableFilter",
+  ].indexOf(type.name) !== -1;
+
+const isFloatFilter = (type: IntrospectionInputTypeRef) =>
+  type.kind === "INPUT_OBJECT" &&
+  [
+    "FloatFilter",
+    "FloatNullableFilter",
+    "NestedFloatFilter",
+    "NestedFloatNullableFilter",
+  ].indexOf(type.name) !== -1;
 
 const getFilters = (
-  key: string,
+  originalKey: string,
   value: any,
   whereType: IntrospectionInputObjectType,
 
   introspectionResults: IntrospectionResult,
 ) => {
+  // for parsing fields with comparators
+  // the original key should be captured in second match unchanged so it shouldn't break anything else
+  const keyRegex = /^(.+?)(_(gt|gte|lt|lte|equals|contains|startsWith|endsWith))?$/;
+  // equals, contains, startsWith, endsWith are specifically for strings
+  // default "comparison" (without specified comparator) is equals, for strings it's contains (so to override this, provide _equals on string fields)
+  const matches = originalKey.match(keyRegex);
+  const key = matches[1];
+  const comparator = matches[3];
+
   if (key === "NOT" || key === "OR" || key === "AND") {
     return {
       [key]: value.map((f) =>
@@ -81,11 +163,60 @@ const getFilters = (
     };
   }
 
-  const fieldType = whereType.inputFields.find((f) => f.name === key)
+  if (comparator) {
+    // use information in whereType and introspectionResults to determine, if we can split the original key and make it act as a compare
+
+    const comparisonFieldType = whereType.inputFields.find(
+      (f) => f.name === key,
+    )?.type as IntrospectionInputObjectType;
+
+    if (comparisonFieldType) {
+      // separated field exists on the whereType
+      const filterName = comparisonFieldType.name;
+      const filter = introspectionResults.types.find(
+        (f) => f.name === filterName,
+      ) as IntrospectionInputObjectType;
+      const comparatorField = filter.inputFields.find(
+        (f) => f.name === comparator,
+      );
+      if (comparatorField) {
+        // and has the comparison field
+
+        if (!isObject(value) && !isArray(value)) {
+          // all comparison fields (equals, lt, lte, gt, gte, contains, startsWith, endsWith) use a Scalar value so it can't be object or array
+          if (isBooleanFilter(filter)) {
+            // the only way we could get here is with "boolField_equals" (which is the same as "boolField")
+            // but skipping here would lead to trying to find field "boolField_equals" which might not exist
+            return getBooleanFilter(key, value);
+          }
+
+          if (isStringFilter(filter)) {
+            return getStringFilter(key, value, comparator);
+          }
+
+          if (isDateTimeFilter(filter)) {
+            return getDateTimeFilter(key, value, comparator);
+          }
+
+          if (isIntFilter(filter)) {
+            return getIntFilter(key, value, comparator);
+          }
+
+          if (isFloatFilter(filter)) {
+            return getFloatFilter(key, value, comparator);
+          }
+        }
+      }
+    }
+  }
+
+  // we can't use comparison on the splitted field, try to use the original key in a default way (without comparator)
+
+  const fieldType = whereType.inputFields.find((f) => f.name === originalKey)
     ?.type as IntrospectionInputObjectType;
 
   if (!fieldType) {
-    if (key === "q") {
+    if (originalKey === "q") {
       // special: q is universal text search
       // we search all text fields
       // additionaly we split by  space to make a AND connection
@@ -106,22 +237,45 @@ const getFilters = (
       return {};
     }
   }
-  if (!isObject(value) && isBooleanFilter(fieldType)) {
-    return getBooleanFilter(key, value);
+
+  if (!isObject(value)) {
+    if (isBooleanFilter(fieldType)) {
+      return getBooleanFilter(originalKey, value);
+    }
+
+    if (isStringFilter(fieldType)) {
+      return getStringFilter(originalKey, value);
+    }
+
+    if (isDateTimeFilter(fieldType)) {
+      return getDateTimeFilter(originalKey, value);
+    }
+
+    if (isIntFilter(fieldType)) {
+      return getIntFilter(originalKey, value);
+    }
+
+    if (isFloatFilter(fieldType)) {
+      return getFloatFilter(originalKey, value);
+    }
   }
 
-  if (!isObject(value) && isStringFilter(fieldType)) {
-    return getStringFilter(key, value);
-  }
-  if (isArray(value) && isStringFilter(fieldType)) {
-    return { OR: value.map((v) => getStringFilter(key, v)) };
-  }
+  if (isArray(value)) {
+    if (isStringFilter(fieldType)) {
+      return { OR: value.map((v) => getStringFilter(originalKey, v)) };
+    }
 
-  if (!isObject(value) && isIntFilter(fieldType)) {
-    return getIntFilter(key, value);
-  }
-  if (isArray(value) && isIntFilter(fieldType)) {
-    return { OR: value.map((v) => getIntFilter(key, v)) };
+    if (isIntFilter(fieldType)) {
+      return { OR: value.map((v) => getIntFilter(originalKey, v)) };
+    }
+
+    if (isDateTimeFilter(fieldType)) {
+      return { OR: value.map((v) => getDateTimeFilter(originalKey, v)) };
+    }
+
+    if (isFloatFilter(fieldType)) {
+      return { OR: value.map((v) => getFloatFilter(originalKey, v)) };
+    }
   }
 
   if (fieldType.kind === "INPUT_OBJECT") {
@@ -138,7 +292,7 @@ const getFilters = (
 
       if (hasSomeFilter) {
         return {
-          [key]: {
+          [originalKey]: {
             some: {
               id: {
                 equals: value,
@@ -148,7 +302,7 @@ const getFilters = (
         };
       }
       return {
-        [key]: {
+        [originalKey]: {
           id: {
             equals: value,
           },
@@ -161,7 +315,7 @@ const getFilters = (
       );
       if (hasSomeFilter) {
         return {
-          [key]: {
+          [originalKey]: {
             some: {
               id: {
                 in: value,
@@ -171,7 +325,7 @@ const getFilters = (
         };
       }
       return {
-        [key]: {
+        [originalKey]: {
           id: {
             in: value,
           },
@@ -185,10 +339,10 @@ const getFilters = (
         introspectionResults,
         inputObjectType,
       );
-      return { [key]: where };
+      return { [originalKey]: where };
     }
   }
-  return { [key]: value };
+  return { [originalKey]: value };
 };
 
 type Filter = {
