@@ -7,6 +7,8 @@ describe("buildWhere", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
   let testBlogPostResource: Resource;
+  let testFilterResource: Resource;
+
   beforeAll(async () => {
     testIntrospection = await getTestIntrospection();
     testUserResource = testIntrospection.resources.find(
@@ -15,9 +17,589 @@ describe("buildWhere", () => {
     testBlogPostResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "BlogPost",
     );
+    testFilterResource = testIntrospection.resources.find(
+      (r) => r.type.kind === "OBJECT" && r.type.name === "FilteringTest",
+    );
   });
 
-  it("can handle simple number values", async () => {
+  describe("properly handles suffixed fields", () => {
+    describe("separating suffix from field name", () => {
+      it("valid suffix gets separated", async () => {
+        const filter = {
+          intField_gt: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField: {
+            gt: 12,
+          },
+        });
+      });
+      it("invalid suffix gets ignored", async () => {
+        const filter = {
+          intField_bt: "12", // "bigger than"
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField_bt: {
+            equals: 12,
+          },
+        });
+      });
+      it("allows underscores in field name with valid suffix", async () => {
+        const filter = {
+          snake_field_gt: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          snake_field: {
+            gt: 12,
+          },
+        });
+      });
+      it("allows underscores in field name with invalid suffix", async () => {
+        const filter = {
+          snake_field_bt: "12", // "bigger than"
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          snake_field_bt: {
+            equals: 12,
+          },
+        });
+      });
+    });
+    describe("reverts to handling original field when", () => {
+      it("no comparator is provided", async () => {
+        const filter = {
+          intField: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField: {
+            equals: 12,
+          },
+        });
+      });
+      it("no comparator is recognized", async () => {
+        const filter = {
+          intField_bt: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField_bt: {
+            equals: 12,
+          },
+        });
+      });
+      it("separated field doesn't exist", async () => {
+        const filter = {
+          myIntField_gt: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({});
+      });
+      it("separated field exists but its type doesn't support comparison", async () => {
+        const filter = {
+          boolField_gt: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({});
+      });
+      it("value is an object", async () => {
+        const filter = {
+          intField_gt: {
+            value: "12",
+          },
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({});
+      });
+      it("value is an array", async () => {
+        const filter = {
+          intField_gt: ["12", "13"],
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({});
+      });
+    });
+    it("in case of conflict favors comparison", async () => {
+      const filter = {
+        intField_lt: "12",
+      };
+      const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+      // intField is Int
+      // intField_lt is String
+      // => picks lt comparison on Int
+      expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+        intField: {
+          lt: 12,
+        },
+      });
+    });
+    it("works with Boolean fields and explicit equal comparison", async () => {
+      const filter = {
+        boolField_equals: "true",
+      };
+
+      const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+        boolField: {
+          equals: true,
+        },
+      });
+    });
+    describe("works with String fields", () => {
+      it("equals", async () => {
+        const filter = {
+          stringField_equals: "aBc",
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          OR: [
+            {
+              stringField: {
+                equals: "aBc",
+              }
+            },
+            {
+              stringField: {
+                equals: "abc"
+              }
+            },
+            {
+              stringField: {
+                equals: "ABc"
+              }
+            }
+          ]
+        });
+      });
+      it("greater than", async () => {
+        const filter = {
+          stringField_gt: "aBc",
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          OR: [
+            {
+              stringField: {
+                gt: "aBc",
+              }
+            },
+            {
+              stringField: {
+                gt: "abc",
+              }
+            },
+            {
+              stringField: {
+                gt: "ABc",
+              }
+            }
+          ]
+        });
+      });
+      it("greater than or equal", async () => {
+        const filter = {
+          stringField_gte: "aBc",
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          OR: [
+            {
+              stringField: {
+                gte: "aBc",
+              }
+            },
+            {
+              stringField: {
+                gte: "abc",
+              }
+            },
+            {
+              stringField: {
+                gte: "ABc",
+              }
+            }
+          ]
+        });
+      });
+      it("lesser than", async () => {
+        const filter = {
+          stringField_lt: "aBc"
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          OR: [
+            {
+              stringField: {
+                lt: "aBc"
+              }
+            },
+            {
+              stringField: {
+                lt: "abc"
+              }
+            },
+            {
+              stringField: {
+                lt: "ABc"
+              }
+            }
+          ]
+        });
+      });
+      it("lesser than or equal", async () => {
+        const filter = {
+          stringField_lte: "aBc"
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          OR: [
+            {
+              stringField: {
+                lte: "aBc"
+              }
+            },
+            {
+              stringField: {
+                lte: "abc"
+              }
+            },
+            {
+              stringField: {
+                lte: "ABc"
+              }
+            }
+          ]
+        });
+      });
+      it("contains", async () => {
+        const filter = {
+          stringField_contains: "aBc"
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          OR: [
+            {
+              stringField: {
+                contains: "aBc"
+              }
+            },
+            {
+              stringField: {
+                contains: "abc"
+              }
+            },
+            {
+              stringField: {
+                contains: "ABc"
+              }
+            }
+          ]
+        });
+      });
+      it("starts with", async () => {
+        const filter = {
+          stringField_startsWith: "aBc"
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          OR: [
+            {
+              stringField: {
+                startsWith: "aBc"
+              }
+            },
+            {
+              stringField: {
+                startsWith: "abc"
+              }
+            },
+            {
+              stringField: {
+                startsWith: "ABc"
+              }
+            }
+          ]
+        });
+      });
+      it("ends with", async () => {
+        const filter = {
+          stringField_endsWith: "aBc"
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          OR: [
+            {
+              stringField: {
+                endsWith: "aBc"
+              }
+            },
+            {
+              stringField: {
+                endsWith: "abc"
+              }
+            },
+            {
+              stringField: {
+                endsWith: "ABc"
+              }
+            }
+          ]
+        });
+      });
+    });
+    describe("works with Int fields", () => {
+      it("equals", async () => {
+        const filter = {
+          intField_equals: "12",
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField: {
+            equals: 12,
+          },
+        });
+      });
+      it("greater than", async () => {
+        const filter = {
+          intField_gt: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField: {
+            gt: 12,
+          },
+        });
+      });
+      it("greater than or equal", async () => {
+        const filter = {
+          intField_gte: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField: {
+            gte: 12,
+          },
+        });
+      });
+      it("lesser than", async () => {
+        const filter = {
+          intField_lt: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField: {
+            lt: 12,
+          },
+        });
+      });
+      it("lesser than or equal", async () => {
+        const filter = {
+          intField_lte: "12",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          intField: {
+            lte: 12,
+          },
+        });
+      });
+    });
+    describe("works with Float fields", () => {
+      it("equals", async () => {
+        const filter = {
+          floatField_equals: "12.34",
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          floatField: {
+            equals: 12.34,
+          },
+        });
+      });
+      it("greater than", async () => {
+        const filter = {
+          floatField_gt: "12.34",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          floatField: {
+            gt: 12.34,
+          },
+        });
+      });
+      it("greater than or equal", async () => {
+        const filter = {
+          floatField_gte: "12.34",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          floatField: {
+            gte: 12.34,
+          },
+        });
+      });
+      it("lesser than", async () => {
+        const filter = {
+          floatField_lt: "12.34",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          floatField: {
+            lt: 12.34,
+          },
+        });
+      });
+      it("lesser than or equal", async () => {
+        const filter = {
+          floatField_lte: "12.34",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          floatField: {
+            lte: 12.34,
+          },
+        });
+      });
+    });
+    describe("works with DateTime fields", () => {
+      it("equals", async () => {
+        const filter = {
+          dateTimeField_equals: "2020-12-30",
+        };
+
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          dateTimeField: {
+            equals: new Date("2020-12-30"),
+          },
+        });
+      });
+      it("greater than", async () => {
+        const filter = {
+          dateTimeField_gt: "2020-12-30",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          dateTimeField: {
+            gt: new Date("2020-12-30"),
+          },
+        });
+      });
+      it("greater than or equal", async () => {
+        const filter = {
+          dateTimeField_gte: "2020-12-30",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          dateTimeField: {
+            gte: new Date("2020-12-30"),
+          },
+        });
+      });
+      it("lesser than", async () => {
+        const filter = {
+          dateTimeField_lt: "2020-12-30",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          dateTimeField: {
+            lt: new Date("2020-12-30"),
+          },
+        });
+      });
+      it("lesser than or equal", async () => {
+        const filter = {
+          dateTimeField_lte: "2020-12-30",
+        };
+        const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+        expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+          dateTimeField: {
+            lte: new Date("2020-12-30"),
+          },
+        });
+      });
+    });
+  });
+
+  it("can handle simple float values", async () => {
+    const filter = {
+      floatField: "12.34",
+    };
+
+    const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+      floatField: {
+        equals: 12.34,
+      },
+    });
+  });
+
+  it("can handle simple datetime values", async () => {
+    const filter = {
+      dateTimeField: "2020-12-30",
+    };
+
+    const result = buildWhere(filter, testFilterResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
+      dateTimeField: {
+        equals: new Date("2020-12-30"),
+      },
+    });
+  });
+
+  // below are previous tests which shouldn't be changed and should pass
+  it("can handle simple int values", async () => {
     const filter = {
       yearOfBirth: 1879,
     };
@@ -40,69 +622,6 @@ describe("buildWhere", () => {
       wantsNewsletter: {
         equals: true,
       },
-    });
-  });
-
-  describe("can handle datetime values", () => {
-    it("equal comparison", async () => {
-      const filter = {
-        createdAt: "2020-12-30",
-      };
-      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
-
-      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
-        createdAt: {
-          equals: new Date("2020-12-30"),
-        },
-      });
-    });
-    it("greater than", async () => {
-      const filter = {
-        createdAt_gt: "2020-12-30",
-      };
-      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
-
-      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
-        createdAt: {
-          gt: new Date("2020-12-30"),
-        },
-      });
-    });
-    it("greater than or equal", async () => {
-      const filter = {
-        createdAt_gte: "2020-12-30",
-      };
-      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
-
-      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
-        createdAt: {
-          gte: new Date("2020-12-30"),
-        },
-      });
-    });
-    it("lesser than", async () => {
-      const filter = {
-        createdAt_lt: "2020-12-30",
-      };
-      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
-
-      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
-        createdAt: {
-          lt: new Date("2020-12-30"),
-        },
-      });
-    });
-    it("lesser than or equal", async () => {
-      const filter = {
-        createdAt_lte: "2020-12-30",
-      };
-      const result = buildWhere(filter, testBlogPostResource, testIntrospection);
-
-      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
-        createdAt: {
-          lte: new Date("2020-12-30"),
-        },
-      });
     });
   });
 
@@ -234,6 +753,7 @@ describe("buildWhere", () => {
       ],
     });
   });
+
   it("handles mix of raw and simple filters", async () => {
     //
 
@@ -316,6 +836,7 @@ describe("buildWhere", () => {
       ],
     });
   });
+
   it("handles mixes of arrays as well", async () => {
     const filter = {
       yearOfBirth: [1879, 1920],

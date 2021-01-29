@@ -86,9 +86,24 @@ export const testSchema = (options: Options) => {
       t.model.id();
       t.model.title();
       t.model.text();
-      t.model.createdAt();
       t.model.author();
       t.model.comments();
+    },
+  });
+
+  const FilteringTest = objectType({
+    name: "FilteringTest",
+    definition(t) {
+      t.model.id();
+      t.model.intField();
+      t.model.floatField();
+      t.model.stringField();
+      t.model.dateTimeField();
+      t.model.boolField();
+      t.model.intField_lt();
+      t.model.intField_bt();
+      t.model.snake_field();
+      t.model.snake_field_bt();
     },
   });
 
@@ -125,12 +140,14 @@ export const testSchema = (options: Options) => {
     BlogPost,
     BlogPostComment,
     UserCreateOneWithoutCommentsInput,
+    FilteringTest,
 
     addCrudResolvers("User", options),
     addCrudResolvers("UserRole", options),
     addCrudResolvers("SomePublicRecordWithIntId", options),
     addCrudResolvers("BlogPost", options),
     addCrudResolvers("BlogPostComment", options),
+    addCrudResolvers("FilteringTest", options),
   ];
 
   return makeSchema({
