@@ -61,6 +61,19 @@ model User {
   comments        BlogPostComment[]
 }
 
+model FilteringTest {
+  id              Int   @id @default(autoincrement())
+  intField        Int
+  floatField      Float
+  stringField     String
+  dateTimeField   DateTime
+  boolField       Boolean
+  intField_lt     String
+  intField_bt     Int
+  snake_field     Int
+  snake_field_bt  Int
+}
+
 model SomePublicRecordWithIntId {
   id    Int    @default(autoincrement()) @id
   title String
