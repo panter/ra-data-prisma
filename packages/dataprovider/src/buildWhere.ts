@@ -11,8 +11,22 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 const getStringFilter = (
   key: string,
   value: any,
-  comparator: string = "contains",
+  hasCaseInsensitive: boolean = false,
+  caseSensitiveFlag: boolean = false,
+  comparator: string = "contains"
 ) => {
+  // hasCaseInsensitive is determined from the introspection results
+  // case sensitive flag can be used only if it supports QueryMode enum
+  // no QueryMode => case sensitive flag is ignored and fall back to original implementation
+  if (hasCaseInsensitive) {
+    return {
+      [key]: {
+        [comparator]: value,
+        mode: caseSensitiveFlag ? "default" : "insensitive"
+      }
+    }
+  }
+  
   const OR = [
     {
       [key]: {
@@ -139,6 +153,14 @@ const isFloatFilter = (type: IntrospectionInputTypeRef) =>
     "NestedFloatNullableFilter",
   ].indexOf(type.name) !== -1;
 
+const supportsCaseInsensitive = (introspectionResults: IntrospectionResult): boolean => {
+  // Prisma 2.8.0 added QueryMode enum (present in StringFilter and StringNullableFilter input objects as property `mode`)
+  const queryModeExists = introspectionResults.types.find(type => type.kind === "ENUM" && type.name === "QueryMode");
+  const stringFilterType = introspectionResults.types.find(type => type.kind === "INPUT_OBJECT" && type.name === "StringFilter") as IntrospectionInputObjectType;
+  const usesQueryMode = stringFilterType?.inputFields.find(field => field.name === "mode" && field.type.kind === "ENUM" && field.type.name === "QueryMode");
+  return !!queryModeExists && !!usesQueryMode;
+}
+
 const getFilters = (
   originalKey: string,
   value: any,
@@ -146,14 +168,16 @@ const getFilters = (
 
   introspectionResults: IntrospectionResult,
 ) => {
+  const hasCaseInsensitive = supportsCaseInsensitive(introspectionResults);
   // for parsing fields with comparators
   // the original key should be captured in second match unchanged so it shouldn't break anything else
-  const keyRegex = /^(.+?)(_(gt|gte|lt|lte|equals|contains|startsWith|endsWith))?$/;
+  const keyRegex = /^(.+?)(_(gt|gte|lt|lte|equals|contains|startsWith|endsWith))?(_(cs))?$/;
   // equals, contains, startsWith, endsWith are specifically for strings
   // default "comparison" (without specified comparator) is equals, for strings it's contains (so to override this, provide _equals on string fields)
   const matches = originalKey.match(keyRegex);
   const key = matches[1];
   const comparator = matches[3];
+  const useCaseSensitive = !!matches[5];
 
   if (key === "NOT" || key === "OR" || key === "AND") {
     return {
@@ -191,7 +215,7 @@ const getFilters = (
           }
 
           if (isStringFilter(filter)) {
-            return getStringFilter(key, value, comparator);
+            return getStringFilter(key, value, hasCaseInsensitive, useCaseSensitive, comparator);
           }
 
           if (isDateTimeFilter(filter)) {
@@ -238,13 +262,13 @@ const getFilters = (
     }
   }
 
-  if (!isObject(value)) {
+  if (!isObject(value) && !isArray(value)) {
     if (isBooleanFilter(fieldType)) {
       return getBooleanFilter(originalKey, value);
     }
 
     if (isStringFilter(fieldType)) {
-      return getStringFilter(originalKey, value);
+      return getStringFilter(originalKey, value, hasCaseInsensitive, useCaseSensitive);
     }
 
     if (isDateTimeFilter(fieldType)) {
