@@ -54,23 +54,10 @@ describe("buildVariables", () => {
               },
             },
             {
-              OR: [
-                {
-                  firstName: {
-                    contains: "fooBar",
-                  },
-                },
-                {
-                  firstName: {
-                    contains: "foobar",
-                  },
-                },
-                {
-                  firstName: {
-                    contains: "FooBar",
-                  },
-                },
-              ],
+              firstName: {
+                contains: "fooBar",
+                mode: "insensitive",
+              },
             },
           ],
         },
