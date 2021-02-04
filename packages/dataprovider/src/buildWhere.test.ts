@@ -22,6 +22,17 @@ describe("buildWhere", () => {
     );
   });
 
+  describe("can handle true case insensitive string search", () => {
+    it("will use case insensitive search if available", async () => {
+      
+    });
+    it("can explicitly use case sensitive if you can specify", async () => {
+
+    });
+    it("defaults back to original pseudo case insensitive on older Prisma versions", async () => {
+
+    });
+  });
   describe("properly handles suffixed fields", () => {
     describe("separating suffix from field name", () => {
       it("valid suffix gets separated", async () => {
