@@ -24,13 +24,51 @@ describe("buildWhere", () => {
 
   describe("can handle true case insensitive string search", () => {
     it("will use case insensitive search if available", async () => {
-      
-    });
-    it("can explicitly use case sensitive if you can specify", async () => {
+      const filter = {
+        firstName: "fooBar",
+      };
+      const result = buildWhere(filter, testUserResource, testIntrospection);
 
+      expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+        firstName: {
+          contains: "fooBar",
+          mode: "insensitive",
+        },
+      });
     });
-    it("defaults back to original pseudo case insensitive on older Prisma versions", async () => {
+    it("returns where with multiple cases on older Prisma versions", async () => {
+      // current test schema + introspection is running on sufficient Prisma version (../generated/schema.graphql contains QueryMode enum)
+      // for testing the original pseudo case insensitive version (which should be used on clients with < 2.8.0 Prisma) we need to imitate the older version
+      // manually deleting the enum from introspection should be enough (supportsCaseInsensitive() returns false then)
+      const oldPrismaTestIntrospection = Object.assign({}, testIntrospection);
+      oldPrismaTestIntrospection.types = oldPrismaTestIntrospection.types.filter(
+        (type) => type.kind !== "ENUM" || type.name !== "QueryMode",
+      );
+      const filter = {
+        firstName: "aBc",
+      };
 
+      const result = buildWhere(filter, testUserResource, oldPrismaTestIntrospection);
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+        OR: [
+          {
+            firstName: {
+              contains: "aBc",
+            },
+          },
+          {
+            firstName: {
+              contains: "abc",
+            },
+          },
+          {
+            firstName: {
+              contains: "ABc",
+            },
+          },
+        ],
+      });
     });
   });
   describe("properly handles suffixed fields", () => {
@@ -181,23 +219,10 @@ describe("buildWhere", () => {
         const result = buildWhere(filter, testFilterResource, testIntrospection);
 
         expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
-          OR: [
-            {
-              stringField: {
-                equals: "aBc",
-              }
-            },
-            {
-              stringField: {
-                equals: "abc"
-              }
-            },
-            {
-              stringField: {
-                equals: "ABc"
-              }
-            }
-          ]
+          stringField: {
+            equals: "aBc",
+            mode: "insensitive",
+          },
         });
       });
       it("greater than", async () => {
@@ -208,23 +233,10 @@ describe("buildWhere", () => {
         const result = buildWhere(filter, testFilterResource, testIntrospection);
 
         expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
-          OR: [
-            {
-              stringField: {
-                gt: "aBc",
-              }
-            },
-            {
-              stringField: {
-                gt: "abc",
-              }
-            },
-            {
-              stringField: {
-                gt: "ABc",
-              }
-            }
-          ]
+          stringField: {
+            gt: "aBc",
+            mode: "insensitive",
+          },
         });
       });
       it("greater than or equal", async () => {
@@ -235,158 +247,80 @@ describe("buildWhere", () => {
         const result = buildWhere(filter, testFilterResource, testIntrospection);
 
         expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
-          OR: [
-            {
-              stringField: {
-                gte: "aBc",
-              }
-            },
-            {
-              stringField: {
-                gte: "abc",
-              }
-            },
-            {
-              stringField: {
-                gte: "ABc",
-              }
-            }
-          ]
+          stringField: {
+            gte: "aBc",
+            mode: "insensitive",
+          },
         });
       });
       it("lesser than", async () => {
         const filter = {
-          stringField_lt: "aBc"
+          stringField_lt: "aBc",
         };
 
         const result = buildWhere(filter, testFilterResource, testIntrospection);
 
         expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
-          OR: [
-            {
-              stringField: {
-                lt: "aBc"
-              }
-            },
-            {
-              stringField: {
-                lt: "abc"
-              }
-            },
-            {
-              stringField: {
-                lt: "ABc"
-              }
-            }
-          ]
+          stringField: {
+            lt: "aBc",
+            mode: "insensitive",
+          },
         });
       });
       it("lesser than or equal", async () => {
         const filter = {
-          stringField_lte: "aBc"
+          stringField_lte: "aBc",
         };
 
         const result = buildWhere(filter, testFilterResource, testIntrospection);
 
         expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
-          OR: [
-            {
-              stringField: {
-                lte: "aBc"
-              }
-            },
-            {
-              stringField: {
-                lte: "abc"
-              }
-            },
-            {
-              stringField: {
-                lte: "ABc"
-              }
-            }
-          ]
+          stringField: {
+            lte: "aBc",
+            mode: "insensitive",
+          },
         });
       });
       it("contains", async () => {
         const filter = {
-          stringField_contains: "aBc"
+          stringField_contains: "aBc",
         };
 
         const result = buildWhere(filter, testFilterResource, testIntrospection);
 
         expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
-          OR: [
-            {
-              stringField: {
-                contains: "aBc"
-              }
-            },
-            {
-              stringField: {
-                contains: "abc"
-              }
-            },
-            {
-              stringField: {
-                contains: "ABc"
-              }
-            }
-          ]
+          stringField: {
+            contains: "aBc",
+            mode: "insensitive",
+          },
         });
       });
       it("starts with", async () => {
         const filter = {
-          stringField_startsWith: "aBc"
+          stringField_startsWith: "aBc",
         };
 
         const result = buildWhere(filter, testFilterResource, testIntrospection);
 
         expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
-          OR: [
-            {
-              stringField: {
-                startsWith: "aBc"
-              }
-            },
-            {
-              stringField: {
-                startsWith: "abc"
-              }
-            },
-            {
-              stringField: {
-                startsWith: "ABc"
-              }
-            }
-          ]
+          stringField: {
+            startsWith: "aBc",
+            mode: "insensitive",
+          },
         });
       });
       it("ends with", async () => {
         const filter = {
-          stringField_endsWith: "aBc"
+          stringField_endsWith: "aBc",
         };
 
         const result = buildWhere(filter, testFilterResource, testIntrospection);
 
         expect(result).toEqual<NexusGenArgTypes["Query"]["filteringTests"]["where"]>({
-          OR: [
-            {
-              stringField: {
-                endsWith: "aBc"
-              }
-            },
-            {
-              stringField: {
-                endsWith: "abc"
-              }
-            },
-            {
-              stringField: {
-                endsWith: "ABc"
-              }
-            }
-          ]
+          stringField: {
+            endsWith: "aBc",
+            mode: "insensitive",
+          },
         });
       });
     });
@@ -657,61 +591,6 @@ describe("buildWhere", () => {
     });
   });
 
-  it("returns where with multiple cases when its a string", async () => {
-    //
-
-    const filter = {
-      yearOfBirth: 1879,
-      firstName: "fooBar",
-      lastName: "einstein",
-    };
-    const result = buildWhere(filter, testUserResource, testIntrospection);
-
-    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
-      AND: [
-        {
-          yearOfBirth: {
-            equals: 1879,
-          },
-        },
-        {
-          OR: [
-            {
-              firstName: {
-                contains: "fooBar",
-              },
-            },
-            {
-              firstName: {
-                contains: "foobar",
-              },
-            },
-            {
-              firstName: {
-                contains: "FooBar",
-              },
-            },
-          ],
-        },
-        {
-          OR: [
-            {
-              lastName: {
-                contains: "einstein",
-              },
-            },
-
-            {
-              lastName: {
-                contains: "Einstein",
-              },
-            },
-          ],
-        },
-      ],
-    });
-  });
-
   it("passes the raw query if its compatible", async () => {
     //
 
@@ -814,23 +693,10 @@ describe("buildWhere", () => {
         {
           OR: [
             {
-              OR: [
-                {
-                  firstName: {
-                    contains: "fooBar",
-                  },
-                },
-                {
-                  firstName: {
-                    contains: "foobar",
-                  },
-                },
-                {
-                  firstName: {
-                    contains: "FooBar",
-                  },
-                },
-              ],
+              firstName: {
+                contains: "fooBar",
+                mode: "insensitive",
+              },
             },
             {
               lastName: {
@@ -873,32 +739,16 @@ describe("buildWhere", () => {
         {
           OR: [
             {
-              OR: [
-                {
-                  firstName: {
-                    contains: "albert",
-                  },
-                },
-                {
-                  firstName: {
-                    contains: "Albert",
-                  },
-                },
-              ],
+              firstName: {
+                contains: "albert",
+                mode: "insensitive",
+              },
             },
             {
-              OR: [
-                {
-                  firstName: {
-                    contains: "niels",
-                  },
-                },
-                {
-                  firstName: {
-                    contains: "Niels",
-                  },
-                },
-              ],
+              firstName: {
+                contains: "niels",
+                mode: "insensitive",
+              },
             },
           ],
         },
@@ -1042,43 +892,17 @@ describe("buildWhere", () => {
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       OR: [
         {
-          OR: [
-            {
-              firstName: {
-                contains: "fooBar",
-              },
-            },
-            {
-              firstName: {
-                contains: "foobar",
-              },
-            },
-            {
-              firstName: {
-                contains: "FooBar",
-              },
-            },
-          ],
+          firstName: {
+            contains: "fooBar",
+            mode: "insensitive",
+          },
         },
         {
           userSocialMedia: {
-            OR: [
-              {
-                instagram: {
-                  contains: "fooBar",
-                },
-              },
-              {
-                instagram: {
-                  contains: "foobar",
-                },
-              },
-              {
-                instagram: {
-                  contains: "FooBar",
-                },
-              },
-            ],
+            instagram: {
+              contains: "fooBar",
+              mode: "insensitive",
+            },
           },
         },
       ],
@@ -1118,46 +942,22 @@ describe("buildWhere", () => {
           {
             OR: [
               {
-                OR: [
-                  {
-                    email: {
-                      contains: "stein",
-                    },
-                  },
-                  {
-                    email: {
-                      contains: "Stein",
-                    },
-                  },
-                ],
+                email: {
+                  contains: "stein",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    firstName: {
-                      contains: "stein",
-                    },
-                  },
-                  {
-                    firstName: {
-                      contains: "Stein",
-                    },
-                  },
-                ],
+                firstName: {
+                  contains: "stein",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    lastName: {
-                      contains: "stein",
-                    },
-                  },
-                  {
-                    lastName: {
-                      contains: "Stein",
-                    },
-                  },
-                ],
+                lastName: {
+                  contains: "stein",
+                  mode: "insensitive",
+                },
               },
             ],
           },
@@ -1175,92 +975,44 @@ describe("buildWhere", () => {
           {
             OR: [
               {
-                OR: [
-                  {
-                    email: {
-                      contains: "albert",
-                    },
-                  },
-                  {
-                    email: {
-                      contains: "Albert",
-                    },
-                  },
-                ],
+                email: {
+                  contains: "albert",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    firstName: {
-                      contains: "albert",
-                    },
-                  },
-                  {
-                    firstName: {
-                      contains: "Albert",
-                    },
-                  },
-                ],
+                firstName: {
+                  contains: "albert",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    lastName: {
-                      contains: "albert",
-                    },
-                  },
-                  {
-                    lastName: {
-                      contains: "Albert",
-                    },
-                  },
-                ],
+                lastName: {
+                  contains: "albert",
+                  mode: "insensitive",
+                },
               },
             ],
           },
           {
             OR: [
               {
-                OR: [
-                  {
-                    email: {
-                      contains: "stein",
-                    },
-                  },
-                  {
-                    email: {
-                      contains: "Stein",
-                    },
-                  },
-                ],
+                email: {
+                  contains: "stein",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    firstName: {
-                      contains: "stein",
-                    },
-                  },
-                  {
-                    firstName: {
-                      contains: "Stein",
-                    },
-                  },
-                ],
+                firstName: {
+                  contains: "stein",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    lastName: {
-                      contains: "stein",
-                    },
-                  },
-                  {
-                    lastName: {
-                      contains: "Stein",
-                    },
-                  },
-                ],
+                lastName: {
+                  contains: "stein",
+                  mode: "insensitive",
+                },
               },
             ],
           },
@@ -1278,77 +1030,44 @@ describe("buildWhere", () => {
           {
             OR: [
               {
-                OR: [
-                  {
-                    email: {
-                      contains: "albert",
-                    },
-                  },
-                  {
-                    email: {
-                      contains: "Albert",
-                    },
-                  },
-                ],
+                email: {
+                  contains: "albert",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    firstName: {
-                      contains: "albert",
-                    },
-                  },
-                  {
-                    firstName: {
-                      contains: "Albert",
-                    },
-                  },
-                ],
+                firstName: {
+                  contains: "albert",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    lastName: {
-                      contains: "albert",
-                    },
-                  },
-                  {
-                    lastName: {
-                      contains: "Albert",
-                    },
-                  },
-                ],
+                lastName: {
+                  contains: "albert",
+                  mode: "insensitive",
+                },
               },
             ],
           },
           {
             OR: [
               {
-                OR: [
-                  {
-                    email: {
-                      contains: "1879",
-                    },
-                  },
-                ],
+                email: {
+                  contains: "1879",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    firstName: {
-                      contains: "1879",
-                    },
-                  },
-                ],
+                firstName: {
+                  contains: "1879",
+                  mode: "insensitive",
+                },
               },
               {
-                OR: [
-                  {
-                    lastName: {
-                      contains: "1879",
-                    },
-                  },
-                ],
+                lastName: {
+                  contains: "1879",
+                  mode: "insensitive",
+                },
               },
               {
                 yearOfBirth: {
