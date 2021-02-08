@@ -6,13 +6,29 @@ import upperFirst from "lodash/upperFirst";
 import isObject from "lodash/isObject";
 import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
-import { IntrospectionResult, Resource } from "./constants/interfaces";
+import {
+  CheckComparisonQueryResult,
+  IntrospectionResult,
+  Resource,
+} from "./constants/interfaces";
 
 const getStringFilter = (
   key: string,
   value: any,
+  hasCaseInsensitive: boolean = false,
   comparator: string = "contains",
 ) => {
+  // hasCaseInsensitive is determined from the introspection results
+  // no QueryMode => fall back to original implementation
+  if (hasCaseInsensitive) {
+    return {
+      [key]: {
+        [comparator]: value,
+        mode: "insensitive",
+      },
+    };
+  }
+
   const OR = [
     {
       [key]: {
@@ -61,7 +77,6 @@ const getFloatFilter = (
   value: any,
   comparator: string = "equals",
 ) => {
-  // TODO: test
   const asFloat = parseFloat(value);
   if (isNaN(asFloat)) {
     return {};
@@ -112,14 +127,15 @@ const isBooleanFilter = (type: IntrospectionInputTypeRef) =>
     "NestedBoolNullableFilter",
   ].indexOf(type.name) !== -1;
 
+// StringFilters are a bit special - Nested variants don't have the case insensitive property `mode` on them (otherwise same)
+// in case of older Prisma, they're all the same
 const isStringFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
-  [
-    "StringFilter",
-    "StringNullableFilter",
-    "NestedStringFilter",
-    "NestedStringNullableFilter",
-  ].indexOf(type.name) !== -1;
+  ["StringFilter", "StringNullableFilter"].indexOf(type.name) !== -1;
+
+const isNestedStringFilter = (type: IntrospectionInputTypeRef) =>
+  type.kind === "INPUT_OBJECT" &&
+  ["NestedStringFilter", "NestedStringNullableFilter"].indexOf(type.name) !== -1;
 
 const isIntFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
@@ -139,22 +155,86 @@ const isFloatFilter = (type: IntrospectionInputTypeRef) =>
     "NestedFloatNullableFilter",
   ].indexOf(type.name) !== -1;
 
+const supportsCaseInsensitive = (
+  introspectionResults: IntrospectionResult,
+): boolean => {
+  // Prisma 2.8.0 added QueryMode enum (present in StringFilter and StringNullableFilter input objects as property `mode`)
+  const queryModeExists = introspectionResults.types.find(
+    (type) => type.kind === "ENUM" && type.name === "QueryMode",
+  );
+  const stringFilterType = introspectionResults.types.find(
+    (type) => type.kind === "INPUT_OBJECT" && type.name === "StringFilter",
+  ) as IntrospectionInputObjectType;
+  const usesQueryMode = stringFilterType?.inputFields.find(
+    (field) =>
+      field.name === "mode" &&
+      field.type.kind === "ENUM" &&
+      field.type.name === "QueryMode",
+  );
+  return !!queryModeExists && !!usesQueryMode;
+};
+
+const processKey = (originalKey: string) => {
+  // for parsing fields with comparators
+  // the original key should be captured in second match unchanged so it shouldn't break anything else
+  // equals, contains, startsWith, endsWith are specifically for strings
+  // default "comparison" (without specified comparator) is equals, for strings it's contains (so to override this, provide _equals on string fields)
+  const keyRegex = /^(.+?)(_(gt|gte|lt|lte|equals|contains|startsWith|endsWith))?$/;
+  const matches = originalKey.match(keyRegex);
+  const key = matches[1];
+  const comparator = matches[3];
+
+  return {
+    originalKey,
+    key,
+    comparator,
+  };
+};
+
+const processComparisonQuery = (
+  field: string,
+  value: any,
+  comparison: string,
+  whereType: IntrospectionInputObjectType,
+  introspectionResults: IntrospectionResult,
+): CheckComparisonQueryResult => {
+  if (!comparison) {
+    return { comparisonPossible: false };
+  }
+
+  const comparisonFieldType = whereType.inputFields.find(
+    (f) => f.name === field,
+  )?.type as IntrospectionInputObjectType;
+
+  if (comparisonFieldType) {
+    // separated field exists on the whereType
+    const filterName = comparisonFieldType.name;
+    const filter = introspectionResults.types.find(
+      (f) => f.name === filterName,
+    ) as IntrospectionInputObjectType;
+    const comparatorField = filter.inputFields.find(
+      (f) => f.name === comparison,
+    );
+    if (comparatorField) {
+      // and has the comparison field
+      if (!isObject(value) && !isArray(value)) {
+        // all comparison fields (equals, lt, lte, gt, gte, contains, startsWith, endsWith) use a Scalar value so it can't be object or array
+        return { comparisonPossible: true, comparisonFieldType: filter };
+      }
+    }
+  }
+  return { comparisonPossible: false };
+};
+
 const getFilters = (
-  originalKey: string,
+  _key: string,
   value: any,
   whereType: IntrospectionInputObjectType,
 
   introspectionResults: IntrospectionResult,
 ) => {
-  // for parsing fields with comparators
-  // the original key should be captured in second match unchanged so it shouldn't break anything else
-  const keyRegex = /^(.+?)(_(gt|gte|lt|lte|equals|contains|startsWith|endsWith))?$/;
-  // equals, contains, startsWith, endsWith are specifically for strings
-  // default "comparison" (without specified comparator) is equals, for strings it's contains (so to override this, provide _equals on string fields)
-  const matches = originalKey.match(keyRegex);
-  const key = matches[1];
-  const comparator = matches[3];
-
+  const hasCaseInsensitive = supportsCaseInsensitive(introspectionResults);
+  const { originalKey, key, comparator } = processKey(_key);
   if (key === "NOT" || key === "OR" || key === "AND") {
     return {
       [key]: value.map((f) =>
@@ -163,50 +243,40 @@ const getFilters = (
     };
   }
 
-  if (comparator) {
-    // use information in whereType and introspectionResults to determine, if we can split the original key and make it act as a compare
+  // check introspection, if we can use comparison on the field before suffixes (and if possible, return the type of that field)
+  const { comparisonPossible, comparisonFieldType } = processComparisonQuery(
+    key,
+    value,
+    comparator,
+    whereType,
+    introspectionResults,
+  );
+  if (comparisonPossible) {
+    if (isBooleanFilter(comparisonFieldType)) {
+      // the only way we could get here is with "boolField_equals" (which is the same as "boolField")
+      // but skipping here would lead to trying to find field "boolField_equals" which might not exist
+      return getBooleanFilter(key, value);
+    }
 
-    const comparisonFieldType = whereType.inputFields.find(
-      (f) => f.name === key,
-    )?.type as IntrospectionInputObjectType;
+    if (isStringFilter(comparisonFieldType)) {
+      return getStringFilter(key, value, hasCaseInsensitive, comparator);
+    }
+    // Nested variants don't have `mode` property
+    // pass `hasCaseInsensitive=false` to bypass the check and use the original implementation
+    if (isNestedStringFilter(comparisonFieldType)) {
+      return getStringFilter(key, value, false, comparator);
+    }
 
-    if (comparisonFieldType) {
-      // separated field exists on the whereType
-      const filterName = comparisonFieldType.name;
-      const filter = introspectionResults.types.find(
-        (f) => f.name === filterName,
-      ) as IntrospectionInputObjectType;
-      const comparatorField = filter.inputFields.find(
-        (f) => f.name === comparator,
-      );
-      if (comparatorField) {
-        // and has the comparison field
+    if (isDateTimeFilter(comparisonFieldType)) {
+      return getDateTimeFilter(key, value, comparator);
+    }
 
-        if (!isObject(value) && !isArray(value)) {
-          // all comparison fields (equals, lt, lte, gt, gte, contains, startsWith, endsWith) use a Scalar value so it can't be object or array
-          if (isBooleanFilter(filter)) {
-            // the only way we could get here is with "boolField_equals" (which is the same as "boolField")
-            // but skipping here would lead to trying to find field "boolField_equals" which might not exist
-            return getBooleanFilter(key, value);
-          }
+    if (isIntFilter(comparisonFieldType)) {
+      return getIntFilter(key, value, comparator);
+    }
 
-          if (isStringFilter(filter)) {
-            return getStringFilter(key, value, comparator);
-          }
-
-          if (isDateTimeFilter(filter)) {
-            return getDateTimeFilter(key, value, comparator);
-          }
-
-          if (isIntFilter(filter)) {
-            return getIntFilter(key, value, comparator);
-          }
-
-          if (isFloatFilter(filter)) {
-            return getFloatFilter(key, value, comparator);
-          }
-        }
-      }
+    if (isFloatFilter(comparisonFieldType)) {
+      return getFloatFilter(key, value, comparator);
     }
   }
 
@@ -222,13 +292,20 @@ const getFilters = (
       // additionaly we split by  space to make a AND connection
       const AND = value.split(" ").map((part: string) => ({
         OR: whereType.inputFields
-          .map((f) =>
-            f.name !== "id" && isStringFilter(f.type)
-              ? getStringFilter(f.name, part.trim())
-              : f.name !== "id" && isIntFilter(f.type)
-              ? getIntFilter(f.name, part.trim())
-              : null,
-          )
+          .map((f) => {
+            if (f.name !== "id") {
+              if (isStringFilter(f.type)) {
+                return getStringFilter(f.name, part.trim(), hasCaseInsensitive);
+              }
+              if (isNestedStringFilter(f.type)) {
+                return getStringFilter(f.name, part.trim(), false);
+              }
+              if (isIntFilter(f.type)) {
+                return getIntFilter(f.name, part.trim());
+              }
+            }
+            return null;
+          })
           .filter((f) => !isEmpty(f)),
       }));
 
@@ -238,13 +315,17 @@ const getFilters = (
     }
   }
 
-  if (!isObject(value)) {
+  if (!isObject(value) && !isArray(value)) {
     if (isBooleanFilter(fieldType)) {
       return getBooleanFilter(originalKey, value);
     }
 
     if (isStringFilter(fieldType)) {
-      return getStringFilter(originalKey, value);
+      return getStringFilter(originalKey, value, hasCaseInsensitive);
+    }
+
+    if (isNestedStringFilter(fieldType)) {
+      return getStringFilter(originalKey, value, false);
     }
 
     if (isDateTimeFilter(fieldType)) {
@@ -262,7 +343,17 @@ const getFilters = (
 
   if (isArray(value)) {
     if (isStringFilter(fieldType)) {
-      return { OR: value.map((v) => getStringFilter(originalKey, v)) };
+      return {
+        OR: value.map((v) =>
+          getStringFilter(originalKey, v, hasCaseInsensitive),
+        ),
+      };
+    }
+
+    if (isNestedStringFilter(fieldType)) {
+      return {
+        OR: value.map((v) => getStringFilter(originalKey, v, false)),
+      };
     }
 
     if (isIntFilter(fieldType)) {
