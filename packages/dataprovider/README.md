@@ -159,7 +159,7 @@ To fix this, you can specify a `ResourceView` to do that:
 buildGraphQLProvider({
   clientOptions: { uri: "/api/graphql" } as any,
   resourceViews: {
-    AllParticipantsToInvoice: {
+    ParticipantsToInvoice: {
       resource: "ChallengeParticipation",
       fragment: gql`
         fragment Billing on ChallengeParticipation {
@@ -252,7 +252,7 @@ buildGraphQLProvider({
   },
 })
 ```
-Now you have a new virtual resource `AllParticipantsToInvoice` that can be used to display a List or for one record. (notice: update/create/delete is currently not specified, so use it read-only) and it will have exactly this data.
+Now you have a new virtual resource `ParticipantsToInvoice` that can be used to display a List or for one record. (notice: update/create/delete is currently not specified, so use it read-only) and it will have exactly this data.
 
 There are two ways you can use this new virtual resource. If you want to use it with React-Admin's query hooks (`useQuery, useGetList, useGetOne`), you need to add this as a new `<Resource>`, because these hooks rely on Redux store and it will throw an error if the resource is unknown:
 ```jsx
