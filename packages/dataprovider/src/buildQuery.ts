@@ -54,7 +54,7 @@ export const buildQueryFactory = (
         fragment = resourceView.fragment as DocumentNode;
       } else {
         throw new Error(
-          `Error in resource view ${resourceName} - you either must specify both 'one' and 'many' fragment or use a single fragment for both.`,
+          `Error in resource view ${resourceName} - you either must specify both 'one' and 'many' fragments or use a single fragment for both.`,
         );
       }
     }
