@@ -57,7 +57,7 @@ describe("buildQueryFactory", () => {
       );
     });
 
-    it("allows to use custom virtual view resources", () => {
+    it("allows to use a single custom virtual view resources for one and many", () => {
       const buildQuery = buildQueryFactory(testIntrospection, {
         resourceViews: {
           UserWithTwitter: {
@@ -104,6 +104,113 @@ describe("buildQueryFactory", () => {
           total: usersCount(where: $where)
         }
       `);
+    });
+
+    describe("allows to use different custom virtual view resources", () => {
+      it("for get one fetch", () => {
+        const buildQuery = buildQueryFactory(testIntrospection, {
+          resourceViews: {
+            UserWithTwitter: {
+              resource: "User",
+              fragment: {
+                one: gqlReal`
+                  fragment OneUserWithTwitter on User {
+                    id
+                    socialMedia {
+                      twitter
+                    }
+                  }
+                `,
+                many: gqlReal`
+                  fragment ManyUsersWithTwitter on User {
+                    id
+                    email
+                    wantsNewsletter
+                    socialMedia {
+                      twitter
+                    }
+                  }
+                `,
+              },
+            },
+          },
+        });
+
+        const { query } = buildQuery("GET_ONE", "UserWithTwitter", { id: 1 });
+
+        expect(query).toEqualGraphql(gql`
+          query user($where: UserWhereUniqueInput!) {
+            data: user(where: $where) {
+              id
+              socialMedia {
+                twitter
+              }
+            }
+          }
+        `);
+      });
+      it("for get list fetch", () => {
+        const buildQuery = buildQueryFactory(testIntrospection, {
+          resourceViews: {
+            UserWithTwitter: {
+              resource: "User",
+              fragment: {
+                one: gqlReal`
+                  fragment OneUserWithTwitter on User {
+                    id
+                    socialMedia {
+                      twitter
+                    }
+                  }
+                `,
+                many: gqlReal`
+                  fragment ManyUsersWithTwitter on User {
+                    id
+                    email
+                    wantsNewsletter
+                    socialMedia {
+                      twitter
+                    }
+                  }
+                `,
+              },
+            },
+          },
+        });
+
+        const { query } = buildQuery("GET_LIST", "UserWithTwitter", {
+          pagination: {
+            page: 1,
+            perPage: 50,
+          },
+          filter: {},
+          sort: {},
+        } as GetListParams);
+
+        expect(query).toEqualGraphql(gql`
+          query users(
+            $where: UserWhereInput
+            $orderBy: [UserOrderByInput!]
+            $take: Int
+            $skip: Int
+          ) {
+            items: users(
+              where: $where
+              orderBy: $orderBy
+              take: $take
+              skip: $skip
+            ) {
+              id
+              email
+              wantsNewsletter
+              socialMedia {
+                twitter
+              }
+            }
+            total: usersCount(where: $where)
+          }
+        `);
+      });
     });
   });
 });
