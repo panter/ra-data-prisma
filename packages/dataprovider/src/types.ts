@@ -1,8 +1,13 @@
 import { DocumentNode } from "graphql";
 
+export type DoubleFragment = {
+  one: DocumentNode;
+  many: DocumentNode;
+};
+
 export type ResourceView = {
   resource: string;
-  fragment: DocumentNode;
+  fragment: DocumentNode | DoubleFragment;
 };
 
 export type OurOptions = {
