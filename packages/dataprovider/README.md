@@ -254,13 +254,14 @@ buildGraphQLProvider({
 ```
 Now you have a new virtual resource `ParticipantsToInvoice` that can be used to display a List or for one record. (notice: update/create/delete is currently not specified, so use it read-only) and it will have exactly this data.
 
-There are two ways you can use this new virtual resource. If you want to use it with React-Admin's query hooks (`useQuery, useGetList, useGetOne`), you need to add this as a new `<Resource>`, because these hooks rely on Redux store and it will throw an error if the resource is unknown:
+There are two ways you can use this new virtual resource. If you want to use it with React-Admin's query hooks (`useQuery, useGetList, useGetOne`), you need to add this as a new `<Resource>`:
 ```jsx
 <Admin>
   // ...
   <Resource name="ParticipantsToInvoice" />
 </Admin>
 ```
+These hooks rely on Redux store and will throw an error if the resource isn't defined.
 
 However, if you directly use data provider calls, you can use it with defined `<Resource>` but also _without_ as it directly calls data provider.
 ```ts
