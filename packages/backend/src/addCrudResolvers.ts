@@ -1,6 +1,6 @@
 import { ResourceOptions, CommonOptions } from "./types";
 import setupCrudResolvers from "./setupCrudResolvers";
-import { extendType, arg, intArg } from "@nexus/schema";
+import { extendType, arg, intArg } from "nexus";
 
 const addCrudResolvers = (
   resourceName: string,
