@@ -4,7 +4,7 @@ import {
   stringArg,
   inputObjectType,
   nonNull,
-} from "@nexus/schema";
+} from "nexus";
 import { join } from "path";
 import { nexusSchemaPrisma } from "nexus-plugin-prisma/schema";
 import { addCrudResolvers } from "../../backend/src";

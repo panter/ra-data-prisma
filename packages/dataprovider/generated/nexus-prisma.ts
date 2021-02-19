@@ -3,13 +3,13 @@ import * as Prisma from '@prisma/client';
 
 // Pagination type
 type Pagination = {
-  take?: boolean
-  skip?: boolean
-  cursor?: boolean
+    take?: boolean
+    skip?: boolean
+    cursor?: boolean
 }
 
 // Prisma custom scalar names
-type CustomScalars = 'Json'
+type CustomScalars = 'Json' | 'DateTime'
 
 // Prisma model type definitions
 interface PrismaModels {
@@ -18,6 +18,7 @@ interface PrismaModels {
   BlogPost: Prisma.BlogPost
   BlogPostComment: Prisma.BlogPostComment
   User: Prisma.User
+  FilteringTest: Prisma.FilteringTest
   SomePublicRecordWithIntId: Prisma.SomePublicRecordWithIntId
 }
 
@@ -34,15 +35,19 @@ interface NexusPrismaInputs {
     }
     blogPosts: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-      ordering: 'id' | 'title' | 'text' | 'authorId'
+      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId'
     }
     blogPostComments: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'postId' | 'authorId'
+      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
     }
     users: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
-      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'address'
+      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address'
+    }
+    filteringTests: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
+      ordering: 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
     }
     somePublicRecordWithIntIds: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title'
@@ -52,7 +57,7 @@ interface NexusPrismaInputs {
   UserRole: {
     users: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
-      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'address'
+      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address'
     }
   }
   UserSocialMedia: {
@@ -61,7 +66,7 @@ interface NexusPrismaInputs {
   BlogPost: {
     comments: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'postId' | 'authorId'
+      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
     }
   }
   BlogPostComment: {
@@ -74,12 +79,15 @@ interface NexusPrismaInputs {
     }
     blogPosts: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-      ordering: 'id' | 'title' | 'text' | 'authorId'
+      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId'
     }
     comments: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'postId' | 'authorId'
+      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
     }
+  }
+  FilteringTest: {
+
   }
   SomePublicRecordWithIntId: {
 
@@ -99,45 +107,53 @@ interface NexusPrismaOutputs {
     blogPostComments: 'BlogPostComment'
     user: 'User'
     users: 'User'
+    filteringTest: 'FilteringTest'
+    filteringTests: 'FilteringTest'
     somePublicRecordWithIntId: 'SomePublicRecordWithIntId'
     somePublicRecordWithIntIds: 'SomePublicRecordWithIntId'
   },
   Mutation: {
     createOneUserRole: 'UserRole'
     updateOneUserRole: 'UserRole'
-    updateManyUserRole: 'BatchPayload'
+    updateManyUserRole: 'AffectedRowsOutput'
     deleteOneUserRole: 'UserRole'
-    deleteManyUserRole: 'BatchPayload'
+    deleteManyUserRole: 'AffectedRowsOutput'
     upsertOneUserRole: 'UserRole'
     createOneUserSocialMedia: 'UserSocialMedia'
     updateOneUserSocialMedia: 'UserSocialMedia'
-    updateManyUserSocialMedia: 'BatchPayload'
+    updateManyUserSocialMedia: 'AffectedRowsOutput'
     deleteOneUserSocialMedia: 'UserSocialMedia'
-    deleteManyUserSocialMedia: 'BatchPayload'
+    deleteManyUserSocialMedia: 'AffectedRowsOutput'
     upsertOneUserSocialMedia: 'UserSocialMedia'
     createOneBlogPost: 'BlogPost'
     updateOneBlogPost: 'BlogPost'
-    updateManyBlogPost: 'BatchPayload'
+    updateManyBlogPost: 'AffectedRowsOutput'
     deleteOneBlogPost: 'BlogPost'
-    deleteManyBlogPost: 'BatchPayload'
+    deleteManyBlogPost: 'AffectedRowsOutput'
     upsertOneBlogPost: 'BlogPost'
     createOneBlogPostComment: 'BlogPostComment'
     updateOneBlogPostComment: 'BlogPostComment'
-    updateManyBlogPostComment: 'BatchPayload'
+    updateManyBlogPostComment: 'AffectedRowsOutput'
     deleteOneBlogPostComment: 'BlogPostComment'
-    deleteManyBlogPostComment: 'BatchPayload'
+    deleteManyBlogPostComment: 'AffectedRowsOutput'
     upsertOneBlogPostComment: 'BlogPostComment'
     createOneUser: 'User'
     updateOneUser: 'User'
-    updateManyUser: 'BatchPayload'
+    updateManyUser: 'AffectedRowsOutput'
     deleteOneUser: 'User'
-    deleteManyUser: 'BatchPayload'
+    deleteManyUser: 'AffectedRowsOutput'
     upsertOneUser: 'User'
+    createOneFilteringTest: 'FilteringTest'
+    updateOneFilteringTest: 'FilteringTest'
+    updateManyFilteringTest: 'AffectedRowsOutput'
+    deleteOneFilteringTest: 'FilteringTest'
+    deleteManyFilteringTest: 'AffectedRowsOutput'
+    upsertOneFilteringTest: 'FilteringTest'
     createOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
     updateOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-    updateManySomePublicRecordWithIntId: 'BatchPayload'
+    updateManySomePublicRecordWithIntId: 'AffectedRowsOutput'
     deleteOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-    deleteManySomePublicRecordWithIntId: 'BatchPayload'
+    deleteManySomePublicRecordWithIntId: 'AffectedRowsOutput'
     upsertOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
   },
   UserRole: {
@@ -183,6 +199,18 @@ interface NexusPrismaOutputs {
     blogPosts: 'BlogPost'
     comments: 'BlogPostComment'
   }
+  FilteringTest: {
+    id: 'Int'
+    intField: 'Int'
+    floatField: 'Float'
+    stringField: 'String'
+    dateTimeField: 'DateTime'
+    boolField: 'Boolean'
+    intField_lt: 'String'
+    intField_bt: 'Int'
+    snake_field: 'Int'
+    snake_field_bt: 'Int'
+  }
   SomePublicRecordWithIntId: {
     id: 'Int'
     title: 'String'
@@ -196,6 +224,7 @@ interface NexusPrismaMethods {
   BlogPost: Typegen.NexusPrismaFields<'BlogPost'>
   BlogPostComment: Typegen.NexusPrismaFields<'BlogPostComment'>
   User: Typegen.NexusPrismaFields<'User'>
+  FilteringTest: Typegen.NexusPrismaFields<'FilteringTest'>
   SomePublicRecordWithIntId: Typegen.NexusPrismaFields<'SomePublicRecordWithIntId'>
   Query: Typegen.NexusPrismaFields<'Query'>
   Mutation: Typegen.NexusPrismaFields<'Mutation'>
