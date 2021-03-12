@@ -88,6 +88,16 @@ const getFloatFilter = (
   };
 };
 
+const getEnumFilter = (
+  key: string,
+  value: any,
+  comparator: string = "equals",
+) => ({
+  [key]: {
+    [comparator]: value,
+  },
+});
+
 const getBooleanFilter = (key: string, value: any) => {
   return {
     [key]: {
@@ -154,6 +164,9 @@ const isFloatFilter = (type: IntrospectionInputTypeRef) =>
     "NestedFloatFilter",
     "NestedFloatNullableFilter",
   ].indexOf(type.name) !== -1;
+
+const isEnumFilter = (type: IntrospectionInputTypeRef) =>
+  type.kind === "INPUT_OBJECT" && type.name.startsWith("Enum");
 
 const supportsCaseInsensitive = (
   introspectionResults: IntrospectionResult,
@@ -278,6 +291,10 @@ const getFilters = (
     if (isFloatFilter(comparisonFieldType)) {
       return getFloatFilter(key, value, comparator);
     }
+
+    if (isEnumFilter(comparisonFieldType)) {
+      return getEnumFilter(key, value, comparator);
+    }
   }
 
   // we can't use comparison on the splitted field, try to use the original key in a default way (without comparator)
@@ -339,6 +356,10 @@ const getFilters = (
     if (isFloatFilter(fieldType)) {
       return getFloatFilter(originalKey, value);
     }
+
+    if (isEnumFilter(fieldType)) {
+      return getEnumFilter(originalKey, value);
+    }
   }
 
   if (isArray(value)) {
@@ -366,6 +387,10 @@ const getFilters = (
 
     if (isFloatFilter(fieldType)) {
       return { OR: value.map((v) => getFloatFilter(originalKey, v)) };
+    }
+
+    if (isEnumFilter(fieldType)) {
+      return { OR: value.map((v) => getEnumFilter(originalKey, v)) };
     }
   }
 
@@ -452,21 +477,8 @@ const buildWhereWithType = (
   const hasAnd = whereType.inputFields.some((i) => i.name === "AND");
   const where = hasAnd
     ? Object.keys(filter ?? {}).reduce(
-        (acc, key) => {
-          // defaults to AND
-          const filters = getFilters(
-            key,
-            filter[key],
-            whereType,
-
-            introspectionResults,
-          );
-
-          return { ...acc, AND: [...acc.AND, filters] };
-        },
-        { AND: [] },
-      )
-    : Object.keys(filter ?? {}).reduce((acc, key) => {
+      (acc, key) => {
+        // defaults to AND
         const filters = getFilters(
           key,
           filter[key],
@@ -475,8 +487,21 @@ const buildWhereWithType = (
           introspectionResults,
         );
 
-        return { ...acc, ...filters };
-      }, {});
+        return { ...acc, AND: [...acc.AND, filters] };
+      },
+      { AND: [] },
+    )
+    : Object.keys(filter ?? {}).reduce((acc, key) => {
+      const filters = getFilters(
+        key,
+        filter[key],
+        whereType,
+
+        introspectionResults,
+      );
+
+      return { ...acc, ...filters };
+    }, {});
   // simplify AND if there is only one
   if (where.AND?.length === 0) {
     delete where.AND;

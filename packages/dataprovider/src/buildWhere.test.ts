@@ -756,6 +756,43 @@ describe("buildWhere", () => {
     });
   });
 
+  it("allows to filter for enums", async () => {
+    const filter = {
+      gender: "MALE",
+    };
+
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      gender: {
+        equals: "MALE",
+      },
+    });
+  });
+
+  it("allows to filter for multiple enums", async () => {
+    const filter = {
+      gender: ["MALE", "FEMALE"],
+    };
+
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      OR: [
+        {
+          gender: {
+            equals: "MALE",
+          },
+        },
+        {
+          gender: {
+            equals: "FEMALE",
+          },
+        },
+      ],
+    });
+  });
+
   it("allows to filter for one related id in a 1-1 relation", async () => {
     const filter = {
       userSocialMedia: "foo",
