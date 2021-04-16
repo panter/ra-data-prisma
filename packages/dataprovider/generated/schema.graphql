@@ -34,24 +34,48 @@ input BlogPostCommentCreateInput {
   text: String!
 }
 
+input BlogPostCommentCreateManyAuthorInput {
+  id: String
+  postId: String
+  text: String!
+}
+
+input BlogPostCommentCreateManyAuthorInputEnvelope {
+  data: [BlogPostCommentCreateManyAuthorInput!]
+  skipDuplicates: Boolean
+}
+
+input BlogPostCommentCreateManyPostInput {
+  authorId: String
+  id: String
+  text: String!
+}
+
+input BlogPostCommentCreateManyPostInputEnvelope {
+  data: [BlogPostCommentCreateManyPostInput!]
+  skipDuplicates: Boolean
+}
+
 input BlogPostCommentCreateNestedManyWithoutAuthorInput {
   connect: [BlogPostCommentWhereUniqueInput!]
-  connectOrCreate: [BlogPostCommentCreateOrConnectWithoutauthorInput!]
+  connectOrCreate: [BlogPostCommentCreateOrConnectWithoutAuthorInput!]
   create: [BlogPostCommentCreateWithoutAuthorInput!]
+  createMany: BlogPostCommentCreateManyAuthorInputEnvelope
 }
 
 input BlogPostCommentCreateNestedManyWithoutPostInput {
   connect: [BlogPostCommentWhereUniqueInput!]
-  connectOrCreate: [BlogPostCommentCreateOrConnectWithoutpostInput!]
+  connectOrCreate: [BlogPostCommentCreateOrConnectWithoutPostInput!]
   create: [BlogPostCommentCreateWithoutPostInput!]
+  createMany: BlogPostCommentCreateManyPostInputEnvelope
 }
 
-input BlogPostCommentCreateOrConnectWithoutauthorInput {
+input BlogPostCommentCreateOrConnectWithoutAuthorInput {
   create: BlogPostCommentCreateWithoutAuthorInput!
   where: BlogPostCommentWhereUniqueInput!
 }
 
-input BlogPostCommentCreateOrConnectWithoutpostInput {
+input BlogPostCommentCreateOrConnectWithoutPostInput {
   create: BlogPostCommentCreateWithoutPostInput!
   where: BlogPostCommentWhereUniqueInput!
 }
@@ -74,11 +98,15 @@ input BlogPostCommentListRelationFilter {
   some: BlogPostCommentWhereInput
 }
 
-input BlogPostCommentOrderByInput {
-  author: UserOrderByInput
+input BlogPostCommentOrderByRelationAggregateInput {
+  count: SortOrder!
+}
+
+input BlogPostCommentOrderByWithRelationInput {
+  author: UserOrderByWithRelationInput
   authorId: SortOrder
   id: SortOrder
-  post: BlogPostOrderByInput
+  post: BlogPostOrderByWithRelationInput
   postId: SortOrder
   text: SortOrder
 }
@@ -117,8 +145,9 @@ input BlogPostCommentUpdateManyWithWhereWithoutPostInput {
 
 input BlogPostCommentUpdateManyWithoutAuthorInput {
   connect: [BlogPostCommentWhereUniqueInput!]
-  connectOrCreate: [BlogPostCommentCreateOrConnectWithoutauthorInput!]
+  connectOrCreate: [BlogPostCommentCreateOrConnectWithoutAuthorInput!]
   create: [BlogPostCommentCreateWithoutAuthorInput!]
+  createMany: BlogPostCommentCreateManyAuthorInputEnvelope
   delete: [BlogPostCommentWhereUniqueInput!]
   deleteMany: [BlogPostCommentScalarWhereInput!]
   disconnect: [BlogPostCommentWhereUniqueInput!]
@@ -130,8 +159,9 @@ input BlogPostCommentUpdateManyWithoutAuthorInput {
 
 input BlogPostCommentUpdateManyWithoutPostInput {
   connect: [BlogPostCommentWhereUniqueInput!]
-  connectOrCreate: [BlogPostCommentCreateOrConnectWithoutpostInput!]
+  connectOrCreate: [BlogPostCommentCreateOrConnectWithoutPostInput!]
   create: [BlogPostCommentCreateWithoutPostInput!]
+  createMany: BlogPostCommentCreateManyPostInputEnvelope
   delete: [BlogPostCommentWhereUniqueInput!]
   deleteMany: [BlogPostCommentScalarWhereInput!]
   disconnect: [BlogPostCommentWhereUniqueInput!]
@@ -199,24 +229,36 @@ input BlogPostCreateInput {
   title: String!
 }
 
+input BlogPostCreateManyAuthorInput {
+  id: String
+  text: String!
+  title: String!
+}
+
+input BlogPostCreateManyAuthorInputEnvelope {
+  data: [BlogPostCreateManyAuthorInput!]
+  skipDuplicates: Boolean
+}
+
 input BlogPostCreateNestedManyWithoutAuthorInput {
   connect: [BlogPostWhereUniqueInput!]
-  connectOrCreate: [BlogPostCreateOrConnectWithoutauthorInput!]
+  connectOrCreate: [BlogPostCreateOrConnectWithoutAuthorInput!]
   create: [BlogPostCreateWithoutAuthorInput!]
+  createMany: BlogPostCreateManyAuthorInputEnvelope
 }
 
 input BlogPostCreateNestedOneWithoutCommentsInput {
   connect: BlogPostWhereUniqueInput
-  connectOrCreate: BlogPostCreateOrConnectWithoutcommentsInput
+  connectOrCreate: BlogPostCreateOrConnectWithoutCommentsInput
   create: BlogPostCreateWithoutCommentsInput
 }
 
-input BlogPostCreateOrConnectWithoutauthorInput {
+input BlogPostCreateOrConnectWithoutAuthorInput {
   create: BlogPostCreateWithoutAuthorInput!
   where: BlogPostWhereUniqueInput!
 }
 
-input BlogPostCreateOrConnectWithoutcommentsInput {
+input BlogPostCreateOrConnectWithoutCommentsInput {
   create: BlogPostCreateWithoutCommentsInput!
   where: BlogPostWhereUniqueInput!
 }
@@ -241,9 +283,14 @@ input BlogPostListRelationFilter {
   some: BlogPostWhereInput
 }
 
-input BlogPostOrderByInput {
-  author: UserOrderByInput
+input BlogPostOrderByRelationAggregateInput {
+  count: SortOrder!
+}
+
+input BlogPostOrderByWithRelationInput {
+  author: UserOrderByWithRelationInput
   authorId: SortOrder
+  comments: BlogPostCommentOrderByRelationAggregateInput
   id: SortOrder
   text: SortOrder
   title: SortOrder
@@ -280,8 +327,9 @@ input BlogPostUpdateManyWithWhereWithoutAuthorInput {
 
 input BlogPostUpdateManyWithoutAuthorInput {
   connect: [BlogPostWhereUniqueInput!]
-  connectOrCreate: [BlogPostCreateOrConnectWithoutauthorInput!]
+  connectOrCreate: [BlogPostCreateOrConnectWithoutAuthorInput!]
   create: [BlogPostCreateWithoutAuthorInput!]
+  createMany: BlogPostCreateManyAuthorInputEnvelope
   delete: [BlogPostWhereUniqueInput!]
   deleteMany: [BlogPostScalarWhereInput!]
   disconnect: [BlogPostWhereUniqueInput!]
@@ -293,7 +341,7 @@ input BlogPostUpdateManyWithoutAuthorInput {
 
 input BlogPostUpdateOneWithoutCommentsInput {
   connect: BlogPostWhereUniqueInput
-  connectOrCreate: BlogPostCreateOrConnectWithoutcommentsInput
+  connectOrCreate: BlogPostCreateOrConnectWithoutCommentsInput
   create: BlogPostCreateWithoutCommentsInput
   delete: Boolean
   disconnect: Boolean
@@ -413,7 +461,7 @@ input FilteringTestCreateInput {
   stringField: String!
 }
 
-input FilteringTestOrderByInput {
+input FilteringTestOrderByWithRelationInput {
   boolField: SortOrder
   dateTimeField: SortOrder
   floatField: SortOrder
@@ -674,22 +722,22 @@ input NullableStringFieldUpdateOperationsInput {
 type Query {
   blogPost(where: BlogPostWhereUniqueInput!): BlogPost
   blogPostComment(where: BlogPostCommentWhereUniqueInput!): BlogPostComment
-  blogPostComments(cursor: BlogPostCommentWhereUniqueInput, orderBy: [BlogPostCommentOrderByInput!], skip: Int, take: Int, where: BlogPostCommentWhereInput): [BlogPostComment!]!
-  blogPostCommentsCount(cursor: BlogPostCommentWhereUniqueInput, orderBy: BlogPostCommentOrderByInput, skip: Int, take: Int, where: BlogPostCommentWhereInput): Int
-  blogPosts(cursor: BlogPostWhereUniqueInput, orderBy: [BlogPostOrderByInput!], skip: Int, take: Int, where: BlogPostWhereInput): [BlogPost!]!
-  blogPostsCount(cursor: BlogPostWhereUniqueInput, orderBy: BlogPostOrderByInput, skip: Int, take: Int, where: BlogPostWhereInput): Int
+  blogPostComments(cursor: BlogPostCommentWhereUniqueInput, orderBy: [BlogPostCommentOrderByWithRelationInput!], skip: Int, take: Int, where: BlogPostCommentWhereInput): [BlogPostComment!]!
+  blogPostCommentsCount(cursor: BlogPostCommentWhereUniqueInput, orderBy: BlogPostCommentOrderByWithRelationInput, skip: Int, take: Int, where: BlogPostCommentWhereInput): Int
+  blogPosts(cursor: BlogPostWhereUniqueInput, orderBy: [BlogPostOrderByWithRelationInput!], skip: Int, take: Int, where: BlogPostWhereInput): [BlogPost!]!
+  blogPostsCount(cursor: BlogPostWhereUniqueInput, orderBy: BlogPostOrderByWithRelationInput, skip: Int, take: Int, where: BlogPostWhereInput): Int
   filteringTest(where: FilteringTestWhereUniqueInput!): FilteringTest
-  filteringTests(cursor: FilteringTestWhereUniqueInput, orderBy: [FilteringTestOrderByInput!], skip: Int, take: Int, where: FilteringTestWhereInput): [FilteringTest!]!
-  filteringTestsCount(cursor: FilteringTestWhereUniqueInput, orderBy: FilteringTestOrderByInput, skip: Int, take: Int, where: FilteringTestWhereInput): Int
+  filteringTests(cursor: FilteringTestWhereUniqueInput, orderBy: [FilteringTestOrderByWithRelationInput!], skip: Int, take: Int, where: FilteringTestWhereInput): [FilteringTest!]!
+  filteringTestsCount(cursor: FilteringTestWhereUniqueInput, orderBy: FilteringTestOrderByWithRelationInput, skip: Int, take: Int, where: FilteringTestWhereInput): Int
   somePublicRecordWithIntId(where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId
-  somePublicRecordWithIntIds(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: [SomePublicRecordWithIntIdOrderByInput!], skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): [SomePublicRecordWithIntId!]!
-  somePublicRecordWithIntIdsCount(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: SomePublicRecordWithIntIdOrderByInput, skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): Int
+  somePublicRecordWithIntIds(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: [SomePublicRecordWithIntIdOrderByWithRelationInput!], skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): [SomePublicRecordWithIntId!]!
+  somePublicRecordWithIntIdsCount(cursor: SomePublicRecordWithIntIdWhereUniqueInput, orderBy: SomePublicRecordWithIntIdOrderByWithRelationInput, skip: Int, take: Int, where: SomePublicRecordWithIntIdWhereInput): Int
   user(where: UserWhereUniqueInput!): User
   userRole(where: UserRoleWhereUniqueInput!): UserRole
-  userRoles(cursor: UserRoleWhereUniqueInput, orderBy: [UserRoleOrderByInput!], skip: Int, take: Int, where: UserRoleWhereInput): [UserRole!]!
-  userRolesCount(cursor: UserRoleWhereUniqueInput, orderBy: UserRoleOrderByInput, skip: Int, take: Int, where: UserRoleWhereInput): Int
-  users(cursor: UserWhereUniqueInput, orderBy: [UserOrderByInput!], skip: Int, take: Int, where: UserWhereInput): [User!]!
-  usersCount(cursor: UserWhereUniqueInput, orderBy: UserOrderByInput, skip: Int, take: Int, where: UserWhereInput): Int
+  userRoles(cursor: UserRoleWhereUniqueInput, orderBy: [UserRoleOrderByWithRelationInput!], skip: Int, take: Int, where: UserRoleWhereInput): [UserRole!]!
+  userRolesCount(cursor: UserRoleWhereUniqueInput, orderBy: UserRoleOrderByWithRelationInput, skip: Int, take: Int, where: UserRoleWhereInput): Int
+  users(cursor: UserWhereUniqueInput, orderBy: [UserOrderByWithRelationInput!], skip: Int, take: Int, where: UserWhereInput): [User!]!
+  usersCount(cursor: UserWhereUniqueInput, orderBy: UserOrderByWithRelationInput, skip: Int, take: Int, where: UserWhereInput): Int
 }
 
 enum QueryMode {
@@ -706,7 +754,7 @@ input SomePublicRecordWithIntIdCreateInput {
   title: String!
 }
 
-input SomePublicRecordWithIntIdOrderByInput {
+input SomePublicRecordWithIntIdOrderByWithRelationInput {
   id: SortOrder
   title: SortOrder
 }
@@ -811,19 +859,19 @@ input UserCreateInput {
 
 input UserCreateNestedManyWithoutRolesInput {
   connect: [UserWhereUniqueInput!]
-  connectOrCreate: [UserCreateOrConnectWithoutrolesInput!]
+  connectOrCreate: [UserCreateOrConnectWithoutRolesInput!]
   create: [UserCreateWithoutRolesInput!]
 }
 
 input UserCreateNestedOneWithoutBlogPostsInput {
   connect: UserWhereUniqueInput
-  connectOrCreate: UserCreateOrConnectWithoutblogPostsInput
+  connectOrCreate: UserCreateOrConnectWithoutBlogPostsInput
   create: UserCreateWithoutBlogPostsInput
 }
 
 input UserCreateNestedOneWithoutCommentsInput {
   connect: UserWhereUniqueInput
-  connectOrCreate: UserCreateOrConnectWithoutcommentsInput
+  connectOrCreate: UserCreateOrConnectWithoutCommentsInput
   create: UserCreateWithoutCommentsInput
 }
 
@@ -831,17 +879,17 @@ input UserCreateOneWithoutCommentsInput {
   connect: UserWhereUniqueInput
 }
 
-input UserCreateOrConnectWithoutblogPostsInput {
+input UserCreateOrConnectWithoutBlogPostsInput {
   create: UserCreateWithoutBlogPostsInput!
   where: UserWhereUniqueInput!
 }
 
-input UserCreateOrConnectWithoutcommentsInput {
+input UserCreateOrConnectWithoutCommentsInput {
   create: UserCreateWithoutCommentsInput!
   where: UserWhereUniqueInput!
 }
 
-input UserCreateOrConnectWithoutrolesInput {
+input UserCreateOrConnectWithoutRolesInput {
   create: UserCreateWithoutRolesInput!
   where: UserWhereUniqueInput!
 }
@@ -901,15 +949,22 @@ input UserListRelationFilter {
   some: UserWhereInput
 }
 
-input UserOrderByInput {
+input UserOrderByRelationAggregateInput {
+  count: SortOrder!
+}
+
+input UserOrderByWithRelationInput {
   address: SortOrder
+  blogPosts: BlogPostOrderByRelationAggregateInput
+  comments: BlogPostCommentOrderByRelationAggregateInput
   email: SortOrder
   firstName: SortOrder
   gender: SortOrder
   id: SortOrder
   interests: SortOrder
   lastName: SortOrder
-  userSocialMedia: UserSocialMediaOrderByInput
+  roles: UserRoleOrderByRelationAggregateInput
+  userSocialMedia: UserSocialMediaOrderByWithRelationInput
   wantsNewsletter: SortOrder
   yearOfBirth: SortOrder
 }
@@ -927,11 +982,11 @@ input UserRoleCreateInput {
 
 input UserRoleCreateNestedManyWithoutUsersInput {
   connect: [UserRoleWhereUniqueInput!]
-  connectOrCreate: [UserRoleCreateOrConnectWithoutusersInput!]
+  connectOrCreate: [UserRoleCreateOrConnectWithoutUsersInput!]
   create: [UserRoleCreateWithoutUsersInput!]
 }
 
-input UserRoleCreateOrConnectWithoutusersInput {
+input UserRoleCreateOrConnectWithoutUsersInput {
   create: UserRoleCreateWithoutUsersInput!
   where: UserRoleWhereUniqueInput!
 }
@@ -947,9 +1002,14 @@ input UserRoleListRelationFilter {
   some: UserRoleWhereInput
 }
 
-input UserRoleOrderByInput {
+input UserRoleOrderByRelationAggregateInput {
+  count: SortOrder!
+}
+
+input UserRoleOrderByWithRelationInput {
   id: SortOrder
   name: SortOrder
+  users: UserOrderByRelationAggregateInput
 }
 
 input UserRoleScalarWhereInput {
@@ -978,7 +1038,7 @@ input UserRoleUpdateManyWithWhereWithoutUsersInput {
 
 input UserRoleUpdateManyWithoutUsersInput {
   connect: [UserRoleWhereUniqueInput!]
-  connectOrCreate: [UserRoleCreateOrConnectWithoutusersInput!]
+  connectOrCreate: [UserRoleCreateOrConnectWithoutUsersInput!]
   create: [UserRoleCreateWithoutUsersInput!]
   delete: [UserRoleWhereUniqueInput!]
   deleteMany: [UserRoleScalarWhereInput!]
@@ -1042,11 +1102,11 @@ type UserSocialMedia {
 
 input UserSocialMediaCreateNestedOneWithoutUserInput {
   connect: UserSocialMediaWhereUniqueInput
-  connectOrCreate: UserSocialMediaCreateOrConnectWithoutuserInput
+  connectOrCreate: UserSocialMediaCreateOrConnectWithoutUserInput
   create: UserSocialMediaCreateWithoutUserInput
 }
 
-input UserSocialMediaCreateOrConnectWithoutuserInput {
+input UserSocialMediaCreateOrConnectWithoutUserInput {
   create: UserSocialMediaCreateWithoutUserInput!
   where: UserSocialMediaWhereUniqueInput!
 }
@@ -1057,16 +1117,17 @@ input UserSocialMediaCreateWithoutUserInput {
   twitter: String!
 }
 
-input UserSocialMediaOrderByInput {
+input UserSocialMediaOrderByWithRelationInput {
   id: SortOrder
   instagram: SortOrder
   twitter: SortOrder
+  user: UserOrderByWithRelationInput
   userId: SortOrder
 }
 
 input UserSocialMediaUpdateOneWithoutUserInput {
   connect: UserSocialMediaWhereUniqueInput
-  connectOrCreate: UserSocialMediaCreateOrConnectWithoutuserInput
+  connectOrCreate: UserSocialMediaCreateOrConnectWithoutUserInput
   create: UserSocialMediaCreateWithoutUserInput
   delete: Boolean
   disconnect: Boolean
@@ -1135,7 +1196,7 @@ input UserUpdateManyWithWhereWithoutRolesInput {
 
 input UserUpdateManyWithoutRolesInput {
   connect: [UserWhereUniqueInput!]
-  connectOrCreate: [UserCreateOrConnectWithoutrolesInput!]
+  connectOrCreate: [UserCreateOrConnectWithoutRolesInput!]
   create: [UserCreateWithoutRolesInput!]
   delete: [UserWhereUniqueInput!]
   deleteMany: [UserScalarWhereInput!]
@@ -1148,7 +1209,7 @@ input UserUpdateManyWithoutRolesInput {
 
 input UserUpdateOneWithoutBlogPostsInput {
   connect: UserWhereUniqueInput
-  connectOrCreate: UserCreateOrConnectWithoutblogPostsInput
+  connectOrCreate: UserCreateOrConnectWithoutBlogPostsInput
   create: UserCreateWithoutBlogPostsInput
   delete: Boolean
   disconnect: Boolean
@@ -1158,7 +1219,7 @@ input UserUpdateOneWithoutBlogPostsInput {
 
 input UserUpdateOneWithoutCommentsInput {
   connect: UserWhereUniqueInput
-  connectOrCreate: UserCreateOrConnectWithoutcommentsInput
+  connectOrCreate: UserCreateOrConnectWithoutCommentsInput
   create: UserCreateWithoutCommentsInput
   delete: Boolean
   disconnect: Boolean
@@ -1217,6 +1278,7 @@ input UserUpdateWithoutRolesInput {
 }
 
 input UserUpdateinterestsInput {
+  push: Topic
   set: [Topic!]
 }
 

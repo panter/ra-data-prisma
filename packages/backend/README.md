@@ -55,6 +55,36 @@ const schema = makeSchema({
 
 use `addCrudResolvers` for every Model that you want to manage in react-admin. Additionaly if you have a relation between two Models, call it for both Models even if you only want to show one in a list
 
+## Enable sort by relation
+
+You can sort by relations. It's currently a preview feature in prisma: https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting#sort-by-relation-preview
+
+1. enable it in prisma: in your prisma schema, add `previewFeatures = ["orderByRelation"]`
+2. enable it in `addCrudResolvers`: `addCrudResolvers(modelName, {enableOrderByRelation: true})
+3. in react-admin edit the `<ReferenceField />` for this column:
+
+```
+<ReferenceField
+
+  label="<your label>"
+  source="<field>"
+  reference="<resource name of the relation>"
+  sortBy="<field>.<related field>"
+>
+```
+
+e.g. if you have a list of blog posts each with an author and you want to sort by the author's lastname:
+
+```
+<ReferenceField
+
+  label="Author"
+  source="author"
+  reference="User"
+  sortBy="author.lastname"
+>
+```
+
 ## Security
 
 Make sure that you restrict access to these resolvers using [graphql-shield](https://github.com/maticzav/graphql-shield) (@nexus/schema)

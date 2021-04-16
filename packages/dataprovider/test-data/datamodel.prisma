@@ -1,5 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["orderByRelation"]
 }
 
 datasource db {
@@ -8,13 +9,13 @@ datasource db {
 }
 
 model UserRole {
-  id    String @default(uuid()) @id
+  id    String @id @default(uuid())
   name  String
   users User[] @relation(references: [id])
 }
 
 model UserSocialMedia {
-  id        String @default(uuid()) @id
+  id        String @id @default(uuid())
   instagram String
   twitter   String
   user      User   @relation(fields: [userId], references: [id])
@@ -22,7 +23,7 @@ model UserSocialMedia {
 }
 
 model BlogPost {
-  id       String            @default(uuid()) @id
+  id       String            @id @default(uuid())
   title    String
   text     String
   author   User?             @relation(fields: [authorId], references: [id])
@@ -31,7 +32,7 @@ model BlogPost {
 }
 
 model BlogPostComment {
-  id       String    @default(uuid()) @id
+  id       String    @id @default(uuid())
   text     String
   post     BlogPost? @relation(fields: [postId], references: [id])
   postId   String?
@@ -46,7 +47,7 @@ enum Gender {
 }
 
 model User {
-  id              String            @default(uuid()) @id
+  id              String            @id @default(uuid())
   email           String            @unique
   roles           UserRole[]        @relation(references: [id])
   firstName       String?
@@ -62,20 +63,20 @@ model User {
 }
 
 model FilteringTest {
-  id              Int   @id @default(autoincrement())
-  intField        Int
-  floatField      Float
-  stringField     String
-  dateTimeField   DateTime
-  boolField       Boolean
-  intField_lt     String
-  intField_bt     Int
-  snake_field     Int
-  snake_field_bt  Int
+  id             Int      @id @default(autoincrement())
+  intField       Int
+  floatField     Float
+  stringField    String
+  dateTimeField  DateTime
+  boolField      Boolean
+  intField_lt    String
+  intField_bt    Int
+  snake_field    Int
+  snake_field_bt Int
 }
 
 model SomePublicRecordWithIntId {
-  id    Int    @default(autoincrement()) @id
+  id    Int    @id @default(autoincrement())
   title String
 }
 

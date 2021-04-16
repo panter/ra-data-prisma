@@ -86,7 +86,7 @@ describe("buildQueryFactory", () => {
       expect(query).toEqualGraphql(gql`
         query users(
           $where: UserWhereInput
-          $orderBy: [UserOrderByInput!]
+          $orderBy: [UserOrderByWithRelationInput!]
           $take: Int
           $skip: Int
         ) {
@@ -190,7 +190,7 @@ describe("buildQueryFactory", () => {
         expect(query).toEqualGraphql(gql`
           query users(
             $where: UserWhereInput
-            $orderBy: [UserOrderByInput!]
+            $orderBy: [UserOrderByWithRelationInput!]
             $take: Int
             $skip: Int
           ) {
@@ -300,7 +300,7 @@ describe("buildQueryFactory", () => {
         expect(query).toEqualGraphql(gql`
           query users(
             $where: UserWhereInput
-            $orderBy: [UserOrderByInput!]
+            $orderBy: [UserOrderByWithRelationInput!]
             $take: Int
             $skip: Int
           ) {

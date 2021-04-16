@@ -1,3 +1,5 @@
 import { testSchema } from "./testSchema";
 // for type generation
-testSchema({});
+testSchema({
+  enableOrderByRelation: true,
+});

@@ -12,6 +12,7 @@ export type Customize = {
 
 export type CommonOptions = {
   aliasPrefix?: string;
+  enableOrderByRelation?: boolean;
 };
 export type ResourceOptions = {
   /**
@@ -20,4 +21,5 @@ export type ResourceOptions = {
   printSecurityWarning?: boolean;
   aliasPrefix?: string;
   customize?: Customize;
+  enableOrderByRelation?: boolean;
 };

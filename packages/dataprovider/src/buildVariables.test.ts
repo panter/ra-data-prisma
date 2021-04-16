@@ -70,6 +70,85 @@ describe("buildVariables", () => {
         skip: 90,
       });
     });
+
+    it("allows sorting by direct properties", async () => {
+      //
+
+      const params = {
+        pagination: { page: 1, perPage: 10 },
+        sort: { field: "text", order: "ASC" },
+      };
+      const result = buildVariables(testIntrospection)(
+        testBlogPostCommentResource,
+        GET_LIST,
+        params,
+      );
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPostComments"]>({
+        take: 10,
+        skip: 0,
+        where: {},
+        orderBy: [
+          {
+            text: "asc",
+          },
+        ],
+      });
+    });
+    it("allows sorting by relations", async () => {
+      //
+
+      const params = {
+        pagination: { page: 1, perPage: 10 },
+        sort: { field: "post.text", order: "ASC" },
+      };
+      const result = buildVariables(testIntrospection)(
+        testBlogPostCommentResource,
+        GET_LIST,
+        params,
+      );
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPostComments"]>({
+        take: 10,
+        skip: 0,
+        where: {},
+        orderBy: [
+          {
+            post: {
+              text: "asc",
+            },
+          },
+        ],
+      });
+    });
+    it("allows sorting by nested relations", async () => {
+      //
+
+      const params = {
+        pagination: { page: 1, perPage: 10 },
+        sort: { field: "post.author.firstName", order: "DESC" },
+      };
+      const result = buildVariables(testIntrospection)(
+        testBlogPostCommentResource,
+        GET_LIST,
+        params,
+      );
+
+      expect(result).toEqual<NexusGenArgTypes["Query"]["blogPostComments"]>({
+        take: 10,
+        skip: 0,
+        where: {},
+        orderBy: [
+          {
+            post: {
+              author: {
+                firstName: "desc",
+              },
+            },
+          },
+        ],
+      });
+    });
   });
 
   describe("CREATE", () => {
