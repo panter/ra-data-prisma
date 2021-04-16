@@ -21,6 +21,7 @@ const setupCrudResolvers = (
     printSecurityWarning = true,
     customize,
     aliasPrefix,
+    enableOrderByRelation = false,
   }: ResourceOptions & CommonOptions = {},
 ) => {
   const typeName = upperFirst(resourceName);
@@ -69,13 +70,16 @@ const setupCrudResolvers = (
           alias: makePrefixedFullName(queryAllName, aliasPrefix),
         };
         t.crud[queryAllName](customize?.many?.(manyConfig) ?? manyConfig);
+
         t.int(makePrefixedFullName(queryCountName, aliasPrefix), {
           args: {
             where: arg({
               type: `${typeName}WhereInput`,
             }),
             orderBy: arg({
-              type: `${typeName}OrderByInput`,
+              type: enableOrderByRelation
+                ? `${typeName}OrderByWithRelationInput`
+                : `${typeName}OrderByInput`,
             }),
             skip: intArg({}),
 

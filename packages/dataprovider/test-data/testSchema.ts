@@ -10,13 +10,11 @@ import { nexusSchemaPrisma } from "nexus-plugin-prisma/schema";
 import { addCrudResolvers } from "../../backend/src";
 import "../generated/nexus";
 import "../generated/nexus-prisma";
+import { CommonOptions } from "../../backend/src/types";
 
 const typegenPath = (p: string) => process.env.PWD && join(process.env.PWD, p);
-type Options = {
-  aliasPrefix?: string;
-};
 
-export const testSchema = (options: Options) => {
+export const testSchema = (options: CommonOptions) => {
   const User = objectType({
     name: "User",
     definition(t) {

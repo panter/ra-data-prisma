@@ -27,15 +27,15 @@ interface NexusPrismaInputs {
   Query: {
     userRoles: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'users'
-      ordering: 'id' | 'name'
+      ordering: 'id' | 'name' | 'users'
     }
     userSocialMedias: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'instagram' | 'twitter' | 'user' | 'userId'
-      ordering: 'id' | 'instagram' | 'twitter' | 'userId'
+      ordering: 'id' | 'instagram' | 'twitter' | 'user' | 'userId'
     }
     blogPosts: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId'
+      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
     }
     blogPostComments: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
@@ -43,7 +43,7 @@ interface NexusPrismaInputs {
     }
     users: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
-      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address'
+      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
     }
     filteringTests: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
@@ -57,7 +57,7 @@ interface NexusPrismaInputs {
   UserRole: {
     users: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
-      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address'
+      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
     }
   }
   UserSocialMedia: {
@@ -75,11 +75,11 @@ interface NexusPrismaInputs {
   User: {
     roles: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'users'
-      ordering: 'id' | 'name'
+      ordering: 'id' | 'name' | 'users'
     }
     blogPosts: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId'
+      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
     }
     comments: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'

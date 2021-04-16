@@ -9,6 +9,7 @@ import {
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
 import isObject from "lodash/isObject";
+import set from "lodash/set";
 import {
   CREATE,
   DELETE,
@@ -22,7 +23,6 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { buildWhere } from "./buildWhere";
 import exhaust from "./utils/exhaust";
 import getFinalType from "./utils/getFinalType";
-import { disconnect } from "process";
 
 export interface GetListParams {
   filter: { [key: string]: any };
@@ -52,22 +52,19 @@ const buildOrderBy = (
   const { field, order } = sort;
 
   const orderType = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}OrderByInput`,
+    (t) => t.name === `${resource.type.name}OrderByWithRelationInput`,
   ) as IntrospectionInputObjectType;
-
-  if (!orderType) {
+  const fieldParts = field?.split(".");
+  if (!orderType || !fieldParts) {
     return null;
   }
 
-  if (!orderType.inputFields.some((f) => f.name === field)) {
+  if (!orderType.inputFields.some((f) => f.name === fieldParts[0])) {
     return null;
   }
-
-  return [
-    {
-      [sort.field]: sort.order === "ASC" ? "asc" : "desc",
-    },
-  ];
+  const selector = {};
+  set(selector, field, sort.order === "ASC" ? "asc" : "desc");
+  return [selector];
 };
 
 const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
