@@ -680,6 +680,7 @@ describe("buildVariables", () => {
         data: {
           id: "einstein",
           roles: [{ name: "Student Role" }, { id: "human", name: "Human" }],
+          blogPosts: [{ text: "Lorem ipsum", title: "My super post" }],
         },
         previousData: {
           roles: [{ id: "human", name: "Human" }],
@@ -693,6 +694,9 @@ describe("buildVariables", () => {
         data: {
           roles: {
             create: [{ name: "Student Role" }],
+          },
+          blogPosts: {
+            create: [{ text: "Lorem ipsum", title: "My super post" }],
           },
         },
       });
