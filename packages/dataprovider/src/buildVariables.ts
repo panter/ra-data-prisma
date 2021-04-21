@@ -466,7 +466,7 @@ const buildUpdateVariables = (introspectionResults: IntrospectionResult) => (
   // TODO: we assume "data.id" to be the id
   const id = params.data.id;
   delete params.data.id;
-  delete params.previousData.id;
+  delete params.previousData?.id;
 
   return {
     where: {
