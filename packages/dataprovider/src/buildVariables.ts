@@ -463,8 +463,8 @@ const buildUpdateVariables = (introspectionResults: IntrospectionResult) => (
   const inputType = introspectionResults.types.find(
     (t) => t.name === `${resource.type.name}UpdateInput`,
   ) as IntrospectionInputObjectType;
-  // TODO: we assume "data.id" to be the id
-  const id = params.data.id;
+
+  const id = params.id ?? params.data.id; // TODO: do we still need params.data.id?
   delete params.data.id;
   delete params.previousData?.id;
 
