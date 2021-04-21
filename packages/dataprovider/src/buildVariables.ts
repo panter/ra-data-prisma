@@ -33,6 +33,7 @@ export interface GetListParams {
 enum ModifiersParams {
   connect = "connect",
   create = "create",
+  createMany = "createMany",
   delete = "delete",
   deleteMany = "deleteMany",
   disconnect = "disconnect",
