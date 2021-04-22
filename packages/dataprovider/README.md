@@ -75,6 +75,10 @@ this dataprovider supports all filtering and searching and adds some convenience
 
 If you have relations, you can use `ReferenceArrayField/Input` or `Referenceinput/Field`. Make sure that the reference Model is also compatible (by calling `addCrudResolvers("MyReferenceModel")` from `@ra-data-prisma/backend` on your backend).
 
+### Sorting by relations
+
+`<List />`s can be sorted by relations. [Enable it in the backend](../backend#enable-sort-by-relation)
+
 #### some examples:
 
 _show a list of cities with the country_
