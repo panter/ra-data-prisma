@@ -250,9 +250,12 @@ const getFilters = (
   const { originalKey, key, comparator } = processKey(_key);
   if (key === "NOT" || key === "OR" || key === "AND") {
     return {
-      [key]: value.map((f) =>
-        buildWhereWithType(f, introspectionResults, whereType),
-      ),
+      [key]:
+        value === null
+          ? null
+          : value.map((f) =>
+              buildWhereWithType(f, introspectionResults, whereType),
+            ),
     };
   }
 

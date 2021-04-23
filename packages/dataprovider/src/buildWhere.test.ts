@@ -891,6 +891,58 @@ describe("buildWhere", () => {
     });
   });
 
+  it("allows to filter for null relation values", async () => {
+    const filter = {
+      roles: {
+        some: {
+          NOT: null,
+        },
+      },
+    };
+
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      roles: {
+        some: {
+          NOT: null,
+        },
+      },
+    });
+  });
+
+  it("allows to filter by deeply nested relations", async () => {
+    const filter = {
+      roles: {
+        some: {
+          users: {
+            every: {
+              address: {
+                equals: "asd",
+              },
+            },
+          },
+        },
+      },
+    };
+
+    const result = buildWhere(filter, testUserResource, testIntrospection);
+
+    expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
+      roles: {
+        some: {
+          users: {
+            every: {
+              address: {
+                equals: "asd",
+              },
+            },
+          },
+        },
+      },
+    });
+  });
+
   it("allows to use prisma graphql filters", async () => {
     const filter = {
       yearOfBirth: {
