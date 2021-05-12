@@ -23,6 +23,7 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { buildWhere } from "./buildWhere";
 import exhaust from "./utils/exhaust";
 import getFinalType from "./utils/getFinalType";
+import { VariantOptions } from "./types";
 
 export interface GetListParams {
   filter: { [key: string]: any };
@@ -44,17 +45,28 @@ enum ModifiersParams {
   connectOrCreate = "connectOrCreate",
 }
 
+function getOrderType(
+  introspectionResults: IntrospectionResult,
+  resource: Resource,
+): IntrospectionInputObjectType {
+  const withoutRelation = `${resource.type.name}OrderByInput`;
+  const withRelation = `${resource.type.name}OrderByWithRelationInput`;
+
+  return introspectionResults.types.find(
+    (t) => t.name === withRelation || t.name === withoutRelation,
+  ) as IntrospectionInputObjectType;
+}
+
 const buildOrderBy = (
   introspectionResults: IntrospectionResult,
   resource: Resource,
   sort: GetListParams["sort"],
+  options: VariantOptions,
 ) => {
   if (!sort) return null;
-  const { field, order } = sort;
+  const { field } = sort;
 
-  const orderType = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}OrderByWithRelationInput`,
-  ) as IntrospectionInputObjectType;
+  const orderType = getOrderType(introspectionResults, resource);
   const fieldParts = field?.split(".");
   if (!orderType || !fieldParts) {
     return null;
@@ -68,17 +80,21 @@ const buildOrderBy = (
   return [selector];
 };
 
-const buildGetListVariables = (introspectionResults: IntrospectionResult) => (
-  resource: Resource,
-  aorFetchType: string,
-  params: GetListParams,
-) => {
+const buildGetListVariables = (
+  introspectionResults: IntrospectionResult,
+  options: VariantOptions,
+) => (resource: Resource, aorFetchType: string, params: GetListParams) => {
   const where = buildWhere(params.filter, resource, introspectionResults);
 
   return {
     skip: (params.pagination.page - 1) * params.pagination.perPage,
     take: params.pagination.perPage,
-    orderBy: buildOrderBy(introspectionResults, resource, params?.sort),
+    orderBy: buildOrderBy(
+      introspectionResults,
+      resource,
+      params?.sort,
+      options,
+    ),
     where,
   };
 };
@@ -495,14 +511,13 @@ const buildCreateVariables = (introspectionResults: IntrospectionResult) => (
   return variables;
 };
 
-export default (introspectionResults: IntrospectionResult) => (
-  resource: Resource,
-  aorFetchType: string,
-  params: any,
-) => {
+export default (
+  introspectionResults: IntrospectionResult,
+  options: VariantOptions,
+) => (resource: Resource, aorFetchType: string, params: any) => {
   switch (aorFetchType) {
     case GET_LIST: {
-      return buildGetListVariables(introspectionResults)(
+      return buildGetListVariables(introspectionResults, options)(
         resource,
         aorFetchType,
         params,
@@ -511,19 +526,22 @@ export default (introspectionResults: IntrospectionResult) => (
     case GET_MANY:
       return {
         where: {
-          //@ts-ignore
           id: {
             in: params.ids
-              .map((obj) => (isObject(obj) ? obj.id : obj))
+              .map((obj) => (isObject(obj) ? (obj as any).id : obj))
               .filter((v) => !isNil(v)),
           },
         },
       };
     case GET_MANY_REFERENCE: {
-      return buildGetListVariables(introspectionResults)(resource, GET_LIST, {
-        ...params,
-        filter: { [params.target]: params.id },
-      });
+      return buildGetListVariables(introspectionResults, options)(
+        resource,
+        GET_LIST,
+        {
+          ...params,
+          filter: { [params.target]: params.id },
+        },
+      );
     }
     case GET_ONE: {
       return buildGetOneVariables(introspectionResults)(resource, params);

@@ -10,7 +10,7 @@ const MANY_FETCH_TYPES = [GET_LIST, GET_MANY, GET_MANY_REFERENCE];
 
 export const buildQueryFactory = (
   introspectionResults: IntrospectionResult,
-  { resourceViews }: OurOptions = {},
+  { resourceViews, ...otherOptions }: OurOptions,
 ) => {
   const knownResources = introspectionResults.resources.map((r) => r.type.name);
 
@@ -59,13 +59,18 @@ export const buildQueryFactory = (
       }
     }
 
-    const variables = buildVariables(introspectionResults)(
+    const variables = buildVariables(introspectionResults, otherOptions)(
       resource,
       aorFetchType,
       params,
     )!;
 
-    const query = buildGqlQuery(introspectionResults)(
+    if (otherOptions.queryDialect === "typegraphql") {
+      Object.keys(variables).forEach((key) => {
+        variables[key] = variables[key] ?? undefined;
+      });
+    }
+    const query = buildGqlQuery(introspectionResults, otherOptions)(
       resource,
       aorFetchType,
       variables,
@@ -73,6 +78,7 @@ export const buildQueryFactory = (
     );
     const parseResponse = getResponseParser(introspectionResults, {
       shouldSanitizeLinkedResources: !isResourceView,
+      queryDialect: otherOptions.queryDialect,
     })(aorFetchType, resource);
 
     return {

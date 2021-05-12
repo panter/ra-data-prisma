@@ -10,12 +10,20 @@ export type ResourceView = {
   fragment: DocumentNode | DoubleFragment;
 };
 
-export type OurOptions = {
+export type QueryDialect = "nexus-prisma" | "typegraphql";
+
+export type ConfigOptions = {
   resourceViews?: {
     [name: string]: ResourceView;
   };
   aliasPrefix?: string;
 };
+
+export type VariantOptions = {
+  queryDialect: QueryDialect;
+};
+
+export type OurOptions = ConfigOptions & VariantOptions;
 
 type RaDataGraphqlOptions = {
   clientOptions?: {
@@ -26,4 +34,8 @@ type RaDataGraphqlOptions = {
   client?: any;
 };
 
-export type Options = RaDataGraphqlOptions & OurOptions;
+export type Options = RaDataGraphqlOptions & ConfigOptions & VariantOptions;
+export type DataProviderOptions = RaDataGraphqlOptions &
+  ConfigOptions &
+  Partial<VariantOptions>;
+

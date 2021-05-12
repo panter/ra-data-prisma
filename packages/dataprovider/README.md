@@ -6,7 +6,8 @@ Data provider for [react admin](https://github.com/marmelab/react-admin)
 
 `yarn add @ra-data-prisma/dataprovider`
 
-Make sure your backend API is compatible by using the other package in this repo [backend](../backend/README.md)
+Make sure your backend API is compatible by using the other package in this repo [backend](../backend/README.md).
+Alternativly, you can connect to a backend that was created using [typegraphql-prisma](https://www.npmjs.com/package/typegraphql-prisma). [See Chapter typegraphql-prisma](#usage-with-typegraphql-prisma)
 
 Add the dataprovider to your react-admin app:
 
@@ -60,14 +61,14 @@ Set `aliasPrefix` if you have set it on the backend as well (see [backend](./pac
 this dataprovider supports all filtering and searching and adds some convenience to it:
 
 - _intelligent handling of strings and ints_: you don't have to specify `equals` or `contains`, we do that for you. The filter can just be `{firstname: "albert"}` and we create the correct graphql query for that
-- _extended react-admin input fields_: you can directly use comparison operators on `NumberInputs`, `TextInputs` and `DateInputs`. For example, implementing "Created since" filter (`DateInput` on a field `createdAt`) would become 
-    ```jsx
-    <DateInput label="Created since" source="createdAt_gt" />
-    ```
-    - available comparisons (default comparison is the one which would be used if omitted):
-        - ints, floats and datetimes - `gt`, `gte`, `lt`, `lte`, `equals` (default = `equals`)
-        - strings - `gt`, `gte`, `lt`, `lte`, `equals`, `contains`, `startsWith`, `endsWith` (default = `contains`)
-- _case insensitive_: If your Prisma version supports it (>= 2.8.0), we automatically query strings as case insensitive. If your Prisma version doesn't support it, we emulate it with query for multiple variations of the search term: as-is, fully lowercase, first letter uppercase. This does work in many cases (searching for terms and names), but fails in some. 
+- _extended react-admin input fields_: you can directly use comparison operators on `NumberInputs`, `TextInputs` and `DateInputs`. For example, implementing "Created since" filter (`DateInput` on a field `createdAt`) would become
+  ```jsx
+  <DateInput label="Created since" source="createdAt_gt" />
+  ```
+  - available comparisons (default comparison is the one which would be used if omitted):
+    - ints, floats and datetimes - `gt`, `gte`, `lt`, `lte`, `equals` (default = `equals`)
+    - strings - `gt`, `gte`, `lt`, `lte`, `equals`, `contains`, `startsWith`, `endsWith` (default = `contains`)
+- _case insensitive_: If your Prisma version supports it (>= 2.8.0), we automatically query strings as case insensitive. If your Prisma version doesn't support it, we emulate it with query for multiple variations of the search term: as-is, fully lowercase, first letter uppercase. This does work in many cases (searching for terms and names), but fails in some.
 - _q_ query. `q` is a convention in react-admin for general search. We implement this client side. A query on `q` will search all string fields and int fields on a resource. It additionaly splits multiple search terms and does an AND search
 - if you need more sophisticated search, you can use normal nexus-prisma graphql queries. You can even mix it with `q` and the intelligent short notation
 
@@ -89,25 +90,20 @@ export const CityList = (props) => (
     <Datagrid>
       <TextField source="id" />
       <TextField source="name" />
-      <ReferenceField
-        label="Country"
-        source="country"
-        reference="Country"
-      >
+      <ReferenceField label="Country" source="country" reference="Country">
         <TextField source="name" />
       </ReferenceField>
       <EditButton />
     </Datagrid>
   </List>
-)
-
+);
 ```
 
 _show all user roles in the user list_
 
 ```jsx
 export const UserList = (props) => (
-  <List {...props} >
+  <List {...props}>
     <Datagrid>
       <TextField source="id" />
       <TextField source="username" />
@@ -124,7 +120,7 @@ export const UserList = (props) => (
       <EditButton />
     </Datagrid>
   </List>
-)
+);
 ```
 
 _edit the roles for a user_
@@ -145,8 +141,7 @@ export const UserEdit = (props) => (
       </ReferenceArrayInput>
     </SimpleForm>
   </Edit>
-)
-
+);
 ```
 
 ### Virtual Resources / Views (_experimental_)
@@ -194,9 +189,11 @@ buildGraphQLProvider({
       `,
     },
   },
-})
+});
 ```
+
 You can also have separate fragments for "one" record and for "many" records (e.g. different views for detail of a resource and for their list):
+
 ```ts
 // real world example
 buildGraphQLProvider({
@@ -251,30 +248,48 @@ buildGraphQLProvider({
             }
           }
         `,
-      }
+      },
     },
   },
-})
+});
 ```
+
 Now you have a new virtual resource `ParticipantsToInvoice` that can be used to display a List or for one record. (notice: update/create/delete is currently not specified, so use it read-only) and it will have exactly this data.
 
 There are two ways you can use this new virtual resource. If you want to use it with React-Admin's query hooks (`useQuery, useGetList, useGetOne`), you need to add this as a new `<Resource>`:
+
 ```jsx
 <Admin>
   // ...
   <Resource name="ParticipantsToInvoice" />
 </Admin>
 ```
+
 These hooks rely on Redux store and will throw an error if the resource isn't defined.
 
 However, if you directly use data provider calls, you can use it with defined `<Resource>` but also _without_ as it directly calls data provider.
+
 ```ts
-const dataProvider = useDataProvider()
-const { data } = await dataProvider.getList('ParticipantsToInvoice', {
+const dataProvider = useDataProvider();
+const { data } = await dataProvider.getList("ParticipantsToInvoice", {
   pagination: { page: 1, perPage: 10 },
-  sort: { field: 'id', order: 'ASC' },
-  filter: {}
-}),
+  sort: { field: "id", order: "ASC" },
+  filter: {},
+});
 ```
 
 It's currently also possible to override an existing resource, altough this is not battle tested.
+
+## Usage with typegraphql-prisma
+
+(beta)
+
+You can use the dataprovider to connect to a backend that was created using https://www.npmjs.com/package/typegraphql-prisma.
+It has a slightly different dialect. Pass the following option to the dataprovider:
+
+```ts
+const dataProvider = useDataProvider({
+    clientOptions: { uri: "/graphql" }
+    queryDialect: "typegraphql" // 👈
+})
+```

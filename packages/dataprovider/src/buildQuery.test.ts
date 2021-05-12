@@ -6,6 +6,8 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { getTestIntrospection } from "./testUtils/getTestIntrospection";
 
 import "./testUtils/testTypes";
+import { defaultOurOptions } from "./buildDataProvider";
+
 describe("buildQueryFactory", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
@@ -18,7 +20,11 @@ describe("buildQueryFactory", () => {
 
   it("throws an error if resource is unknown", () => {
     expect(() =>
-      buildQueryFactory(testIntrospection)("GET_LIST", "Airplane", {} as any),
+      buildQueryFactory(testIntrospection, defaultOurOptions)(
+        "GET_LIST",
+        "Airplane",
+        {} as any,
+      ),
     ).toThrow(
       "Unknown resource Airplane. Make sure it has been declared on your server side schema. Known resources are User, UserRole",
     );
@@ -38,6 +44,7 @@ describe("buildQueryFactory", () => {
     it("throws an error if a view resource point to a non-existing resource", () => {
       expect(() =>
         buildQueryFactory(testIntrospection, {
+          ...defaultOurOptions,
           resourceViews: {
             AirplaneWithManufacturer: {
               resource: "Airplane",
@@ -59,6 +66,7 @@ describe("buildQueryFactory", () => {
 
     it("allows to use a single custom virtual view resources for one and many", () => {
       const buildQuery = buildQueryFactory(testIntrospection, {
+        ...defaultOurOptions,
         resourceViews: {
           UserWithTwitter: {
             resource: "User",
@@ -109,6 +117,7 @@ describe("buildQueryFactory", () => {
     describe("allows to use different custom virtual view resources", () => {
       it("for get one fetch", () => {
         const buildQuery = buildQueryFactory(testIntrospection, {
+          ...defaultOurOptions,
           resourceViews: {
             UserWithTwitter: {
               resource: "User",
@@ -151,6 +160,7 @@ describe("buildQueryFactory", () => {
       });
       it("for get list fetch", () => {
         const buildQuery = buildQueryFactory(testIntrospection, {
+          ...defaultOurOptions,
           resourceViews: {
             UserWithTwitter: {
               resource: "User",
@@ -211,8 +221,135 @@ describe("buildQueryFactory", () => {
           }
         `);
       });
+      it("for get list fetch with typegraphql count option", () => {
+        const buildQuery = buildQueryFactory(testIntrospection, {
+          queryDialect: "typegraphql",
+          resourceViews: {
+            UserWithTwitter: {
+              resource: "User",
+              fragment: {
+                one: gqlReal`
+                  fragment OneUserWithTwitter on User {
+                    id
+                    socialMedia {
+                      twitter
+                    }
+                  }
+                `,
+                many: gqlReal`
+                  fragment ManyUsersWithTwitter on User {
+                    id
+                    email
+                    wantsNewsletter
+                    socialMedia {
+                      twitter
+                    }
+                  }
+                `,
+              },
+            },
+          },
+        });
+
+        const { query } = buildQuery("GET_LIST", "UserWithTwitter", {
+          pagination: {
+            page: 1,
+            perPage: 50,
+          },
+          filter: {},
+          sort: { field: "id", order: "ASC" },
+        } as GetListParams);
+
+        expect(query).toEqualGraphql(gql`
+          query users(
+            $where: UserWhereInput
+            $orderBy: [UserOrderByWithRelationInput!]
+            $take: Int
+            $skip: Int
+          ) {
+            items: users(
+              where: $where
+              orderBy: $orderBy
+              take: $take
+              skip: $skip
+            ) {
+              id
+              email
+              wantsNewsletter
+              socialMedia {
+                twitter
+              }
+            }
+            total: aggregateUser(where: $where) {
+              count {
+                _all
+              }
+            }
+          }
+        `);
+      });
+
+      it("for get list fetch with typegraphql count option, without order", () => {
+        const buildQuery = buildQueryFactory(testIntrospection, {
+          queryDialect: "typegraphql",
+          resourceViews: {
+            UserWithTwitter: {
+              resource: "User",
+              fragment: {
+                one: gqlReal`
+                  fragment OneUserWithTwitter on User {
+                    id
+                    socialMedia {
+                      twitter
+                    }
+                  }
+                `,
+                many: gqlReal`
+                  fragment ManyUsersWithTwitter on User {
+                    id
+                    email
+                    wantsNewsletter
+                    socialMedia {
+                      twitter
+                    }
+                  }
+                `,
+              },
+            },
+          },
+        });
+
+        const { query } = buildQuery("GET_LIST", "UserWithTwitter", {
+          pagination: {
+            page: 1,
+            perPage: 50,
+          },
+          filter: {},
+          sort: {},
+        } as GetListParams);
+
+        expect(query).toEqualGraphql(gql`
+          query users($where: UserWhereInput, $take: Int, $skip: Int) {
+            items: users(where: $where, take: $take, skip: $skip) {
+              id
+              email
+              wantsNewsletter
+              socialMedia {
+                twitter
+              }
+            }
+            total: aggregateUser(where: $where) {
+              count {
+                _all
+              }
+            }
+          }
+        `);
+      });
+
       it("for get many fetch", () => {
         const buildQuery = buildQueryFactory(testIntrospection, {
+          ...defaultOurOptions,
           resourceViews: {
             UserWithTwitter: {
               resource: "User",
@@ -260,6 +397,7 @@ describe("buildQueryFactory", () => {
       });
       it("for get many reference fetch", () => {
         const buildQuery = buildQueryFactory(testIntrospection, {
+          ...defaultOurOptions,
           resourceViews: {
             UserWithTwitter: {
               resource: "User",

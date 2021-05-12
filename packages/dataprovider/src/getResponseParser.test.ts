@@ -11,6 +11,9 @@ import getResponseParser from "./getResponseParser";
 import { Resource, IntrospectionResult } from "./constants/interfaces";
 
 import { getTestIntrospection } from "./testUtils/getTestIntrospection";
+import { OurOptions } from "./types";
+
+const defaultOptions: OurOptions = {queryDialect: "nexus-prisma"}
 
 const testListTypes = (type: string) => {
   it(`returns the response expected by RA for ${type}`, async () => {
@@ -46,7 +49,58 @@ const testListTypes = (type: string) => {
     };
 
     expect(
-      getResponseParser(testIntrospection)(type, testUserResource)(response),
+      getResponseParser(testIntrospection, defaultOptions)(type, testUserResource)(response),
+    ).toEqual({
+      data: [
+        {
+          id: "user1",
+          firstName: "firstName1",
+          roles: ["admin"],
+        },
+        {
+          id: "post2",
+          firstName: "firstName2",
+          roles: ["admin"],
+        },
+      ],
+      total: 100,
+    });
+  });
+
+  it(`returns the response expected by RA for ${type}, with typegraphql count format`, async () => {
+    const testIntrospection: IntrospectionResult = await getTestIntrospection();
+    const testUserResource: Resource = testIntrospection.resources.find(
+      (r) => r.type.kind === "OBJECT" && r.type.name === "User",
+    );
+
+    const response = {
+      data: {
+        items: [
+          {
+            id: "user1",
+            firstName: "firstName1",
+            roles: [
+              {
+                id: "admin",
+              },
+            ],
+          },
+          {
+            id: "post2",
+            firstName: "firstName2",
+            roles: [
+              {
+                id: "admin",
+              },
+            ],
+          },
+        ],
+        total: {count: {_all: 100}},
+      },
+    };
+
+    expect(
+      getResponseParser(testIntrospection, {queryDialect: "typegraphql"})(type, testUserResource)(response),
     ).toEqual({
       data: [
         {
@@ -64,6 +118,9 @@ const testListTypes = (type: string) => {
     });
   });
 };
+
+
+
 
 const testSingleTypes = (type: string) => {
   it(`returns the response expected by RA for ${type}`, async () => {
@@ -85,7 +142,7 @@ const testSingleTypes = (type: string) => {
       },
     };
     expect(
-      getResponseParser(testIntrospection)(type, testUserResource)(response),
+      getResponseParser(testIntrospection, defaultOptions)(type, testUserResource)(response),
     ).toEqual({
       data: {
         id: "user1",

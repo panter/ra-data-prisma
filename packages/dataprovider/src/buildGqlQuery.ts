@@ -11,6 +11,7 @@ import {
 import { QUERY_TYPES } from "ra-data-graphql";
 import { DELETE, GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
+import { QueryDialect } from "./types";
 import getFinalType from "./utils/getFinalType";
 import * as gqlTypes from "./utils/gqlTypes";
 import isList from "./utils/isList";
@@ -186,13 +187,17 @@ const buildFieldsFromFragment = (
   return (parsedFragment as any).definitions?.[0].selectionSet.selections;
 };
 
-export default (introspectionResults: IntrospectionResult) => (
+export default (
+  introspectionResults: IntrospectionResult,
+  options: { queryDialect: QueryDialect },
+) => (
   resource: Resource,
   aorFetchType: string,
   variables: { [key: string]: any },
   fragment: DocumentNode,
 ) => {
   const queryType = resource[aorFetchType];
+  const { queryDialect } = options;
 
   if (!queryType) {
     throw new Error(
@@ -204,16 +209,47 @@ export default (introspectionResults: IntrospectionResult) => (
   const apolloArgs = buildApolloArgs(queryType, variables);
   const args = buildArgs(queryType, variables);
   const countArgs = buildArgs(queryType, countVariables);
-  const countName = `${queryType.name}Count`;
-
-  const supportsCountArgs =
-    (introspectionResults.queries.find(
-      (query) => query.name === countName,
-    ) as any)?.args.length > 0;
 
   const fields = fragment
     ? buildFieldsFromFragment(fragment, resource.type.name, aorFetchType)
     : buildFields(introspectionResults)((resource.type as any).fields);
+
+  const totals: Record<QueryDialect, FieldNode> = {
+    "nexus-prisma": (() => {
+      const countName = `${queryType.name}Count`;
+
+      const supportsCountArgs =
+        (introspectionResults.queries.find(
+          (query) => query.name === countName,
+        ) as any)?.args.length > 0;
+
+      return gqlTypes.field(gqlTypes.name(countName), {
+        alias: gqlTypes.name("total"),
+        arguments: supportsCountArgs ? countArgs : undefined,
+      });
+    })(),
+    typegraphql: gqlTypes.field(
+      gqlTypes.name(
+        `aggregate${queryType.name
+          .substring(0, 1)
+          .toUpperCase()}${queryType.name.substring(
+          1,
+          queryType.name.length - 1,
+        )}`,
+      ),
+      {
+        alias: gqlTypes.name("total"),
+        arguments: countArgs,
+        selectionSet: gqlTypes.selectionSet([
+          gqlTypes.field(gqlTypes.name("count"), {
+            selectionSet: gqlTypes.selectionSet([
+              gqlTypes.field(gqlTypes.name("_all")),
+            ]),
+          }),
+        ]),
+      },
+    ),
+  };
 
   if (
     aorFetchType === GET_LIST ||
@@ -229,10 +265,7 @@ export default (introspectionResults: IntrospectionResult) => (
             arguments: args,
             selectionSet: gqlTypes.selectionSet(fields),
           }),
-          gqlTypes.field(gqlTypes.name(countName), {
-            alias: gqlTypes.name("total"),
-            arguments: supportsCountArgs ? countArgs : undefined,
-          }),
+          totals[queryDialect],
         ]),
         gqlTypes.name(queryType.name!),
         apolloArgs,
