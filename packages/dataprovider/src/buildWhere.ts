@@ -254,8 +254,8 @@ const getFilters = (
         value === null
           ? null
           : value.map((f) =>
-              buildWhereWithType(f, introspectionResults, whereType),
-            ),
+            buildWhereWithType(f, introspectionResults, whereType),
+          ),
     };
   }
 
@@ -321,7 +321,10 @@ const getFilters = (
                 return getStringFilter(f.name, part.trim(), false);
               }
               if (isIntFilter(f.type)) {
-                return getIntFilter(f.name, part.trim());
+                const numberValue = parseInt(part.trim());
+                const valueIsInt32 =
+                  -(2 ** 31) <= numberValue && numberValue <= 2 ** 31 - 1;
+                return valueIsInt32 ? getIntFilter(f.name, part.trim()) : null;
               }
             }
             return null;
