@@ -5,6 +5,7 @@ import {
   IntrospectionListTypeRef,
   IntrospectionNamedTypeRef,
   IntrospectionNonNullTypeRef,
+  IntrospectionTypeRef,
 } from "graphql";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
@@ -158,10 +159,14 @@ const getUpdateInputDataTypeForList = (
       introdspectionType.name === updateInputFieldType.name,
   ) as IntrospectionInputObjectType).inputFields.find(
     (input) => input.name === "data",
-  ).type as IntrospectionNonNullTypeRef<IntrospectionNamedTypeRef>;
+  ).type as IntrospectionTypeRef;
+
+  const updateListInputDataName = ((updateListInputDataType.kind === "NON_NULL"
+    ? updateListInputDataType.ofType
+    : updateListInputDataType) as IntrospectionNamedTypeRef).name;
+
   return introspectionResults.types.find(
-    (introdspectionType) =>
-      introdspectionType.name === updateListInputDataType.ofType.name,
+    (introdspectionType) => introdspectionType.name === updateListInputDataName,
   ) as IntrospectionInputObjectType;
 };
 
