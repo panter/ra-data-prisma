@@ -1,12 +1,12 @@
-import buildDataProvider from "./buildDataProvider";
+import buildDataProvider, { defaultOurOptions } from "./buildDataProvider";
 import { useEffect, useState } from "react";
-import { Options } from "./types";
+import { DataProviderOptions } from "./types";
 
-const useDataProvider = (options: Options) => {
+const useDataProvider = (options: DataProviderOptions) => {
   const [dataProvider, setDataProvider] = useState();
 
   useEffect(() => {
-    buildDataProvider(options).then((p) => {
+    buildDataProvider({ ...defaultOurOptions, ...options }).then((p) => {
       setDataProvider(() => p);
     });
   }, []);

@@ -2,6 +2,7 @@ import { TypeKind, IntrospectionObjectType } from "graphql";
 import { GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import getFinalType from "./utils/getFinalType";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
+import { QueryDialect } from "./types";
 
 const sanitizeResource = (
   introspectionResults: IntrospectionResult,
@@ -49,7 +50,10 @@ const sanitizeResource = (
 
 export default (
   introspectionResults: IntrospectionResult,
-  { shouldSanitizeLinkedResources = true } = {},
+  {
+    shouldSanitizeLinkedResources = true,
+    queryDialect,
+  }: { shouldSanitizeLinkedResources: boolean; queryDialect: QueryDialect },
 ) => (aorFetchType: string, resource: Resource) => (response: {
   [key: string]: any;
 }) => {
@@ -60,6 +64,15 @@ export default (
   );
   const data = response.data;
 
+  const getTotal = () => {
+    switch (queryDialect) {
+      case "nexus-prisma":
+        return response.data.total;
+      case "typegraphql":
+        return response.data.total.count._all;
+    }
+  };
+
   if (
     aorFetchType === GET_LIST ||
     aorFetchType === GET_MANY ||
@@ -67,7 +80,7 @@ export default (
   ) {
     return {
       data: response.data.items.map(sanitize),
-      total: response.data.total,
+      total: getTotal(),
     };
   }
 

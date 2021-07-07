@@ -4,6 +4,7 @@ import { makeIntrospectionOptions } from "../utils/makeIntrospectionOptions";
 import { testSchema } from "../../test-data/testSchema";
 import { IntrospectionResult } from "../constants/interfaces";
 import { CommonOptions } from "../../../backend/src/types";
+import { defaultOurOptions } from "../buildDataProvider";
 
 export const getTestIntrospection = async (options?: CommonOptions) => {
   const schema = await graphql(
@@ -14,7 +15,7 @@ export const getTestIntrospection = async (options?: CommonOptions) => {
     getIntrospectionQuery(),
   ).then(({ data: { __schema } }) => __schema);
   return introspection(null, {
-    ...makeIntrospectionOptions(options),
+    ...makeIntrospectionOptions({ ...options, ...defaultOurOptions }),
     schema: schema,
   }) as IntrospectionResult;
 };

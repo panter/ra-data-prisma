@@ -25,6 +25,7 @@ import {
 
 import "./testUtils/testTypes";
 import { getTestIntrospection } from "./testUtils/getTestIntrospection";
+import {defaultOurOptions} from "./buildDataProvider";
 
 describe("buildGqlQuery", () => {
   let testIntrospection: IntrospectionResult;
@@ -199,7 +200,7 @@ describe("buildGqlQuery", () => {
 
     it("returns the correct query for GET_LIST", () => {
       expect(
-        buildGqlQuery(testIntrospection)(
+        buildGqlQuery(testIntrospection, defaultOurOptions)(
           testUserResource,
           GET_LIST,
           { where },
@@ -246,9 +247,62 @@ describe("buildGqlQuery", () => {
       );
     });
 
+    it("returns the correct query for GET_LIST with typegraphql count query", () => {
+      expect(
+        buildGqlQuery(testIntrospection, {...defaultOurOptions, queryDialect: "typegraphql"})(
+          testUserResource,
+          GET_LIST,
+          { where },
+          null,
+        ),
+      ).toEqualGraphql(
+        gql`
+          query users($where: UserWhereInput) {
+            items: users(where: $where) {
+              id
+              email
+              firstName
+              lastName
+              yearOfBirth
+              roles {
+                id
+              }
+              gender
+              wantsNewsletter
+              userSocialMedia {
+                id
+                instagram
+                twitter
+                user {
+                  id
+                }
+              }
+              blogPosts {
+                id
+              }
+              comments {
+                id
+              }
+              interests
+              address {
+                street
+                city
+                countryCode
+              }
+            }
+            total: aggregateUser(where: $where) {
+              count {
+                _all
+              }
+            }
+          }
+        `,
+      );
+    });
+
     it("returns the correct query for GET_LIST when defining a fragment", () => {
       expect(
-        buildGqlQuery(testIntrospection)(
+        buildGqlQuery(testIntrospection, defaultOurOptions)(
           testUserResource,
           GET_LIST,
           { where },
@@ -277,7 +331,7 @@ describe("buildGqlQuery", () => {
     });
     it("returns the correct query for GET_MANY", () => {
       expect(
-        buildGqlQuery(testIntrospection)(
+        buildGqlQuery(testIntrospection, defaultOurOptions)(
           testUserResource,
           GET_MANY,
           { where },
@@ -325,7 +379,7 @@ describe("buildGqlQuery", () => {
     });
     it("returns the correct query for GET_MANY_REFERENCE", () => {
       expect(
-        buildGqlQuery(testIntrospection)(
+        buildGqlQuery(testIntrospection, defaultOurOptions)(
           testUserResource,
           GET_MANY_REFERENCE,
           { where },
@@ -373,7 +427,7 @@ describe("buildGqlQuery", () => {
     });
     it("returns the correct query for GET_ONE", () => {
       expect(
-        buildGqlQuery(testIntrospection)(
+        buildGqlQuery(testIntrospection, defaultOurOptions)(
           testUserResource,
           GET_ONE,
 
@@ -421,7 +475,7 @@ describe("buildGqlQuery", () => {
     });
     it("returns the correct query for UPDATE", () => {
       expect(
-        buildGqlQuery(testIntrospection)(
+        buildGqlQuery(testIntrospection, defaultOurOptions)(
           testUserResource,
           UPDATE,
           { where, data: {} },
@@ -471,7 +525,7 @@ describe("buildGqlQuery", () => {
     });
     it("returns the correct query for CREATE", () => {
       expect(
-        buildGqlQuery(testIntrospection)(
+        buildGqlQuery(testIntrospection, defaultOurOptions)(
           testUserResource,
           CREATE,
           { data: {} },
@@ -518,7 +572,7 @@ describe("buildGqlQuery", () => {
     });
     it("returns the correct query for DELETE", () => {
       expect(
-        buildGqlQuery(testIntrospection)(
+        buildGqlQuery(testIntrospection, defaultOurOptions)(
           testUserResource,
           DELETE,
           { where },
@@ -547,7 +601,7 @@ describe("buildGqlQuery", () => {
 
       it("allows to prefix all queries with a prefix", () => {
         expect(
-          buildGqlQuery(testIntrospection)(
+          buildGqlQuery(testIntrospection, defaultOurOptions)(
             testUserResource,
             GET_LIST,
             { where },
@@ -595,7 +649,7 @@ describe("buildGqlQuery", () => {
       });
       it("allows to prefix all mutations with a prefix", () => {
         expect(
-          buildGqlQuery(testIntrospection)(
+          buildGqlQuery(testIntrospection, defaultOurOptions)(
             testUserResource,
             DELETE,
             { where },

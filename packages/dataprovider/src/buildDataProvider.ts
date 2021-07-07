@@ -2,12 +2,17 @@ import merge from "lodash/merge";
 import buildRaGraphqlDataProvider from "ra-data-graphql";
 import { DELETE, DELETE_MANY, UPDATE, UPDATE_MANY } from "react-admin";
 import { buildQueryFactory } from "./buildQuery";
-import { Options } from "./types";
+import { Options, OurOptions } from "./types";
 
 import { makeIntrospectionOptions } from "./utils/makeIntrospectionOptions";
 
+export const defaultOurOptions: OurOptions = {
+  queryDialect: "nexus-prisma",
+};
+
 export const defaultOptions: Options = {
   clientOptions: { uri: "/graphql" },
+  ...defaultOurOptions,
 };
 
 const buildDataProvider = (options: Options) => {
