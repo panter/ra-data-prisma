@@ -60,6 +60,7 @@ model User {
   address         Json?
   blogPosts       BlogPost[]
   comments        BlogPostComment[]
+  weddingDate     DateTime?
 }
 
 model FilteringTest {

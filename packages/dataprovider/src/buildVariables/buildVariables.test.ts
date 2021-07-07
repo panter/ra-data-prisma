@@ -7,10 +7,10 @@ import {
   GET_MANY_REFERENCE,
   UPDATE,
 } from "react-admin";
-import { NexusGenArgTypes } from "../generated/nexus";
-import buildVariables from "./buildVariables";
-import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { getTestIntrospection } from "./testUtils/getTestIntrospection";
+import { NexusGenArgTypes } from "../../generated/nexus";
+import { buildVariables } from "./";
+import { IntrospectionResult, Resource } from "./../constants/interfaces";
+import { getTestIntrospection } from "../testUtils/getTestIntrospection";
 
 describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
@@ -485,6 +485,24 @@ describe("buildVariables", () => {
         where: { id: "einstein" },
         data: {
           lastName: { set: "Zweistein" },
+        },
+      });
+    });
+
+    it("handles dates correctly", () => {
+      const date = new Date("2020-06-25");
+      const params = {
+        data: {
+          id: "einstein",
+          weddingDate: "2020-06-25",
+        },
+      };
+      expect(
+        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          weddingDate: { set: date },
         },
       });
     });

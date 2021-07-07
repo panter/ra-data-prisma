@@ -84,7 +84,8 @@ interface NexusPrismaInputs {
         | "userSocialMedia"
         | "address"
         | "blogPosts"
-        | "comments";
+        | "comments"
+        | "weddingDate";
       ordering:
         | "id"
         | "email"
@@ -98,7 +99,8 @@ interface NexusPrismaInputs {
         | "userSocialMedia"
         | "address"
         | "blogPosts"
-        | "comments";
+        | "comments"
+        | "weddingDate";
     };
     filteringTests: {
       filtering:
@@ -150,7 +152,8 @@ interface NexusPrismaInputs {
         | "userSocialMedia"
         | "address"
         | "blogPosts"
-        | "comments";
+        | "comments"
+        | "weddingDate";
       ordering:
         | "id"
         | "email"
@@ -164,7 +167,8 @@ interface NexusPrismaInputs {
         | "userSocialMedia"
         | "address"
         | "blogPosts"
-        | "comments";
+        | "comments"
+        | "weddingDate";
     };
   };
   UserSocialMedia: {};
@@ -324,6 +328,7 @@ interface NexusPrismaOutputs {
     address: "Json";
     blogPosts: "BlogPost";
     comments: "BlogPostComment";
+    weddingDate: "DateTime";
   };
   FilteringTest: {
     id: "Int";

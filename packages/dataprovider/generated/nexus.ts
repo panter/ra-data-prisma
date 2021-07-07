@@ -459,6 +459,17 @@ export interface NexusGenInputs {
     not?: NexusGenInputs["NestedDateTimeFilter"] | null; // NestedDateTimeFilter
     notIn?: NexusGenScalars["DateTime"][] | null; // [DateTime!]
   };
+  DateTimeNullableFilter: {
+    // input type
+    equals?: NexusGenScalars["DateTime"] | null; // DateTime
+    gt?: NexusGenScalars["DateTime"] | null; // DateTime
+    gte?: NexusGenScalars["DateTime"] | null; // DateTime
+    in?: NexusGenScalars["DateTime"][] | null; // [DateTime!]
+    lt?: NexusGenScalars["DateTime"] | null; // DateTime
+    lte?: NexusGenScalars["DateTime"] | null; // DateTime
+    not?: NexusGenInputs["NestedDateTimeNullableFilter"] | null; // NestedDateTimeNullableFilter
+    notIn?: NexusGenScalars["DateTime"][] | null; // [DateTime!]
+  };
   EnumGenderNullableFilter: {
     // input type
     equals?: NexusGenEnums["Gender"] | null; // Gender
@@ -613,6 +624,17 @@ export interface NexusGenInputs {
     not?: NexusGenInputs["NestedDateTimeFilter"] | null; // NestedDateTimeFilter
     notIn?: NexusGenScalars["DateTime"][] | null; // [DateTime!]
   };
+  NestedDateTimeNullableFilter: {
+    // input type
+    equals?: NexusGenScalars["DateTime"] | null; // DateTime
+    gt?: NexusGenScalars["DateTime"] | null; // DateTime
+    gte?: NexusGenScalars["DateTime"] | null; // DateTime
+    in?: NexusGenScalars["DateTime"][] | null; // [DateTime!]
+    lt?: NexusGenScalars["DateTime"] | null; // DateTime
+    lte?: NexusGenScalars["DateTime"] | null; // DateTime
+    not?: NexusGenInputs["NestedDateTimeNullableFilter"] | null; // NestedDateTimeNullableFilter
+    notIn?: NexusGenScalars["DateTime"][] | null; // [DateTime!]
+  };
   NestedEnumGenderNullableFilter: {
     // input type
     equals?: NexusGenEnums["Gender"] | null; // Gender
@@ -680,6 +702,10 @@ export interface NexusGenInputs {
     not?: NexusGenInputs["NestedStringNullableFilter"] | null; // NestedStringNullableFilter
     notIn?: string[] | null; // [String!]
     startsWith?: string | null; // String
+  };
+  NullableDateTimeFieldUpdateOperationsInput: {
+    // input type
+    set?: NexusGenScalars["DateTime"] | null; // DateTime
   };
   NullableEnumGenderFieldUpdateOperationsInput: {
     // input type
@@ -780,6 +806,7 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaCreateNestedOneWithoutUserInput"]
       | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
+    weddingDate?: NexusGenScalars["DateTime"] | null; // DateTime
     yearOfBirth?: number | null; // Int
   };
   UserCreateNestedManyWithoutRolesInput: {
@@ -842,6 +869,7 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaCreateNestedOneWithoutUserInput"]
       | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
+    weddingDate?: NexusGenScalars["DateTime"] | null; // DateTime
     yearOfBirth?: number | null; // Int
   };
   UserCreateWithoutCommentsInput: {
@@ -861,6 +889,7 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaCreateNestedOneWithoutUserInput"]
       | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
+    weddingDate?: NexusGenScalars["DateTime"] | null; // DateTime
     yearOfBirth?: number | null; // Int
   };
   UserCreateWithoutRolesInput: {
@@ -882,6 +911,7 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaCreateNestedOneWithoutUserInput"]
       | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
+    weddingDate?: NexusGenScalars["DateTime"] | null; // DateTime
     yearOfBirth?: number | null; // Int
   };
   UserCreateinterestsInput: {
@@ -916,6 +946,7 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaOrderByWithRelationInput"]
       | null; // UserSocialMediaOrderByWithRelationInput
     wantsNewsletter?: NexusGenEnums["SortOrder"] | null; // SortOrder
+    weddingDate?: NexusGenEnums["SortOrder"] | null; // SortOrder
     yearOfBirth?: NexusGenEnums["SortOrder"] | null; // SortOrder
   };
   UserRoleCreateInput: {
@@ -1045,6 +1076,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs["EnumTopicNullableListFilter"] | null; // EnumTopicNullableListFilter
     lastName?: NexusGenInputs["StringNullableFilter"] | null; // StringNullableFilter
     wantsNewsletter?: NexusGenInputs["BoolFilter"] | null; // BoolFilter
+    weddingDate?: NexusGenInputs["DateTimeNullableFilter"] | null; // DateTimeNullableFilter
     yearOfBirth?: NexusGenInputs["IntNullableFilter"] | null; // IntNullableFilter
   };
   UserSocialMediaCreateNestedOneWithoutUserInput: {
@@ -1136,6 +1168,9 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaUpdateOneWithoutUserInput"]
       | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs["BoolFieldUpdateOperationsInput"] | null; // BoolFieldUpdateOperationsInput
+    weddingDate?:
+      | NexusGenInputs["NullableDateTimeFieldUpdateOperationsInput"]
+      | null; // NullableDateTimeFieldUpdateOperationsInput
     yearOfBirth?:
       | NexusGenInputs["NullableIntFieldUpdateOperationsInput"]
       | null; // NullableIntFieldUpdateOperationsInput
@@ -1156,6 +1191,9 @@ export interface NexusGenInputs {
       | NexusGenInputs["NullableStringFieldUpdateOperationsInput"]
       | null; // NullableStringFieldUpdateOperationsInput
     wantsNewsletter?: NexusGenInputs["BoolFieldUpdateOperationsInput"] | null; // BoolFieldUpdateOperationsInput
+    weddingDate?:
+      | NexusGenInputs["NullableDateTimeFieldUpdateOperationsInput"]
+      | null; // NullableDateTimeFieldUpdateOperationsInput
     yearOfBirth?:
       | NexusGenInputs["NullableIntFieldUpdateOperationsInput"]
       | null; // NullableIntFieldUpdateOperationsInput
@@ -1238,6 +1276,9 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaUpdateOneWithoutUserInput"]
       | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs["BoolFieldUpdateOperationsInput"] | null; // BoolFieldUpdateOperationsInput
+    weddingDate?:
+      | NexusGenInputs["NullableDateTimeFieldUpdateOperationsInput"]
+      | null; // NullableDateTimeFieldUpdateOperationsInput
     yearOfBirth?:
       | NexusGenInputs["NullableIntFieldUpdateOperationsInput"]
       | null; // NullableIntFieldUpdateOperationsInput
@@ -1263,6 +1304,9 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaUpdateOneWithoutUserInput"]
       | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs["BoolFieldUpdateOperationsInput"] | null; // BoolFieldUpdateOperationsInput
+    weddingDate?:
+      | NexusGenInputs["NullableDateTimeFieldUpdateOperationsInput"]
+      | null; // NullableDateTimeFieldUpdateOperationsInput
     yearOfBirth?:
       | NexusGenInputs["NullableIntFieldUpdateOperationsInput"]
       | null; // NullableIntFieldUpdateOperationsInput
@@ -1290,6 +1334,9 @@ export interface NexusGenInputs {
       | NexusGenInputs["UserSocialMediaUpdateOneWithoutUserInput"]
       | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs["BoolFieldUpdateOperationsInput"] | null; // BoolFieldUpdateOperationsInput
+    weddingDate?:
+      | NexusGenInputs["NullableDateTimeFieldUpdateOperationsInput"]
+      | null; // NullableDateTimeFieldUpdateOperationsInput
     yearOfBirth?:
       | NexusGenInputs["NullableIntFieldUpdateOperationsInput"]
       | null; // NullableIntFieldUpdateOperationsInput
@@ -1332,6 +1379,7 @@ export interface NexusGenInputs {
     roles?: NexusGenInputs["UserRoleListRelationFilter"] | null; // UserRoleListRelationFilter
     userSocialMedia?: NexusGenInputs["UserSocialMediaWhereInput"] | null; // UserSocialMediaWhereInput
     wantsNewsletter?: NexusGenInputs["BoolFilter"] | null; // BoolFilter
+    weddingDate?: NexusGenInputs["DateTimeNullableFilter"] | null; // DateTimeNullableFilter
     yearOfBirth?: NexusGenInputs["IntNullableFilter"] | null; // IntNullableFilter
   };
   UserWhereUniqueInput: {

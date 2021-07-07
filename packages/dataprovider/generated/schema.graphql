@@ -421,6 +421,17 @@ input DateTimeFilter {
   notIn: [DateTime!]
 }
 
+input DateTimeNullableFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeNullableFilter
+  notIn: [DateTime!]
+}
+
 input EnumGenderNullableFilter {
   equals: Gender
   in: [Gender!]
@@ -635,6 +646,17 @@ input NestedDateTimeFilter {
   notIn: [DateTime!]
 }
 
+input NestedDateTimeNullableFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeNullableFilter
+  notIn: [DateTime!]
+}
+
 input NestedEnumGenderNullableFilter {
   equals: Gender
   in: [Gender!]
@@ -701,6 +723,10 @@ input NestedStringNullableFilter {
   not: NestedStringNullableFilter
   notIn: [String!]
   startsWith: String
+}
+
+input NullableDateTimeFieldUpdateOperationsInput {
+  set: DateTime
 }
 
 input NullableEnumGenderFieldUpdateOperationsInput {
@@ -854,6 +880,7 @@ input UserCreateInput {
   roles: UserRoleCreateNestedManyWithoutUsersInput
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
+  weddingDate: DateTime
   yearOfBirth: Int
 }
 
@@ -906,6 +933,7 @@ input UserCreateWithoutBlogPostsInput {
   roles: UserRoleCreateNestedManyWithoutUsersInput
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
+  weddingDate: DateTime
   yearOfBirth: Int
 }
 
@@ -921,6 +949,7 @@ input UserCreateWithoutCommentsInput {
   roles: UserRoleCreateNestedManyWithoutUsersInput
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
+  weddingDate: DateTime
   yearOfBirth: Int
 }
 
@@ -936,6 +965,7 @@ input UserCreateWithoutRolesInput {
   lastName: String
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
+  weddingDate: DateTime
   yearOfBirth: Int
 }
 
@@ -966,6 +996,7 @@ input UserOrderByWithRelationInput {
   roles: UserRoleOrderByRelationAggregateInput
   userSocialMedia: UserSocialMediaOrderByWithRelationInput
   wantsNewsletter: SortOrder
+  weddingDate: SortOrder
   yearOfBirth: SortOrder
 }
 
@@ -1090,6 +1121,7 @@ input UserScalarWhereInput {
   interests: EnumTopicNullableListFilter
   lastName: StringNullableFilter
   wantsNewsletter: BoolFilter
+  weddingDate: DateTimeNullableFilter
   yearOfBirth: IntNullableFilter
 }
 
@@ -1174,6 +1206,7 @@ input UserUpdateInput {
   roles: UserRoleUpdateManyWithoutUsersInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
+  weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
@@ -1186,6 +1219,7 @@ input UserUpdateManyMutationInput {
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
+  weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
@@ -1244,6 +1278,7 @@ input UserUpdateWithoutBlogPostsInput {
   roles: UserRoleUpdateManyWithoutUsersInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
+  weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
@@ -1259,6 +1294,7 @@ input UserUpdateWithoutCommentsInput {
   roles: UserRoleUpdateManyWithoutUsersInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
+  weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
@@ -1274,6 +1310,7 @@ input UserUpdateWithoutRolesInput {
   lastName: NullableStringFieldUpdateOperationsInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
+  weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
@@ -1314,6 +1351,7 @@ input UserWhereInput {
   roles: UserRoleListRelationFilter
   userSocialMedia: UserSocialMediaWhereInput
   wantsNewsletter: BoolFilter
+  weddingDate: DateTimeNullableFilter
   yearOfBirth: IntNullableFilter
 }
 

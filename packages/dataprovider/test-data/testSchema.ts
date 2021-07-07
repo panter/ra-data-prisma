@@ -32,6 +32,7 @@ export const testSchema = (options: CommonOptions) => {
       t.model.blogPosts(null);
       t.model.comments(null);
       t.model.interests();
+      t.model.weddingDate();
       t.field("address", { type: "Address" });
 
       // add one field that needs arguments and therefore can't be used by react-admin

@@ -235,6 +235,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              weddingDate
               address {
                 street
                 city
@@ -282,6 +283,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              weddingDate
               address {
                 street
                 city
@@ -364,6 +366,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              weddingDate
               address {
                 street
                 city
@@ -412,6 +415,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              weddingDate
               address {
                 street
                 city
@@ -461,6 +465,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              weddingDate
               address {
                 street
                 city
@@ -511,6 +516,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              weddingDate
               address {
                 street
                 city
@@ -558,6 +564,7 @@ describe("buildGqlQuery", () => {
                 id
               }
               interests
+              weddingDate
               address {
                 street
                 city
@@ -634,6 +641,7 @@ describe("buildGqlQuery", () => {
                   id
                 }
                 interests
+                weddingDate
                 address {
                   street
                   city

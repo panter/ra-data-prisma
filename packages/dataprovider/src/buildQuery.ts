@@ -1,4 +1,4 @@
-import buildVariables from "./buildVariables";
+import { buildVariables } from "./buildVariables";
 import buildGqlQuery from "./buildGqlQuery";
 import getResponseParser from "./getResponseParser";
 import { IntrospectionResult } from "./constants/interfaces";
@@ -59,7 +59,7 @@ export const buildQueryFactory = (
       }
     }
 
-    const variables = buildVariables(introspectionResults, otherOptions)(
+    const variables = buildVariables(introspectionResults)(
       resource,
       aorFetchType,
       params,
