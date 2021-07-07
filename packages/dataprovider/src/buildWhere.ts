@@ -193,7 +193,8 @@ const processKey = (originalKey: string) => {
   // the original key should be captured in second match unchanged so it shouldn't break anything else
   // equals, contains, startsWith, endsWith are specifically for strings
   // default "comparison" (without specified comparator) is equals, for strings it's contains (so to override this, provide _equals on string fields)
-  const keyRegex = /^(.+?)(_(gt|gte|lt|lte|equals|contains|startsWith|endsWith))?$/;
+  const keyRegex =
+    /^(.+?)(_(gt|gte|lt|lte|equals|contains|startsWith|endsWith))?$/;
   const matches = originalKey.match(keyRegex);
   const key = matches[1];
   const comparator = matches[3];

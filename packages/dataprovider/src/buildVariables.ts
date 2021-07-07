@@ -80,56 +80,57 @@ const buildOrderBy = (
   return [selector];
 };
 
-const buildGetListVariables = (
-  introspectionResults: IntrospectionResult,
-  options: VariantOptions,
-) => (resource: Resource, aorFetchType: string, params: GetListParams) => {
-  const where = buildWhere(params.filter, resource, introspectionResults);
+const buildGetListVariables =
+  (introspectionResults: IntrospectionResult, options: VariantOptions) =>
+  (resource: Resource, aorFetchType: string, params: GetListParams) => {
+    const where = buildWhere(params.filter, resource, introspectionResults);
 
-  return {
-    skip: (params.pagination.page - 1) * params.pagination.perPage,
-    take: params.pagination.perPage,
-    orderBy: buildOrderBy(
-      introspectionResults,
-      resource,
-      params?.sort,
-      options,
-    ),
-    where,
+    return {
+      skip: (params.pagination.page - 1) * params.pagination.perPage,
+      take: params.pagination.perPage,
+      orderBy: buildOrderBy(
+        introspectionResults,
+        resource,
+        params?.sort,
+        options,
+      ),
+      where,
+    };
   };
-};
 
-const buildGetOneVariables = (introspectionResults: IntrospectionResult) => (
-  resource: Resource,
+const buildGetOneVariables =
+  (introspectionResults: IntrospectionResult) =>
+  (
+    resource: Resource,
 
-  params: any,
-) => {
-  const type = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}WhereUniqueInput`,
-  ) as IntrospectionInputObjectType;
+    params: any,
+  ) => {
+    const type = introspectionResults.types.find(
+      (t) => t.name === `${resource.type.name}WhereUniqueInput`,
+    ) as IntrospectionInputObjectType;
 
-  const idType = type?.inputFields.find((f) => f.name === "id");
-  if (idType.type.kind === "SCALAR" && idType.type.name === "String") {
+    const idType = type?.inputFields.find((f) => f.name === "id");
+    if (idType.type.kind === "SCALAR" && idType.type.name === "String") {
+      return {
+        where: {
+          id: String(params.id),
+        },
+      };
+    }
+    if (idType.type.kind === "SCALAR" && idType.type.name === "Int") {
+      return {
+        where: {
+          id: parseInt(params.id),
+        },
+      };
+    }
+    // should usually not happen
     return {
       where: {
-        id: String(params.id),
+        id: params.id,
       },
     };
-  }
-  if (idType.type.kind === "SCALAR" && idType.type.name === "Int") {
-    return {
-      where: {
-        id: parseInt(params.id),
-      },
-    };
-  }
-  // should usually not happen
-  return {
-    where: {
-      id: params.id,
-    },
   };
-};
 
 export interface UpdateParams {
   id: string;
@@ -149,9 +150,10 @@ const getCreateInputDataTypeForList = (
   createModifier: IntrospectionInputValue,
   introspectionResults: IntrospectionResult,
 ) => {
-  const createListModifierType = createModifier.type as IntrospectionListTypeRef<
-    IntrospectionNonNullTypeRef<any>
-  >;
+  const createListModifierType =
+    createModifier.type as IntrospectionListTypeRef<
+      IntrospectionNonNullTypeRef<any>
+    >;
   const createInputFieldType =
     createListModifierType.ofType.kind === "NON_NULL"
       ? createListModifierType.ofType.ofType
@@ -165,16 +167,18 @@ const getUpdateInputDataTypeForList = (
   updateModifier: IntrospectionInputValue,
   introspectionResults: IntrospectionResult,
 ) => {
-  const updateListModifierType = updateModifier.type as IntrospectionListTypeRef<
-    IntrospectionNonNullTypeRef<any>
-  >;
+  const updateListModifierType =
+    updateModifier.type as IntrospectionListTypeRef<
+      IntrospectionNonNullTypeRef<any>
+    >;
   const updateInputFieldType = getFinalType(updateListModifierType.ofType);
-  const updateListInputDataType = (introspectionResults.types.find(
-    (introdspectionType) =>
-      introdspectionType.name === updateInputFieldType.name,
-  ) as IntrospectionInputObjectType).inputFields.find(
-    (input) => input.name === "data",
-  ).type as IntrospectionNonNullTypeRef<IntrospectionNamedTypeRef>;
+  const updateListInputDataType = (
+    introspectionResults.types.find(
+      (introdspectionType) =>
+        introdspectionType.name === updateInputFieldType.name,
+    ) as IntrospectionInputObjectType
+  ).inputFields.find((input) => input.name === "data")
+    .type as IntrospectionNonNullTypeRef<IntrospectionNamedTypeRef>;
   return introspectionResults.types.find(
     (introdspectionType) =>
       introdspectionType.name === updateListInputDataType.ofType.name,
@@ -472,91 +476,88 @@ const buildData = (
     };
   }, {});
 };
-const buildUpdateVariables = (introspectionResults: IntrospectionResult) => (
-  resource: Resource,
-  params: UpdateParams,
-  parentResource?: Resource,
-) => {
-  const inputType = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}UpdateInput`,
-  ) as IntrospectionInputObjectType;
+const buildUpdateVariables =
+  (introspectionResults: IntrospectionResult) =>
+  (resource: Resource, params: UpdateParams, parentResource?: Resource) => {
+    const inputType = introspectionResults.types.find(
+      (t) => t.name === `${resource.type.name}UpdateInput`,
+    ) as IntrospectionInputObjectType;
 
-  const id = params.id ?? params.data.id; // TODO: do we still need params.data.id?
-  delete params.data.id;
-  delete params.previousData?.id;
+    const id = params.id ?? params.data.id; // TODO: do we still need params.data.id?
+    delete params.data.id;
+    delete params.previousData?.id;
 
-  return {
-    where: {
-      id,
-    },
-    data: buildData(inputType, params, introspectionResults),
+    return {
+      where: {
+        id,
+      },
+      data: buildData(inputType, params, introspectionResults),
+    };
   };
-};
 
 interface CreateParams {
   data: { [key: string]: any };
 }
-const buildCreateVariables = (introspectionResults: IntrospectionResult) => (
-  resource: Resource,
-  params: CreateParams,
-  parentResource?: Resource,
-) => {
-  const inputType = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}CreateInput`,
-  ) as IntrospectionInputObjectType;
+const buildCreateVariables =
+  (introspectionResults: IntrospectionResult) =>
+  (resource: Resource, params: CreateParams, parentResource?: Resource) => {
+    const inputType = introspectionResults.types.find(
+      (t) => t.name === `${resource.type.name}CreateInput`,
+    ) as IntrospectionInputObjectType;
 
-  const variables = {
-    data: buildData(inputType, params, introspectionResults),
+    const variables = {
+      data: buildData(inputType, params, introspectionResults),
+    };
+    return variables;
   };
-  return variables;
-};
 
 export default (
-  introspectionResults: IntrospectionResult,
-  options: VariantOptions,
-) => (resource: Resource, aorFetchType: string, params: any) => {
-  switch (aorFetchType) {
-    case GET_LIST: {
-      return buildGetListVariables(introspectionResults, options)(
-        resource,
-        aorFetchType,
-        params,
-      );
-    }
-    case GET_MANY:
-      return {
-        where: {
-          id: {
-            in: params.ids
-              .map((obj) => (isObject(obj) ? (obj as any).id : obj))
-              .filter((v) => !isNil(v)),
+    introspectionResults: IntrospectionResult,
+    options: VariantOptions,
+  ) =>
+  (resource: Resource, aorFetchType: string, params: any) => {
+    switch (aorFetchType) {
+      case GET_LIST: {
+        return buildGetListVariables(introspectionResults, options)(
+          resource,
+          aorFetchType,
+          params,
+        );
+      }
+      case GET_MANY:
+        return {
+          where: {
+            id: {
+              in: params.ids
+                .map((obj) => (isObject(obj) ? (obj as any).id : obj))
+                .filter((v) => !isNil(v)),
+            },
           },
-        },
-      };
-    case GET_MANY_REFERENCE: {
-      return buildGetListVariables(introspectionResults, options)(
-        resource,
-        GET_LIST,
-        {
-          ...params,
-          filter: { [params.target]: params.id },
-        },
-      );
-    }
-    case GET_ONE: {
-      return buildGetOneVariables(introspectionResults)(resource, params);
-    }
-    case UPDATE: {
-      return buildUpdateVariables(introspectionResults)(resource, params);
-    }
+        };
+      case GET_MANY_REFERENCE: {
+        return buildGetListVariables(introspectionResults, options)(
+          resource,
+          GET_LIST,
+          {
+            ...params,
+            filter: { [params.target]: params.id },
+          },
+        );
+      }
+      case GET_ONE: {
+        return buildGetOneVariables(introspectionResults)(resource, params);
+      }
+      case UPDATE: {
+        return buildUpdateVariables(introspectionResults)(resource, params);
+      }
 
-    case CREATE: {
-      return buildCreateVariables(introspectionResults)(resource, params);
-    }
+      case CREATE: {
+        return buildCreateVariables(introspectionResults)(resource, params);
+      }
 
-    case DELETE:
-      return {
-        where: { id: params.id },
-      };
-  }
-};
+      case DELETE:
+        return {
+          where: { id: params.id },
+        };
+    }
+  };

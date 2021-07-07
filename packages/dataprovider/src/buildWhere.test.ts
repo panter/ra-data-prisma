@@ -41,9 +41,10 @@ describe("buildWhere", () => {
       // for testing the original pseudo case insensitive version (which should be used on clients with < 2.8.0 Prisma) we need to imitate the older version
       // manually deleting the enum from introspection should be enough (supportsCaseInsensitive() returns false then)
       const oldPrismaTestIntrospection = Object.assign({}, testIntrospection);
-      oldPrismaTestIntrospection.types = oldPrismaTestIntrospection.types.filter(
-        (type) => type.kind !== "ENUM" || type.name !== "QueryMode",
-      );
+      oldPrismaTestIntrospection.types =
+        oldPrismaTestIntrospection.types.filter(
+          (type) => type.kind !== "ENUM" || type.name !== "QueryMode",
+        );
       const filter = {
         firstName: "aBc",
       };
