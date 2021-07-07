@@ -1,6 +1,12 @@
 import merge from "lodash/merge";
 import buildRaGraphqlDataProvider from "ra-data-graphql";
-import { DELETE, DELETE_MANY, UPDATE, UPDATE_MANY } from "react-admin";
+import {
+  DataProvider,
+  DELETE,
+  DELETE_MANY,
+  UPDATE,
+  UPDATE_MANY,
+} from "react-admin";
 import { buildQueryFactory } from "./buildQuery";
 import { Options, OurOptions } from "./types";
 
@@ -15,7 +21,7 @@ export const defaultOptions: Options = {
   ...defaultOurOptions,
 };
 
-const buildDataProvider = (options: Options) => {
+const buildDataProvider = (options: Options): Promise<DataProvider> => {
   const fullOptions = merge({}, defaultOptions, options);
   return buildRaGraphqlDataProvider(
     merge(
