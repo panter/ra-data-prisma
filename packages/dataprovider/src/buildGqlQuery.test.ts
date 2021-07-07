@@ -25,7 +25,7 @@ import {
 
 import "./testUtils/testTypes";
 import { getTestIntrospection } from "./testUtils/getTestIntrospection";
-import {defaultOurOptions} from "./buildDataProvider";
+import { defaultOurOptions } from "./buildDataProvider";
 
 describe("buildGqlQuery", () => {
   let testIntrospection: IntrospectionResult;
@@ -249,12 +249,10 @@ describe("buildGqlQuery", () => {
 
     it("returns the correct query for GET_LIST with typegraphql count query", () => {
       expect(
-        buildGqlQuery(testIntrospection, {...defaultOurOptions, queryDialect: "typegraphql"})(
-          testUserResource,
-          GET_LIST,
-          { where },
-          null,
-        ),
+        buildGqlQuery(testIntrospection, {
+          ...defaultOurOptions,
+          queryDialect: "typegraphql",
+        })(testUserResource, GET_LIST, { where }, null),
       ).toEqualGraphql(
         gql`
           query users($where: UserWhereInput) {

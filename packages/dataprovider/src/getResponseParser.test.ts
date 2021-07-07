@@ -13,7 +13,7 @@ import { Resource, IntrospectionResult } from "./constants/interfaces";
 import { getTestIntrospection } from "./testUtils/getTestIntrospection";
 import { OurOptions } from "./types";
 
-const defaultOptions: OurOptions = {queryDialect: "nexus-prisma"}
+const defaultOptions: OurOptions = { queryDialect: "nexus-prisma" };
 
 const testListTypes = (type: string) => {
   it(`returns the response expected by RA for ${type}`, async () => {
@@ -49,7 +49,10 @@ const testListTypes = (type: string) => {
     };
 
     expect(
-      getResponseParser(testIntrospection, defaultOptions)(type, testUserResource)(response),
+      getResponseParser(testIntrospection, defaultOptions)(
+        type,
+        testUserResource,
+      )(response),
     ).toEqual({
       data: [
         {
@@ -95,12 +98,15 @@ const testListTypes = (type: string) => {
             ],
           },
         ],
-        total: {count: {_all: 100}},
+        total: { count: { _all: 100 } },
       },
     };
 
     expect(
-      getResponseParser(testIntrospection, {queryDialect: "typegraphql"})(type, testUserResource)(response),
+      getResponseParser(testIntrospection, { queryDialect: "typegraphql" })(
+        type,
+        testUserResource,
+      )(response),
     ).toEqual({
       data: [
         {
@@ -118,9 +124,6 @@ const testListTypes = (type: string) => {
     });
   });
 };
-
-
-
 
 const testSingleTypes = (type: string) => {
   it(`returns the response expected by RA for ${type}`, async () => {
@@ -142,7 +145,10 @@ const testSingleTypes = (type: string) => {
       },
     };
     expect(
-      getResponseParser(testIntrospection, defaultOptions)(type, testUserResource)(response),
+      getResponseParser(testIntrospection, defaultOptions)(
+        type,
+        testUserResource,
+      )(response),
     ).toEqual({
       data: {
         id: "user1",
