@@ -145,7 +145,8 @@ const isStringFilter = (type: IntrospectionInputTypeRef) =>
 
 const isNestedStringFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
-  ["NestedStringFilter", "NestedStringNullableFilter"].indexOf(type.name) !== -1;
+  ["NestedStringFilter", "NestedStringNullableFilter"].indexOf(type.name) !==
+    -1;
 
 const isIntFilter = (type: IntrospectionInputTypeRef) =>
   type.kind === "INPUT_OBJECT" &&
@@ -254,8 +255,8 @@ const getFilters = (
         value === null
           ? null
           : value.map((f) =>
-            buildWhereWithType(f, introspectionResults, whereType),
-          ),
+              buildWhereWithType(f, introspectionResults, whereType),
+            ),
     };
   }
 
@@ -483,8 +484,21 @@ const buildWhereWithType = (
   const hasAnd = whereType.inputFields.some((i) => i.name === "AND");
   const where = hasAnd
     ? Object.keys(filter ?? {}).reduce(
-      (acc, key) => {
-        // defaults to AND
+        (acc, key) => {
+          // defaults to AND
+          const filters = getFilters(
+            key,
+            filter[key],
+            whereType,
+
+            introspectionResults,
+          );
+
+          return { ...acc, AND: [...acc.AND, filters] };
+        },
+        { AND: [] },
+      )
+    : Object.keys(filter ?? {}).reduce((acc, key) => {
         const filters = getFilters(
           key,
           filter[key],
@@ -493,21 +507,8 @@ const buildWhereWithType = (
           introspectionResults,
         );
 
-        return { ...acc, AND: [...acc.AND, filters] };
-      },
-      { AND: [] },
-    )
-    : Object.keys(filter ?? {}).reduce((acc, key) => {
-      const filters = getFilters(
-        key,
-        filter[key],
-        whereType,
-
-        introspectionResults,
-      );
-
-      return { ...acc, ...filters };
-    }, {});
+        return { ...acc, ...filters };
+      }, {});
   // simplify AND if there is only one
   if (where.AND?.length === 0) {
     delete where.AND;

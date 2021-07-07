@@ -38,4 +38,3 @@ export type Options = RaDataGraphqlOptions & ConfigOptions & VariantOptions;
 export type DataProviderOptions = RaDataGraphqlOptions &
   ConfigOptions &
   Partial<VariantOptions>;
-

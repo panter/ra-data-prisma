@@ -1,242 +1,370 @@
-import * as Typegen from 'nexus-plugin-prisma/typegen'
-import * as Prisma from '@prisma/client';
+import * as Typegen from "nexus-plugin-prisma/typegen";
+import * as Prisma from "@prisma/client";
 
 // Pagination type
 type Pagination = {
-    take?: boolean
-    skip?: boolean
-    cursor?: boolean
-}
+  take?: boolean;
+  skip?: boolean;
+  cursor?: boolean;
+};
 
 // Prisma custom scalar names
-type CustomScalars = 'Json' | 'DateTime'
+type CustomScalars = "Json" | "DateTime";
 
 // Prisma model type definitions
 interface PrismaModels {
-  UserRole: Prisma.UserRole
-  UserSocialMedia: Prisma.UserSocialMedia
-  BlogPost: Prisma.BlogPost
-  BlogPostComment: Prisma.BlogPostComment
-  User: Prisma.User
-  FilteringTest: Prisma.FilteringTest
-  SomePublicRecordWithIntId: Prisma.SomePublicRecordWithIntId
+  UserRole: Prisma.UserRole;
+  UserSocialMedia: Prisma.UserSocialMedia;
+  BlogPost: Prisma.BlogPost;
+  BlogPostComment: Prisma.BlogPostComment;
+  User: Prisma.User;
+  FilteringTest: Prisma.FilteringTest;
+  SomePublicRecordWithIntId: Prisma.SomePublicRecordWithIntId;
 }
 
 // Prisma input types metadata
 interface NexusPrismaInputs {
   Query: {
     userRoles: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'users'
-      ordering: 'id' | 'name' | 'users'
-    }
+      filtering: "AND" | "OR" | "NOT" | "id" | "name" | "users";
+      ordering: "id" | "name" | "users";
+    };
     userSocialMedias: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'instagram' | 'twitter' | 'user' | 'userId'
-      ordering: 'id' | 'instagram' | 'twitter' | 'user' | 'userId'
-    }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "instagram"
+        | "twitter"
+        | "user"
+        | "userId";
+      ordering: "id" | "instagram" | "twitter" | "user" | "userId";
+    };
     blogPosts: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-    }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "title"
+        | "text"
+        | "author"
+        | "authorId"
+        | "comments";
+      ordering: "id" | "title" | "text" | "author" | "authorId" | "comments";
+    };
     blogPostComments: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-    }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "text"
+        | "post"
+        | "postId"
+        | "author"
+        | "authorId";
+      ordering: "id" | "text" | "post" | "postId" | "author" | "authorId";
+    };
     users: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
-      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
-    }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "email"
+        | "roles"
+        | "firstName"
+        | "lastName"
+        | "gender"
+        | "yearOfBirth"
+        | "wantsNewsletter"
+        | "interests"
+        | "userSocialMedia"
+        | "address"
+        | "blogPosts"
+        | "comments";
+      ordering:
+        | "id"
+        | "email"
+        | "roles"
+        | "firstName"
+        | "lastName"
+        | "gender"
+        | "yearOfBirth"
+        | "wantsNewsletter"
+        | "interests"
+        | "userSocialMedia"
+        | "address"
+        | "blogPosts"
+        | "comments";
+    };
     filteringTests: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
-      ordering: 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
-    }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "intField"
+        | "floatField"
+        | "stringField"
+        | "dateTimeField"
+        | "boolField"
+        | "intField_lt"
+        | "intField_bt"
+        | "snake_field"
+        | "snake_field_bt";
+      ordering:
+        | "id"
+        | "intField"
+        | "floatField"
+        | "stringField"
+        | "dateTimeField"
+        | "boolField"
+        | "intField_lt"
+        | "intField_bt"
+        | "snake_field"
+        | "snake_field_bt";
+    };
     somePublicRecordWithIntIds: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title'
-      ordering: 'id' | 'title'
-    }
-  },
+      filtering: "AND" | "OR" | "NOT" | "id" | "title";
+      ordering: "id" | "title";
+    };
+  };
   UserRole: {
     users: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
-      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments'
-    }
-  }
-  UserSocialMedia: {
-
-  }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "email"
+        | "roles"
+        | "firstName"
+        | "lastName"
+        | "gender"
+        | "yearOfBirth"
+        | "wantsNewsletter"
+        | "interests"
+        | "userSocialMedia"
+        | "address"
+        | "blogPosts"
+        | "comments";
+      ordering:
+        | "id"
+        | "email"
+        | "roles"
+        | "firstName"
+        | "lastName"
+        | "gender"
+        | "yearOfBirth"
+        | "wantsNewsletter"
+        | "interests"
+        | "userSocialMedia"
+        | "address"
+        | "blogPosts"
+        | "comments";
+    };
+  };
+  UserSocialMedia: {};
   BlogPost: {
     comments: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-    }
-  }
-  BlogPostComment: {
-
-  }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "text"
+        | "post"
+        | "postId"
+        | "author"
+        | "authorId";
+      ordering: "id" | "text" | "post" | "postId" | "author" | "authorId";
+    };
+  };
+  BlogPostComment: {};
   User: {
     roles: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'users'
-      ordering: 'id' | 'name' | 'users'
-    }
+      filtering: "AND" | "OR" | "NOT" | "id" | "name" | "users";
+      ordering: "id" | "name" | "users";
+    };
     blogPosts: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-    }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "title"
+        | "text"
+        | "author"
+        | "authorId"
+        | "comments";
+      ordering: "id" | "title" | "text" | "author" | "authorId" | "comments";
+    };
     comments: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-    }
-  }
-  FilteringTest: {
-
-  }
-  SomePublicRecordWithIntId: {
-
-  }
+      filtering:
+        | "AND"
+        | "OR"
+        | "NOT"
+        | "id"
+        | "text"
+        | "post"
+        | "postId"
+        | "author"
+        | "authorId";
+      ordering: "id" | "text" | "post" | "postId" | "author" | "authorId";
+    };
+  };
+  FilteringTest: {};
+  SomePublicRecordWithIntId: {};
 }
 
 // Prisma output types metadata
 interface NexusPrismaOutputs {
   Query: {
-    userRole: 'UserRole'
-    userRoles: 'UserRole'
-    userSocialMedia: 'UserSocialMedia'
-    userSocialMedias: 'UserSocialMedia'
-    blogPost: 'BlogPost'
-    blogPosts: 'BlogPost'
-    blogPostComment: 'BlogPostComment'
-    blogPostComments: 'BlogPostComment'
-    user: 'User'
-    users: 'User'
-    filteringTest: 'FilteringTest'
-    filteringTests: 'FilteringTest'
-    somePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-    somePublicRecordWithIntIds: 'SomePublicRecordWithIntId'
-  },
+    userRole: "UserRole";
+    userRoles: "UserRole";
+    userSocialMedia: "UserSocialMedia";
+    userSocialMedias: "UserSocialMedia";
+    blogPost: "BlogPost";
+    blogPosts: "BlogPost";
+    blogPostComment: "BlogPostComment";
+    blogPostComments: "BlogPostComment";
+    user: "User";
+    users: "User";
+    filteringTest: "FilteringTest";
+    filteringTests: "FilteringTest";
+    somePublicRecordWithIntId: "SomePublicRecordWithIntId";
+    somePublicRecordWithIntIds: "SomePublicRecordWithIntId";
+  };
   Mutation: {
-    createOneUserRole: 'UserRole'
-    updateOneUserRole: 'UserRole'
-    updateManyUserRole: 'AffectedRowsOutput'
-    deleteOneUserRole: 'UserRole'
-    deleteManyUserRole: 'AffectedRowsOutput'
-    upsertOneUserRole: 'UserRole'
-    createOneUserSocialMedia: 'UserSocialMedia'
-    updateOneUserSocialMedia: 'UserSocialMedia'
-    updateManyUserSocialMedia: 'AffectedRowsOutput'
-    deleteOneUserSocialMedia: 'UserSocialMedia'
-    deleteManyUserSocialMedia: 'AffectedRowsOutput'
-    upsertOneUserSocialMedia: 'UserSocialMedia'
-    createOneBlogPost: 'BlogPost'
-    updateOneBlogPost: 'BlogPost'
-    updateManyBlogPost: 'AffectedRowsOutput'
-    deleteOneBlogPost: 'BlogPost'
-    deleteManyBlogPost: 'AffectedRowsOutput'
-    upsertOneBlogPost: 'BlogPost'
-    createOneBlogPostComment: 'BlogPostComment'
-    updateOneBlogPostComment: 'BlogPostComment'
-    updateManyBlogPostComment: 'AffectedRowsOutput'
-    deleteOneBlogPostComment: 'BlogPostComment'
-    deleteManyBlogPostComment: 'AffectedRowsOutput'
-    upsertOneBlogPostComment: 'BlogPostComment'
-    createOneUser: 'User'
-    updateOneUser: 'User'
-    updateManyUser: 'AffectedRowsOutput'
-    deleteOneUser: 'User'
-    deleteManyUser: 'AffectedRowsOutput'
-    upsertOneUser: 'User'
-    createOneFilteringTest: 'FilteringTest'
-    updateOneFilteringTest: 'FilteringTest'
-    updateManyFilteringTest: 'AffectedRowsOutput'
-    deleteOneFilteringTest: 'FilteringTest'
-    deleteManyFilteringTest: 'AffectedRowsOutput'
-    upsertOneFilteringTest: 'FilteringTest'
-    createOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-    updateOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-    updateManySomePublicRecordWithIntId: 'AffectedRowsOutput'
-    deleteOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-    deleteManySomePublicRecordWithIntId: 'AffectedRowsOutput'
-    upsertOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-  },
+    createOneUserRole: "UserRole";
+    updateOneUserRole: "UserRole";
+    updateManyUserRole: "AffectedRowsOutput";
+    deleteOneUserRole: "UserRole";
+    deleteManyUserRole: "AffectedRowsOutput";
+    upsertOneUserRole: "UserRole";
+    createOneUserSocialMedia: "UserSocialMedia";
+    updateOneUserSocialMedia: "UserSocialMedia";
+    updateManyUserSocialMedia: "AffectedRowsOutput";
+    deleteOneUserSocialMedia: "UserSocialMedia";
+    deleteManyUserSocialMedia: "AffectedRowsOutput";
+    upsertOneUserSocialMedia: "UserSocialMedia";
+    createOneBlogPost: "BlogPost";
+    updateOneBlogPost: "BlogPost";
+    updateManyBlogPost: "AffectedRowsOutput";
+    deleteOneBlogPost: "BlogPost";
+    deleteManyBlogPost: "AffectedRowsOutput";
+    upsertOneBlogPost: "BlogPost";
+    createOneBlogPostComment: "BlogPostComment";
+    updateOneBlogPostComment: "BlogPostComment";
+    updateManyBlogPostComment: "AffectedRowsOutput";
+    deleteOneBlogPostComment: "BlogPostComment";
+    deleteManyBlogPostComment: "AffectedRowsOutput";
+    upsertOneBlogPostComment: "BlogPostComment";
+    createOneUser: "User";
+    updateOneUser: "User";
+    updateManyUser: "AffectedRowsOutput";
+    deleteOneUser: "User";
+    deleteManyUser: "AffectedRowsOutput";
+    upsertOneUser: "User";
+    createOneFilteringTest: "FilteringTest";
+    updateOneFilteringTest: "FilteringTest";
+    updateManyFilteringTest: "AffectedRowsOutput";
+    deleteOneFilteringTest: "FilteringTest";
+    deleteManyFilteringTest: "AffectedRowsOutput";
+    upsertOneFilteringTest: "FilteringTest";
+    createOneSomePublicRecordWithIntId: "SomePublicRecordWithIntId";
+    updateOneSomePublicRecordWithIntId: "SomePublicRecordWithIntId";
+    updateManySomePublicRecordWithIntId: "AffectedRowsOutput";
+    deleteOneSomePublicRecordWithIntId: "SomePublicRecordWithIntId";
+    deleteManySomePublicRecordWithIntId: "AffectedRowsOutput";
+    upsertOneSomePublicRecordWithIntId: "SomePublicRecordWithIntId";
+  };
   UserRole: {
-    id: 'String'
-    name: 'String'
-    users: 'User'
-  }
+    id: "String";
+    name: "String";
+    users: "User";
+  };
   UserSocialMedia: {
-    id: 'String'
-    instagram: 'String'
-    twitter: 'String'
-    user: 'User'
-    userId: 'String'
-  }
+    id: "String";
+    instagram: "String";
+    twitter: "String";
+    user: "User";
+    userId: "String";
+  };
   BlogPost: {
-    id: 'String'
-    title: 'String'
-    text: 'String'
-    author: 'User'
-    authorId: 'String'
-    comments: 'BlogPostComment'
-  }
+    id: "String";
+    title: "String";
+    text: "String";
+    author: "User";
+    authorId: "String";
+    comments: "BlogPostComment";
+  };
   BlogPostComment: {
-    id: 'String'
-    text: 'String'
-    post: 'BlogPost'
-    postId: 'String'
-    author: 'User'
-    authorId: 'String'
-  }
+    id: "String";
+    text: "String";
+    post: "BlogPost";
+    postId: "String";
+    author: "User";
+    authorId: "String";
+  };
   User: {
-    id: 'String'
-    email: 'String'
-    roles: 'UserRole'
-    firstName: 'String'
-    lastName: 'String'
-    gender: 'Gender'
-    yearOfBirth: 'Int'
-    wantsNewsletter: 'Boolean'
-    interests: 'Topic'
-    userSocialMedia: 'UserSocialMedia'
-    address: 'Json'
-    blogPosts: 'BlogPost'
-    comments: 'BlogPostComment'
-  }
+    id: "String";
+    email: "String";
+    roles: "UserRole";
+    firstName: "String";
+    lastName: "String";
+    gender: "Gender";
+    yearOfBirth: "Int";
+    wantsNewsletter: "Boolean";
+    interests: "Topic";
+    userSocialMedia: "UserSocialMedia";
+    address: "Json";
+    blogPosts: "BlogPost";
+    comments: "BlogPostComment";
+  };
   FilteringTest: {
-    id: 'Int'
-    intField: 'Int'
-    floatField: 'Float'
-    stringField: 'String'
-    dateTimeField: 'DateTime'
-    boolField: 'Boolean'
-    intField_lt: 'String'
-    intField_bt: 'Int'
-    snake_field: 'Int'
-    snake_field_bt: 'Int'
-  }
+    id: "Int";
+    intField: "Int";
+    floatField: "Float";
+    stringField: "String";
+    dateTimeField: "DateTime";
+    boolField: "Boolean";
+    intField_lt: "String";
+    intField_bt: "Int";
+    snake_field: "Int";
+    snake_field_bt: "Int";
+  };
   SomePublicRecordWithIntId: {
-    id: 'Int'
-    title: 'String'
-  }
+    id: "Int";
+    title: "String";
+  };
 }
 
 // Helper to gather all methods relative to a model
 interface NexusPrismaMethods {
-  UserRole: Typegen.NexusPrismaFields<'UserRole'>
-  UserSocialMedia: Typegen.NexusPrismaFields<'UserSocialMedia'>
-  BlogPost: Typegen.NexusPrismaFields<'BlogPost'>
-  BlogPostComment: Typegen.NexusPrismaFields<'BlogPostComment'>
-  User: Typegen.NexusPrismaFields<'User'>
-  FilteringTest: Typegen.NexusPrismaFields<'FilteringTest'>
-  SomePublicRecordWithIntId: Typegen.NexusPrismaFields<'SomePublicRecordWithIntId'>
-  Query: Typegen.NexusPrismaFields<'Query'>
-  Mutation: Typegen.NexusPrismaFields<'Mutation'>
+  UserRole: Typegen.NexusPrismaFields<"UserRole">;
+  UserSocialMedia: Typegen.NexusPrismaFields<"UserSocialMedia">;
+  BlogPost: Typegen.NexusPrismaFields<"BlogPost">;
+  BlogPostComment: Typegen.NexusPrismaFields<"BlogPostComment">;
+  User: Typegen.NexusPrismaFields<"User">;
+  FilteringTest: Typegen.NexusPrismaFields<"FilteringTest">;
+  SomePublicRecordWithIntId: Typegen.NexusPrismaFields<
+    "SomePublicRecordWithIntId"
+  >;
+  Query: Typegen.NexusPrismaFields<"Query">;
+  Mutation: Typegen.NexusPrismaFields<"Mutation">;
 }
 
 interface NexusPrismaGenTypes {
-  inputs: NexusPrismaInputs
-  outputs: NexusPrismaOutputs
-  methods: NexusPrismaMethods
-  models: PrismaModels
-  pagination: Pagination
-  scalars: CustomScalars
+  inputs: NexusPrismaInputs;
+  outputs: NexusPrismaOutputs;
+  methods: NexusPrismaMethods;
+  models: PrismaModels;
+  pagination: Pagination;
+  scalars: CustomScalars;
 }
 
 declare global {
@@ -244,7 +372,6 @@ declare global {
 
   type NexusPrisma<
     TypeName extends string,
-    ModelOrCrud extends 'model' | 'crud'
+    ModelOrCrud extends "model" | "crud"
   > = Typegen.GetNexusPrisma<TypeName, ModelOrCrud>;
 }
-  
