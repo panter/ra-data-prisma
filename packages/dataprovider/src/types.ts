@@ -20,7 +20,7 @@ export type ConfigOptions = {
 };
 
 export type VariantOptions = {
-  queryDialect: QueryDialect;
+  queryDialect?: QueryDialect;
 };
 
 export type OurOptions = ConfigOptions & VariantOptions;
