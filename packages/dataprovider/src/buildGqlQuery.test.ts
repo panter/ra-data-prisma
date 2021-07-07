@@ -1,4 +1,4 @@
-import gql from "dummy-tag";
+import gql from "plain-tag";
 import gqlReal from "graphql-tag";
 import { IntrospectionField, print as printOrg, TypeKind } from "graphql";
 import {

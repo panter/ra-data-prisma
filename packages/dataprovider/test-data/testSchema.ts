@@ -12,7 +12,9 @@ import "../generated/nexus";
 import "../generated/nexus-prisma";
 import { CommonOptions } from "../../backend/src/types";
 
-const typegenPath = (p: string) => process.env.PWD && join(process.env.PWD, p);
+const typegenPath = (p: string) => {
+  return process.env.PWD && join(process.env.PWD, p);
+};
 
 export const testSchema = (options: CommonOptions) => {
   const User = objectType({
@@ -155,14 +157,20 @@ export const testSchema = (options: CommonOptions) => {
         experimentalCRUD: true,
         paginationStrategy: "prisma",
         outputs: {
-          typegen: typegenPath("./generated/nexus-prisma.ts"),
+          typegen:
+            process.env.NODE_ENV !== "test"
+              ? typegenPath("./generated/nexus-prisma.ts")
+              : undefined,
         },
       }),
     ],
 
-    outputs: {
-      schema: typegenPath("./generated/schema.graphql"),
-      typegen: typegenPath("./generated/nexus.ts"),
-    },
+    outputs:
+      process.env.NODE_ENV !== "test"
+        ? {
+            schema: typegenPath("./generated/schema.graphql"),
+            typegen: typegenPath("./generated/nexus.ts"),
+          }
+        : undefined,
   });
 };

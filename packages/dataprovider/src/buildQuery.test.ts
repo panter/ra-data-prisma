@@ -1,5 +1,5 @@
 import { buildQueryFactory } from "./buildQuery";
-import gql from "dummy-tag";
+import gql from "plain-tag";
 import gqlReal from "graphql-tag";
 import { GetListParams } from "./buildVariables";
 import { IntrospectionResult, Resource } from "./constants/interfaces";

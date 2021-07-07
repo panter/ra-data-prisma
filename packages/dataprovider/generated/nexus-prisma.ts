@@ -351,9 +351,7 @@ interface NexusPrismaMethods {
   BlogPostComment: Typegen.NexusPrismaFields<"BlogPostComment">;
   User: Typegen.NexusPrismaFields<"User">;
   FilteringTest: Typegen.NexusPrismaFields<"FilteringTest">;
-  SomePublicRecordWithIntId: Typegen.NexusPrismaFields<
-    "SomePublicRecordWithIntId"
-  >;
+  SomePublicRecordWithIntId: Typegen.NexusPrismaFields<"SomePublicRecordWithIntId">;
   Query: Typegen.NexusPrismaFields<"Query">;
   Mutation: Typegen.NexusPrismaFields<"Mutation">;
 }
@@ -372,6 +370,6 @@ declare global {
 
   type NexusPrisma<
     TypeName extends string,
-    ModelOrCrud extends "model" | "crud"
+    ModelOrCrud extends "model" | "crud",
   > = Typegen.GetNexusPrisma<TypeName, ModelOrCrud>;
 }

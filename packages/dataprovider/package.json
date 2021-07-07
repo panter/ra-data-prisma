@@ -24,7 +24,6 @@
     "build": "yarn build:cjs && yarn build:es",
     "build:cjs": "rimraf ./lib && tsc --project tsconfig.json --outDir lib --module commonjs",
     "build:es": "rimraf ./lib-es && tsc --project tsconfig.json",
-    "prepublish": "yarn generate:test && yarn build",
     "prepare": "yarn generate:test && yarn build",
     "generate:test": "yarn generate:test:prisma && yarn generate:test:nexus",
     "generate:test:prisma": "yarn prisma generate --schema test-data/datamodel.prisma",
