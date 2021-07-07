@@ -16,15 +16,15 @@ export const defaultOptions: Options = {
 };
 
 const buildDataProvider = (options: Options) => {
+  const fullOptions = merge({}, defaultOptions, options);
   return buildRaGraphqlDataProvider(
     merge(
       {},
-      defaultOptions,
       {
         buildQuery: buildQueryFactory,
-        introspection: makeIntrospectionOptions(options),
+        introspection: makeIntrospectionOptions(fullOptions),
       },
-      options,
+      fullOptions,
     ),
   ).then((graphQLDataProvider) => {
     return (
