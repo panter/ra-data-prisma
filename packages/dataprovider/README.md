@@ -25,6 +25,8 @@ const AdminApp = () => {
   const dataProvider = useDataProvider({
     clientOptions: { uri: "/graphql" }
     aliasPrefix: "admin" // 👈 set this, if you use a aliasPrefix on your backend as well (recommended)
+    filters: {} // custom filters
+    queryDialect: "nexus-prisma" // customize query dialect, defaults to nexus-prisma
   })
   const authProvider = useAuthProvider()
 
@@ -71,6 +73,54 @@ this dataprovider supports all filtering and searching and adds some convenience
 - _case insensitive_: If your Prisma version supports it (>= 2.8.0), we automatically query strings as case insensitive. If your Prisma version doesn't support it, we emulate it with query for multiple variations of the search term: as-is, fully lowercase, first letter uppercase. This does work in many cases (searching for terms and names), but fails in some.
 - _q_ query. `q` is a convention in react-admin for general search. We implement this client side. A query on `q` will search all string fields and int fields on a resource. It additionaly splits multiple search terms and does an AND search
 - if you need more sophisticated search, you can use normal nexus-prisma graphql queries. You can even mix it with `q` and the intelligent short notation
+
+### Custom filters
+
+if you have a complex query, you can define custom filters:
+
+```ts
+ const dataProvider = useDataProvider({
+    clientOptions: { uri: "/graphql" }
+
+    filters: {
+      onlyMillenials: (value?: boolean) =>
+        value === true
+          ? {
+              AND: [
+                {
+                  yearOfBirth: {
+                    gte: 1981,
+                  },
+                },
+                {
+                  yearOfBirth: {
+                    lte: 1996,
+                  },
+                },
+              ],
+            }
+          : undefined,
+    },
+  })
+
+```
+
+Then you can use that in a react-admin filter:
+
+```tsx
+const UserFilter = (props) => (
+  <Filter {...props}>
+    <TextInput label="Search" source="q" alwaysOn />
+    <BooleanInput
+      label="Show only millenials"
+      source="onlyMillenials"
+      alwaysOn
+    />
+  </Filter>
+);
+```
+
+**Notice** if you want to omit the filter, return null or undefined.
 
 ### Relations
 
@@ -270,7 +320,7 @@ These hooks rely on Redux store and will throw an error if the resource isn't de
 However, if you directly use data provider calls, you can use it with defined `<Resource>` but also _without_ as it directly calls data provider.
 
 ```ts
-const dataProvider = useDataProvider();
+const dataProvider = useDataProvider(options);
 const { data } = await dataProvider.getList("ParticipantsToInvoice", {
   pagination: { page: 1, perPage: 10 },
   sort: { field: "id", order: "ASC" },

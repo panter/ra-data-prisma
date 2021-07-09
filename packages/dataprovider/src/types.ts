@@ -12,11 +12,15 @@ export type ResourceView = {
 
 export type QueryDialect = "nexus-prisma" | "typegraphql";
 
+type Filter = Record<string, unknown>;
 export type ConfigOptions = {
   resourceViews?: {
     [name: string]: ResourceView;
   };
   aliasPrefix?: string;
+  filters?: {
+    [filterName: string]: (value: any) => Filter | void;
+  };
 };
 
 export type VariantOptions = {

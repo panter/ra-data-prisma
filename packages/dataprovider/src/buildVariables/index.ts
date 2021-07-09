@@ -13,6 +13,7 @@ import {
 } from "react-admin";
 import { buildWhere } from "../buildWhere";
 import { IntrospectionResult, Resource } from "../constants/interfaces";
+import { OurOptions } from "../types";
 import { buildData, CreateParams } from "./buildData";
 import { buildOrderBy } from "./buildOrderBy";
 
@@ -23,9 +24,14 @@ export interface GetListParams {
 }
 
 const buildGetListVariables =
-  (introspectionResults: IntrospectionResult) =>
+  (introspectionResults: IntrospectionResult, options: OurOptions) =>
   (resource: Resource, aorFetchType: string, params: GetListParams) => {
-    const where = buildWhere(params.filter, resource, introspectionResults);
+    const where = buildWhere(
+      params.filter,
+      resource,
+      introspectionResults,
+      options,
+    );
 
     return {
       skip: (params.pagination.page - 1) * params.pagination.perPage,
@@ -108,11 +114,11 @@ const buildCreateVariables =
   };
 
 export const buildVariables =
-  (introspectionResults: IntrospectionResult) =>
+  (introspectionResults: IntrospectionResult, options: OurOptions) =>
   (resource: Resource, aorFetchType: string, params: any) => {
     switch (aorFetchType) {
       case GET_LIST: {
-        return buildGetListVariables(introspectionResults)(
+        return buildGetListVariables(introspectionResults, options)(
           resource,
           aorFetchType,
           params,
@@ -129,10 +135,14 @@ export const buildVariables =
           },
         };
       case GET_MANY_REFERENCE: {
-        return buildGetListVariables(introspectionResults)(resource, GET_LIST, {
-          ...params,
-          filter: { [params.target]: params.id },
-        });
+        return buildGetListVariables(introspectionResults, options)(
+          resource,
+          GET_LIST,
+          {
+            ...params,
+            filter: { [params.target]: params.id },
+          },
+        );
       }
       case GET_ONE: {
         return buildGetOneVariables(introspectionResults)(resource, params);

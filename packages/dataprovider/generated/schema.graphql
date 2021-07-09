@@ -864,6 +864,7 @@ type User {
   roles(cursor: UserRoleWhereUniqueInput, skip: Int, take: Int, where: UserRoleWhereInput): [UserRole!]!
   userSocialMedia: UserSocialMedia
   wantsNewsletter: Boolean!
+  weddingDate: DateTime
   yearOfBirth: Int
 }
 

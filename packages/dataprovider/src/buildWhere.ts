@@ -11,6 +11,7 @@ import {
   IntrospectionResult,
   Resource,
 } from "./constants/interfaces";
+import { OurOptions } from "./types";
 
 const getStringFilter = (
   key: string,
@@ -245,18 +246,21 @@ const getFilters = (
   _key: string,
   value: any,
   whereType: IntrospectionInputObjectType,
-
   introspectionResults: IntrospectionResult,
+  options: OurOptions,
 ) => {
   const hasCaseInsensitive = supportsCaseInsensitive(introspectionResults);
   const { originalKey, key, comparator } = processKey(_key);
+  if (options.filters?.[originalKey]) {
+    return options.filters[originalKey](value) ?? {}; // null values are transformed to empty objects
+  }
   if (key === "NOT" || key === "OR" || key === "AND") {
     return {
       [key]:
         value === null
           ? null
           : value.map((f) =>
-              buildWhereWithType(f, introspectionResults, whereType),
+              buildWhereWithType(f, introspectionResults, options, whereType),
             ),
     };
   }
@@ -461,6 +465,7 @@ const getFilters = (
       const where = buildWhereWithType(
         value,
         introspectionResults,
+        options,
         inputObjectType,
       );
       return { [originalKey]: where };
@@ -480,6 +485,7 @@ type Filter = {
 const buildWhereWithType = (
   filter: Filter,
   introspectionResults: IntrospectionResult,
+  options: OurOptions,
   whereType: IntrospectionInputObjectType,
 ) => {
   const hasAnd = whereType.inputFields.some((i) => i.name === "AND");
@@ -493,6 +499,7 @@ const buildWhereWithType = (
             whereType,
 
             introspectionResults,
+            options,
           );
 
           return { ...acc, AND: [...acc.AND, filters] };
@@ -506,6 +513,7 @@ const buildWhereWithType = (
           whereType,
 
           introspectionResults,
+          options,
         );
 
         return { ...acc, ...filters };
@@ -528,10 +536,11 @@ export const buildWhere = (
   filter: Filter,
   resource: Resource,
   introspectionResults: IntrospectionResult,
+  options: OurOptions,
 ) => {
   const whereType = introspectionResults.types.find(
     (t) => t.name === `${resource.type.name}WhereInput`,
   ) as IntrospectionInputObjectType;
 
-  return buildWhereWithType(filter, introspectionResults, whereType);
+  return buildWhereWithType(filter, introspectionResults, options, whereType);
 };
