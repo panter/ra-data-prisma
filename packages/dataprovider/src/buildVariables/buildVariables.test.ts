@@ -11,11 +11,13 @@ import { NexusGenArgTypes } from "../../generated/nexus";
 import { buildVariables } from "./";
 import { IntrospectionResult, Resource } from "./../constants/interfaces";
 import { getTestIntrospection } from "../testUtils/getTestIntrospection";
+import { OurOptions } from "../types";
 
 describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
   let testBlogPostCommentResource: Resource;
+  const options: OurOptions = {};
 
   beforeAll(async () => {
     testIntrospection = await getTestIntrospection();
@@ -39,7 +41,7 @@ describe("buildVariables", () => {
           firstName: "fooBar",
         },
       };
-      const result = buildVariables(testIntrospection)(
+      const result = buildVariables(testIntrospection, options)(
         testUserResource,
         GET_LIST,
         params,
@@ -78,7 +80,7 @@ describe("buildVariables", () => {
         pagination: { page: 1, perPage: 10 },
         sort: { field: "text", order: "ASC" },
       };
-      const result = buildVariables(testIntrospection)(
+      const result = buildVariables(testIntrospection, options)(
         testBlogPostCommentResource,
         GET_LIST,
         params,
@@ -102,7 +104,7 @@ describe("buildVariables", () => {
         pagination: { page: 1, perPage: 10 },
         sort: { field: "post.text", order: "ASC" },
       };
-      const result = buildVariables(testIntrospection)(
+      const result = buildVariables(testIntrospection, options)(
         testBlogPostCommentResource,
         GET_LIST,
         params,
@@ -128,7 +130,7 @@ describe("buildVariables", () => {
         pagination: { page: 1, perPage: 10 },
         sort: { field: "post.author.firstName", order: "DESC" },
       };
-      const result = buildVariables(testIntrospection)(
+      const result = buildVariables(testIntrospection, options)(
         testBlogPostCommentResource,
         GET_LIST,
         params,
@@ -163,7 +165,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -188,7 +194,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           wantsNewsletter: true,
@@ -211,7 +221,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -237,7 +251,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -263,7 +281,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -289,7 +311,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -315,7 +341,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -341,7 +371,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -367,7 +401,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -392,7 +430,7 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(
+        buildVariables(testIntrospection, options)(
           testBlogPostCommentResource,
           CREATE,
           params,
@@ -418,7 +456,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -448,7 +490,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, CREATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
@@ -480,7 +526,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -498,7 +548,11 @@ describe("buildVariables", () => {
         },
       };
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -521,7 +575,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -552,7 +610,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -589,7 +651,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -611,7 +677,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -635,7 +705,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -673,7 +747,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -706,7 +784,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -739,7 +821,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -781,7 +867,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -816,7 +906,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -847,7 +941,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, UPDATE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
@@ -868,7 +966,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, GET_ONE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          GET_ONE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Query"]["user"]>({
         where: { id: "some-id" },
       });
@@ -884,7 +986,7 @@ describe("buildVariables", () => {
           r.type.name === "SomePublicRecordWithIntId",
       );
       expect(
-        buildVariables(testIntrospection)(resource, GET_ONE, params),
+        buildVariables(testIntrospection, options)(resource, GET_ONE, params),
       ).toEqual<NexusGenArgTypes["Query"]["somePublicRecordWithIntId"]>({
         where: { id: 1234 },
       });
@@ -898,7 +1000,7 @@ describe("buildVariables", () => {
           r.type.kind === "OBJECT" &&
           r.type.name === "SomePublicRecordWithIntId",
       );
-      const result = buildVariables(testIntrospection)(
+      const result = buildVariables(testIntrospection, options)(
         resource,
         GET_ONE,
         params,
@@ -917,7 +1019,11 @@ describe("buildVariables", () => {
         ids: ["einstein", "rosen", "penrose"],
       };
       expect(
-        buildVariables(testIntrospection)(testUserResource, GET_MANY, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          GET_MANY,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Query"]["users"]>({
         where: { id: { in: ["einstein", "rosen", "penrose"] } },
       });
@@ -934,7 +1040,7 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(
+        buildVariables(testIntrospection, options)(
           testUserResource,
           GET_MANY_REFERENCE,
           params,
@@ -955,7 +1061,11 @@ describe("buildVariables", () => {
       };
 
       expect(
-        buildVariables(testIntrospection)(testUserResource, DELETE, params),
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          DELETE,
+          params,
+        ),
       ).toEqual<NexusGenArgTypes["Mutation"]["deleteOneUser"]>({
         where: { id: "some-id" },
       });

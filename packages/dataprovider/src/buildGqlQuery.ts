@@ -10,6 +10,7 @@ import {
 } from "graphql";
 import { QUERY_TYPES } from "ra-data-graphql";
 import { DELETE, GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
+import { defaultOurOptions } from "./buildDataProvider";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { QueryDialect } from "./types";
 import getFinalType from "./utils/getFinalType";
@@ -191,7 +192,7 @@ const buildFieldsFromFragment = (
 
 export default (
     introspectionResults: IntrospectionResult,
-    options: { queryDialect: QueryDialect },
+    options = defaultOurOptions,
   ) =>
   (
     resource: Resource,

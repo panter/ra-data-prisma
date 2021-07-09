@@ -1459,6 +1459,7 @@ export interface NexusGenObjects {
     lastName?: string | null; // String
     logs?: Array<string | null> | null; // [String]
     wantsNewsletter: boolean; // Boolean!
+    weddingDate?: NexusGenScalars["DateTime"] | null; // DateTime
     yearOfBirth?: number | null; // Int
   };
   UserRole: {
@@ -1609,6 +1610,7 @@ export interface NexusGenFieldTypes {
     roles: NexusGenRootTypes["UserRole"][]; // [UserRole!]!
     userSocialMedia: NexusGenRootTypes["UserSocialMedia"] | null; // UserSocialMedia
     wantsNewsletter: boolean; // Boolean!
+    weddingDate: NexusGenScalars["DateTime"] | null; // DateTime
     yearOfBirth: number | null; // Int
   };
   UserRole: {
@@ -1744,6 +1746,7 @@ export interface NexusGenFieldTypeNames {
     roles: "UserRole";
     userSocialMedia: "UserSocialMedia";
     wantsNewsletter: "Boolean";
+    weddingDate: "DateTime";
     yearOfBirth: "Int";
   };
   UserRole: {
