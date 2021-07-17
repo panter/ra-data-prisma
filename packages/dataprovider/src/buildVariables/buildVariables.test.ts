@@ -180,6 +180,34 @@ describe("buildVariables", () => {
       });
     });
 
+    it("handles dates correctly", () => {
+      const date = new Date("2020-06-25");
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          weddingDate: "2020-06-25",
+        },
+      };
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: true,
+          weddingDate: date,
+        },
+      });
+    });
+
     it("automatically converts objects to json string on type missmatch", () => {
       const params = {
         data: {

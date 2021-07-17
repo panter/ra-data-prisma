@@ -1,3 +1,4 @@
+import { debug } from "console";
 import {
   IntrospectionInputObjectType,
   IntrospectionInputTypeRef,
@@ -109,6 +110,10 @@ const buildNewInputValue = (
   switch (kind) {
     case "SCALAR":
     case "ENUM": {
+      // if its a date, convert it to a date
+      if (fieldType.kind === "SCALAR" && fieldType.name === "DateTime") {
+        return new Date(fieldData);
+      }
       if (fieldType.kind === "SCALAR" && fieldType.name === "String") {
         if (isObject(fieldData)) {
           return JSON.stringify(fieldData);
