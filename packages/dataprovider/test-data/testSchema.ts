@@ -11,6 +11,9 @@ import { addCrudResolvers } from "../../backend/src";
 import "../generated/nexus";
 import "../generated/nexus-prisma";
 import { CommonOptions } from "../../backend/src/types";
+import prismaInputObjectType, {
+  addMissingTypesPlugin,
+} from "./missingPrismaTypesPlugin";
 
 const typegenPath = (p: string) => {
   return process.env.PWD && join(process.env.PWD, p);
@@ -141,6 +144,22 @@ export const testSchema = (options: CommonOptions) => {
     },
   });
 
+  const BlogPostUpdateManyWithoutAuthorInput = prismaInputObjectType(
+    "BlogPostUpdateManyWithoutAuthorInput",
+    {
+      // @ts-ignore
+      filteredFields: ["disconnect"],
+    },
+  );
+
+  const CatUpdateOneWithoutOwnerInput = prismaInputObjectType(
+    "CatUpdateOneWithoutOwnerInput",
+    {
+      // @ts-ignore
+      filteredFields: ["disconnect"],
+    },
+  );
+
   const types = [
     User,
     UserRole,
@@ -150,6 +169,8 @@ export const testSchema = (options: CommonOptions) => {
     BlogPost,
     BlogPostComment,
     UserCreateOneWithoutCommentsInput,
+    BlogPostUpdateManyWithoutAuthorInput,
+    CatUpdateOneWithoutOwnerInput,
     FilteringTest,
     Company,
 
@@ -175,6 +196,7 @@ export const testSchema = (options: CommonOptions) => {
               : undefined,
         },
       }),
+      addMissingTypesPlugin,
     ],
 
     outputs:
