@@ -236,12 +236,9 @@ export default (
       })(),
       typegraphql: gqlTypes.field(
         gqlTypes.name(
-          `aggregate${queryType.name
+          `aggregate${resource.type.name
             .substring(0, 1)
-            .toUpperCase()}${queryType.name.substring(
-            1,
-            queryType.name.length - 1,
-          )}`,
+            .toUpperCase()}${resource.type.name.substring(1)}`,
         ),
         {
           alias: gqlTypes.name("total"),

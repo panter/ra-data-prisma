@@ -14,6 +14,7 @@ type CustomScalars = "Json" | "DateTime";
 // Prisma model type definitions
 interface PrismaModels {
   UserRole: Prisma.UserRole;
+  Company: Prisma.Company;
   UserSocialMedia: Prisma.UserSocialMedia;
   BlogPost: Prisma.BlogPost;
   BlogPostComment: Prisma.BlogPostComment;
@@ -28,6 +29,10 @@ interface NexusPrismaInputs {
     userRoles: {
       filtering: "AND" | "OR" | "NOT" | "id" | "name" | "users";
       ordering: "id" | "name" | "users";
+    };
+    companies: {
+      filtering: "AND" | "OR" | "NOT" | "id" | "name" | "user" | "userId";
+      ordering: "id" | "name" | "user" | "userId";
     };
     userSocialMedias: {
       filtering:
@@ -85,6 +90,7 @@ interface NexusPrismaInputs {
         | "address"
         | "blogPosts"
         | "comments"
+        | "companies"
         | "weddingDate";
       ordering:
         | "id"
@@ -100,6 +106,7 @@ interface NexusPrismaInputs {
         | "address"
         | "blogPosts"
         | "comments"
+        | "companies"
         | "weddingDate";
     };
     filteringTests: {
@@ -153,6 +160,7 @@ interface NexusPrismaInputs {
         | "address"
         | "blogPosts"
         | "comments"
+        | "companies"
         | "weddingDate";
       ordering:
         | "id"
@@ -168,9 +176,11 @@ interface NexusPrismaInputs {
         | "address"
         | "blogPosts"
         | "comments"
+        | "companies"
         | "weddingDate";
     };
   };
+  Company: {};
   UserSocialMedia: {};
   BlogPost: {
     comments: {
@@ -219,6 +229,10 @@ interface NexusPrismaInputs {
         | "authorId";
       ordering: "id" | "text" | "post" | "postId" | "author" | "authorId";
     };
+    companies: {
+      filtering: "AND" | "OR" | "NOT" | "id" | "name" | "user" | "userId";
+      ordering: "id" | "name" | "user" | "userId";
+    };
   };
   FilteringTest: {};
   SomePublicRecordWithIntId: {};
@@ -229,6 +243,8 @@ interface NexusPrismaOutputs {
   Query: {
     userRole: "UserRole";
     userRoles: "UserRole";
+    company: "Company";
+    companies: "Company";
     userSocialMedia: "UserSocialMedia";
     userSocialMedias: "UserSocialMedia";
     blogPost: "BlogPost";
@@ -249,6 +265,12 @@ interface NexusPrismaOutputs {
     deleteOneUserRole: "UserRole";
     deleteManyUserRole: "AffectedRowsOutput";
     upsertOneUserRole: "UserRole";
+    createOneCompany: "Company";
+    updateOneCompany: "Company";
+    updateManyCompany: "AffectedRowsOutput";
+    deleteOneCompany: "Company";
+    deleteManyCompany: "AffectedRowsOutput";
+    upsertOneCompany: "Company";
     createOneUserSocialMedia: "UserSocialMedia";
     updateOneUserSocialMedia: "UserSocialMedia";
     updateManyUserSocialMedia: "AffectedRowsOutput";
@@ -291,6 +313,12 @@ interface NexusPrismaOutputs {
     name: "String";
     users: "User";
   };
+  Company: {
+    id: "String";
+    name: "String";
+    user: "User";
+    userId: "String";
+  };
   UserSocialMedia: {
     id: "String";
     instagram: "String";
@@ -328,6 +356,7 @@ interface NexusPrismaOutputs {
     address: "Json";
     blogPosts: "BlogPost";
     comments: "BlogPostComment";
+    companies: "Company";
     weddingDate: "DateTime";
   };
   FilteringTest: {
@@ -351,6 +380,7 @@ interface NexusPrismaOutputs {
 // Helper to gather all methods relative to a model
 interface NexusPrismaMethods {
   UserRole: Typegen.NexusPrismaFields<"UserRole">;
+  Company: Typegen.NexusPrismaFields<"Company">;
   UserSocialMedia: Typegen.NexusPrismaFields<"UserSocialMedia">;
   BlogPost: Typegen.NexusPrismaFields<"BlogPost">;
   BlogPostComment: Typegen.NexusPrismaFields<"BlogPostComment">;

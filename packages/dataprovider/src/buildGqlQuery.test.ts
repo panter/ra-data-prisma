@@ -234,6 +234,9 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              companies {
+                id
+              }
               interests
               weddingDate
               address {
@@ -280,6 +283,9 @@ describe("buildGqlQuery", () => {
                 id
               }
               comments {
+                id
+              }
+              companies {
                 id
               }
               interests
@@ -365,6 +371,9 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              companies {
+                id
+              }
               interests
               weddingDate
               address {
@@ -412,6 +421,9 @@ describe("buildGqlQuery", () => {
                 id
               }
               comments {
+                id
+              }
+              companies {
                 id
               }
               interests
@@ -462,6 +474,9 @@ describe("buildGqlQuery", () => {
                 id
               }
               comments {
+                id
+              }
+              companies {
                 id
               }
               interests
@@ -515,6 +530,9 @@ describe("buildGqlQuery", () => {
               comments {
                 id
               }
+              companies {
+                id
+              }
               interests
               weddingDate
               address {
@@ -561,6 +579,9 @@ describe("buildGqlQuery", () => {
                 id
               }
               comments {
+                id
+              }
+              companies {
                 id
               }
               interests
@@ -638,6 +659,9 @@ describe("buildGqlQuery", () => {
                   id
                 }
                 comments {
+                  id
+                }
+                companies {
                   id
                 }
                 interests
