@@ -288,6 +288,72 @@ describe("buildQueryFactory", () => {
           }
         `);
       });
+      it("for get list fetch with typegraphql count option - plural ending in 'ies'", () => {
+        const buildQuery = buildQueryFactory(testIntrospection, {
+          queryDialect: "typegraphql",
+          resourceViews: {
+            CompanyWithUser: {
+              resource: "Company",
+              fragment: {
+                one: gqlReal`
+                  fragment OneCompanyWithUser on Company {
+                    id
+                    user {
+                      id
+                      email
+                    }
+                  }
+                `,
+                many: gqlReal`
+                  fragment ManyCompaniesWithUser on Company {
+                    id
+                    user {
+                        id
+                        email
+                    }
+                  }
+                `,
+              },
+            },
+          },
+        });
+
+        const { query } = buildQuery("GET_LIST", "CompanyWithUser", {
+          pagination: {
+            page: 1,
+            perPage: 50,
+          },
+          filter: {},
+          sort: { field: "id", order: "ASC" },
+        } as GetListParams);
+
+        expect(query).toEqualGraphql(gql`
+          query companies(
+            $where: CompanyWhereInput
+            $orderBy: [CompanyOrderByWithRelationInput!]
+            $take: Int
+            $skip: Int
+          ) {
+            items: companies(
+              where: $where
+              orderBy: $orderBy
+              take: $take
+              skip: $skip
+            ) {
+              id
+              user {
+                id
+                email
+              }
+            }
+            total: aggregateCompany(where: $where) {
+              count {
+                _all
+              }
+            }
+          }
+        `);
+      });
 
       it("for get list fetch with typegraphql count option, without order", () => {
         const buildQuery = buildQueryFactory(testIntrospection, {

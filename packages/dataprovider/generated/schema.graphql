@@ -404,6 +404,111 @@ input BoolFilter {
   not: NestedBoolFilter
 }
 
+type Company {
+  id: String!
+  name: String!
+}
+
+input CompanyCreateManyUserInput {
+  id: String
+  name: String!
+}
+
+input CompanyCreateManyUserInputEnvelope {
+  data: [CompanyCreateManyUserInput!]
+  skipDuplicates: Boolean
+}
+
+input CompanyCreateNestedManyWithoutUserInput {
+  connect: [CompanyWhereUniqueInput!]
+  connectOrCreate: [CompanyCreateOrConnectWithoutUserInput!]
+  create: [CompanyCreateWithoutUserInput!]
+  createMany: CompanyCreateManyUserInputEnvelope
+}
+
+input CompanyCreateOrConnectWithoutUserInput {
+  create: CompanyCreateWithoutUserInput!
+  where: CompanyWhereUniqueInput!
+}
+
+input CompanyCreateWithoutUserInput {
+  id: String
+  name: String!
+}
+
+input CompanyListRelationFilter {
+  every: CompanyWhereInput
+  none: CompanyWhereInput
+  some: CompanyWhereInput
+}
+
+input CompanyOrderByRelationAggregateInput {
+  count: SortOrder!
+}
+
+input CompanyScalarWhereInput {
+  AND: [CompanyScalarWhereInput!]
+  NOT: [CompanyScalarWhereInput!]
+  OR: [CompanyScalarWhereInput!]
+  id: StringFilter
+  name: StringFilter
+  userId: StringFilter
+}
+
+input CompanyUpdateManyMutationInput {
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+}
+
+input CompanyUpdateManyWithWhereWithoutUserInput {
+  data: CompanyUpdateManyMutationInput!
+  where: CompanyScalarWhereInput!
+}
+
+input CompanyUpdateManyWithoutUserInput {
+  connect: [CompanyWhereUniqueInput!]
+  connectOrCreate: [CompanyCreateOrConnectWithoutUserInput!]
+  create: [CompanyCreateWithoutUserInput!]
+  createMany: CompanyCreateManyUserInputEnvelope
+  delete: [CompanyWhereUniqueInput!]
+  deleteMany: [CompanyScalarWhereInput!]
+  disconnect: [CompanyWhereUniqueInput!]
+  set: [CompanyWhereUniqueInput!]
+  update: [CompanyUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [CompanyUpdateManyWithWhereWithoutUserInput!]
+  upsert: [CompanyUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input CompanyUpdateWithWhereUniqueWithoutUserInput {
+  data: CompanyUpdateWithoutUserInput!
+  where: CompanyWhereUniqueInput!
+}
+
+input CompanyUpdateWithoutUserInput {
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+}
+
+input CompanyUpsertWithWhereUniqueWithoutUserInput {
+  create: CompanyCreateWithoutUserInput!
+  update: CompanyUpdateWithoutUserInput!
+  where: CompanyWhereUniqueInput!
+}
+
+input CompanyWhereInput {
+  AND: [CompanyWhereInput!]
+  NOT: [CompanyWhereInput!]
+  OR: [CompanyWhereInput!]
+  id: StringFilter
+  name: StringFilter
+  user: UserWhereInput
+  userId: StringFilter
+}
+
+input CompanyWhereUniqueInput {
+  id: String
+}
+
 scalar DateTime
 
 input DateTimeFieldUpdateOperationsInput {
@@ -854,6 +959,7 @@ type User {
   address: Address
   blogPosts(cursor: BlogPostWhereUniqueInput, skip: Int, take: Int): [BlogPost!]!
   comments(cursor: BlogPostCommentWhereUniqueInput, skip: Int, take: Int): [BlogPostComment!]!
+  companies(cursor: CompanyWhereUniqueInput, skip: Int, take: Int): [Company!]!
   email: String!
   firstName: String
   gender: Gender
@@ -872,6 +978,7 @@ input UserCreateInput {
   address: Json
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
+  companies: CompanyCreateNestedManyWithoutUserInput
   email: String!
   firstName: String
   gender: Gender
@@ -925,6 +1032,7 @@ input UserCreateOrConnectWithoutRolesInput {
 input UserCreateWithoutBlogPostsInput {
   address: Json
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
+  companies: CompanyCreateNestedManyWithoutUserInput
   email: String!
   firstName: String
   gender: Gender
@@ -941,6 +1049,7 @@ input UserCreateWithoutBlogPostsInput {
 input UserCreateWithoutCommentsInput {
   address: Json
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
+  companies: CompanyCreateNestedManyWithoutUserInput
   email: String!
   firstName: String
   gender: Gender
@@ -958,6 +1067,7 @@ input UserCreateWithoutRolesInput {
   address: Json
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
+  companies: CompanyCreateNestedManyWithoutUserInput
   email: String!
   firstName: String
   gender: Gender
@@ -988,6 +1098,7 @@ input UserOrderByWithRelationInput {
   address: SortOrder
   blogPosts: BlogPostOrderByRelationAggregateInput
   comments: BlogPostCommentOrderByRelationAggregateInput
+  companies: CompanyOrderByRelationAggregateInput
   email: SortOrder
   firstName: SortOrder
   gender: SortOrder
@@ -1198,6 +1309,7 @@ input UserUpdateInput {
   address: Json
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
+  companies: CompanyUpdateManyWithoutUserInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
@@ -1270,6 +1382,7 @@ input UserUpdateWithWhereUniqueWithoutRolesInput {
 input UserUpdateWithoutBlogPostsInput {
   address: Json
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
+  companies: CompanyUpdateManyWithoutUserInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
@@ -1286,6 +1399,7 @@ input UserUpdateWithoutBlogPostsInput {
 input UserUpdateWithoutCommentsInput {
   address: Json
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
+  companies: CompanyUpdateManyWithoutUserInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
@@ -1303,6 +1417,7 @@ input UserUpdateWithoutRolesInput {
   address: Json
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
+  companies: CompanyUpdateManyWithoutUserInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
@@ -1343,6 +1458,7 @@ input UserWhereInput {
   address: JsonNullableFilter
   blogPosts: BlogPostListRelationFilter
   comments: BlogPostCommentListRelationFilter
+  companies: CompanyListRelationFilter
   email: StringFilter
   firstName: StringNullableFilter
   gender: EnumGenderNullableFilter

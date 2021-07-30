@@ -31,6 +31,7 @@ export const testSchema = (options: CommonOptions) => {
       t.model.userSocialMedia(null);
       t.model.blogPosts(null);
       t.model.comments(null);
+      t.model.companies(null);
       t.model.interests();
       t.model.weddingDate();
       t.field("address", { type: "Address" });
@@ -48,6 +49,14 @@ export const testSchema = (options: CommonOptions) => {
 
   const UserRole = objectType({
     name: "UserRole",
+    definition(t) {
+      t.model.id();
+      t.model.name();
+    },
+  });
+
+  const Company = objectType({
+    name: "Company",
     definition(t) {
       t.model.id();
       t.model.name();
@@ -142,7 +151,9 @@ export const testSchema = (options: CommonOptions) => {
     BlogPostComment,
     UserCreateOneWithoutCommentsInput,
     FilteringTest,
+    Company,
 
+    addCrudResolvers("Company", options),
     addCrudResolvers("User", options),
     addCrudResolvers("UserRole", options),
     addCrudResolvers("SomePublicRecordWithIntId", options),
