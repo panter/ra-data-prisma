@@ -1,24 +1,29 @@
-import { buildVariables } from "./buildVariables";
+import { GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import buildGqlQuery from "./buildGqlQuery";
-import getResponseParser from "./getResponseParser";
+import { buildVariables } from "./buildVariables";
 import { IntrospectionResult } from "./constants/interfaces";
-import { OurOptions, DoubleFragment } from "./types";
-import { DocumentNode } from "graphql";
-import { GET_LIST, GET_ONE, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
+import getResponseParser from "./getResponseParser";
+import {
+  FetchType,
+  isDocumentNodeFragment,
+  isOneAndManyFragment,
+  OurOptions,
+  ResourceFragment,
+} from "./types";
 
 const MANY_FETCH_TYPES = [GET_LIST, GET_MANY, GET_MANY_REFERENCE];
 
 export const buildQueryFactory = (
   introspectionResults: IntrospectionResult,
-  options: Required<OurOptions>,
+  options: OurOptions,
 ) => {
   const { resourceViews } = options;
   const knownResources = introspectionResults.resources.map((r) => r.type.name);
 
-  return (aorFetchType: string, resourceName: string, params: any) => {
+  return (aorFetchType: FetchType, resourceName: string, params: any) => {
     const resourceView = resourceViews?.[resourceName];
-    const isResourceView = Boolean(resourceView);
-    const resourceNameToUse = isResourceView
+
+    const resourceNameToUse = resourceView
       ? resourceView.resource
       : resourceName;
     const resource = introspectionResults.resources.find(
@@ -39,24 +44,22 @@ export const buildQueryFactory = (
       );
     }
 
-    let fragment: DocumentNode = undefined;
+    let resourceViewFragment: ResourceFragment = undefined;
     if (resourceView) {
-      // type union info is lost after compiling to JS
-      // however, we can check for existence of "one" or "many" fields in the fragment which would indicate DoubleFragment type
-      const maybeDoubleFragment = resourceView.fragment as any;
-      if (maybeDoubleFragment.one && maybeDoubleFragment.many) {
-        const fragmentObject = resourceView.fragment as DoubleFragment;
-        if (MANY_FETCH_TYPES.indexOf(aorFetchType) !== -1) {
-          fragment = fragmentObject.many;
-        } else if (aorFetchType === GET_ONE) {
-          fragment = fragmentObject.one;
+      if (isOneAndManyFragment(resourceView.fragment)) {
+        // has one or many or both
+        // if only one is defined, fall back to no fragment for the other
+        if (MANY_FETCH_TYPES.includes(aorFetchType)) {
+          if (resourceView.fragment.many) {
+            resourceViewFragment = resourceView.fragment.many;
+          }
+        } else {
+          if (resourceView.fragment.one) {
+            resourceViewFragment = resourceView.fragment.one;
+          }
         }
-      } else if (!maybeDoubleFragment.one && !maybeDoubleFragment.many) {
-        fragment = resourceView.fragment as DocumentNode;
       } else {
-        throw new Error(
-          `Error in resource view ${resourceName} - you either must specify both 'one' and 'many' fragments or use a single fragment for both.`,
-        );
+        resourceViewFragment = resourceView.fragment;
       }
     }
 
@@ -75,10 +78,13 @@ export const buildQueryFactory = (
       resource,
       aorFetchType,
       variables,
-      fragment,
+      resourceViewFragment,
     );
     const parseResponse = getResponseParser(introspectionResults, {
-      shouldSanitizeLinkedResources: !isResourceView,
+      shouldSanitizeLinkedResources: !(
+        // don't sanitze on real fragments
+        (resourceViewFragment && isDocumentNodeFragment(resourceViewFragment))
+      ),
       queryDialect: options.queryDialect,
     })(aorFetchType, resource);
 

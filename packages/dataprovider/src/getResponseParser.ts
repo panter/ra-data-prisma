@@ -2,7 +2,7 @@ import { TypeKind, IntrospectionObjectType } from "graphql";
 import { GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import getFinalType from "./utils/getFinalType";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { QueryDialect } from "./types";
+import { FetchType, QueryDialect } from "./types";
 
 const sanitizeResource =
   (
@@ -57,7 +57,7 @@ export default (
       queryDialect,
     }: { shouldSanitizeLinkedResources: boolean; queryDialect: QueryDialect },
   ) =>
-  (aorFetchType: string, resource: Resource) =>
+  (aorFetchType: FetchType, resource: Resource) =>
   (response: { [key: string]: any }) => {
     const sanitize = sanitizeResource(
       introspectionResults,

@@ -1,13 +1,50 @@
 import { DocumentNode } from "graphql";
 
-export type DoubleFragment = {
-  one: DocumentNode;
-  many: DocumentNode;
+import {
+  CREATE,
+  DELETE,
+  GET_LIST,
+  GET_MANY,
+  GET_MANY_REFERENCE,
+  GET_ONE,
+  UPDATE,
+} from "react-admin";
+
+export type WhiteListFragment = {
+  type: "whitelist";
+  fields: string[];
 };
 
+export type BlackListFragment = {
+  type: "blacklist";
+  fields: string[];
+};
+
+export const isDocumentNodeFragment = (
+  fragment: ResourceFragment,
+): fragment is DocumentNode => {
+  return "kind" in fragment && fragment.kind === "Document";
+};
+
+export const isOneAndManyFragment = (
+  fragment: ResourceViewFragment,
+): fragment is DoubleFragment => {
+  return "one" in fragment || "many" in fragment;
+};
+export type ResourceFragment =
+  | DocumentNode
+  | WhiteListFragment
+  | BlackListFragment;
+
+export type DoubleFragment = {
+  one?: ResourceFragment;
+  many?: ResourceFragment;
+};
+
+export type ResourceViewFragment = ResourceFragment | DoubleFragment;
 export type ResourceView = {
   resource: string;
-  fragment: DocumentNode | DoubleFragment;
+  fragment: ResourceViewFragment;
 };
 
 export type QueryDialect = "nexus-prisma" | "typegraphql";
@@ -22,6 +59,15 @@ export type ConfigOptions = {
     [filterName: string]: (value: any) => Filter | void;
   };
 };
+
+export type FetchType =
+  | typeof CREATE
+  | typeof DELETE
+  | typeof GET_LIST
+  | typeof GET_MANY
+  | typeof GET_MANY_REFERENCE
+  | typeof GET_ONE
+  | typeof UPDATE;
 
 export type VariantOptions = {
   queryDialect?: QueryDialect;

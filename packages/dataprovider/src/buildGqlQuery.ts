@@ -12,7 +12,14 @@ import { QUERY_TYPES } from "ra-data-graphql";
 import { DELETE, GET_LIST, GET_MANY, GET_MANY_REFERENCE } from "react-admin";
 import { defaultOurOptions } from "./buildDataProvider";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { QueryDialect } from "./types";
+import {
+  BlackListFragment,
+  FetchType,
+  isDocumentNodeFragment,
+  QueryDialect,
+  ResourceFragment,
+  WhiteListFragment,
+} from "./types";
 import getFinalType from "./utils/getFinalType";
 import * as gqlTypes from "./utils/gqlTypes";
 import isList from "./utils/isList";
@@ -190,15 +197,31 @@ const buildFieldsFromFragment = (
   return (parsedFragment as any).definitions?.[0].selectionSet.selections;
 };
 
+const filterFields = (
+  fields: FieldNode[],
+  fragment: WhiteListFragment | BlackListFragment,
+): FieldNode[] => {
+  return fields.filter((f) => {
+    const match = fragment.fields.includes(f.name.value);
+    if (fragment.type === "whitelist") {
+      // only include these
+      return match;
+    } else {
+      // blacklist, exclude these
+      return !match;
+    }
+  });
+};
+
 export default (
     introspectionResults: IntrospectionResult,
     options = defaultOurOptions,
   ) =>
   (
     resource: Resource,
-    aorFetchType: string,
+    aorFetchType: FetchType,
     variables: { [key: string]: any },
-    fragment: DocumentNode,
+    fragment: ResourceFragment,
   ) => {
     const queryType = resource[aorFetchType];
     const { queryDialect } = options;
@@ -214,9 +237,14 @@ export default (
     const args = buildArgs(queryType, variables);
     const countArgs = buildArgs(queryType, countVariables);
 
+    const buildRawFields = () =>
+      buildFields(introspectionResults)((resource.type as any).fields);
     const fields = fragment
-      ? buildFieldsFromFragment(fragment, resource.type.name, aorFetchType)
-      : buildFields(introspectionResults)((resource.type as any).fields);
+      ? isDocumentNodeFragment(fragment) // its a document node
+        ? buildFieldsFromFragment(fragment, resource.type.name, aorFetchType)
+        : /** blaclist or whitelist**/
+          filterFields(buildRawFields(), fragment)
+      : buildRawFields();
 
     const totals: Record<QueryDialect, FieldNode> = {
       "nexus-prisma": (() => {
