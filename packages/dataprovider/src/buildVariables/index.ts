@@ -13,7 +13,7 @@ import {
 } from "react-admin";
 import { buildWhere } from "../buildWhere";
 import { IntrospectionResult, Resource } from "../constants/interfaces";
-import { OurOptions } from "../types";
+import { FetchType, OurOptions } from "../types";
 import { buildData, CreateParams } from "./buildData";
 import { buildOrderBy } from "./buildOrderBy";
 
@@ -25,7 +25,7 @@ export interface GetListParams {
 
 const buildGetListVariables =
   (introspectionResults: IntrospectionResult, options: OurOptions) =>
-  (resource: Resource, aorFetchType: string, params: GetListParams) => {
+  (resource: Resource, aorFetchType: FetchType, params: GetListParams) => {
     const where = buildWhere(
       params.filter,
       resource,
@@ -115,7 +115,7 @@ const buildCreateVariables =
 
 export const buildVariables =
   (introspectionResults: IntrospectionResult, options: OurOptions) =>
-  (resource: Resource, aorFetchType: string, params: any) => {
+  (resource: Resource, aorFetchType: FetchType, params: any) => {
     switch (aorFetchType) {
       case GET_LIST: {
         return buildGetListVariables(introspectionResults, options)(

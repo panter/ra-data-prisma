@@ -194,55 +194,138 @@ export const UserEdit = (props) => (
 );
 ```
 
-### Virtual Resources / Views (_experimental_)
+### Customize fetching & virtual Resources
 
-Lists currently load all fields on a certain type, but linked resources get sanitized to **just load the id**.
+react-admin has [no mechanism to tell the dataprovider which fields are requested for any resources](https://github.com/marmelab/react-admin/issues/4751),
+we therefore load all fields for a resource. Ff a field points to an existing `Resource`, we only fetch the id of that resource.
 
-But sometimes you need to load specific nested fields from a certain resource, for example for an export.
-Unfortunatly, react-admin has no mechanism to describe what to fetch exactly (see also https://github.com/marmelab/react-admin/issues/4751)
+But sometimes you need to customize this behaviour, e.g.:
 
-To fix this, you can specify a `ResourceView` to do that:
+- you want to load a nested resource with all properties for easier export
+- you have large/slow resolvers in some resources and don't want to load these for performance reasons
+
+We therefore provide a way to customize the loaded field-set by defining fragments, blacklists and whitelists.
+
+Additionaly you can use that to create "virtual resources" that show other fields.
+
+#### Basic usage
+
+using one fragment for both one and many:
 
 ```ts
-// real world example
+
 buildGraphQLProvider({
   clientOptions: { uri: "/api/graphql" } as any,
   resourceViews: {
-    ParticipantsToInvoice: {
-      resource: "ChallengeParticipation",
-      fragment: gql`
-        fragment Billing on ChallengeParticipation {
-          challenge {
-            title
-          }
-          user {
-            email
-            firstname
-            lastname
-            school {
-              name
-              address
-              city {
-                name
-                zipCode
-                canton {
-                  id
-                }
-              }
-            }
-          }
-          teamsCount
-          teams {
-            name
-          }
-        }
-      `,
+    <local resource name>: {
+      resource: <backend resource name>,
+      fragment: <fragment to use>
     },
   },
 });
 ```
 
-You can also have separate fragments for "one" record and for "many" records (e.g. different views for detail of a resource and for their list):
+You can also specify different fragments for one and many (or ommit one of those):
+
+```ts
+
+buildGraphQLProvider({
+  clientOptions: { uri: "/api/graphql" } as any,
+  resourceViews: {
+    <local resource name>: {
+      resource: <backend resource name>,
+      fragment: {
+        one: <fragment for one>
+        many: <fragment for many>
+      }
+    },
+  },
+});
+```
+
+- `<backend resource name>`: the name of an existing `Resource` that is defined on the backend
+- `<local resource name>`: if you use the same name as `<backend resource name>`, you basically customize that `Resource`. You can chose a different name
+  to create a "virtual" resource.
+- `<fragment for ...>`: Specifies which fields are loaded when fetching one or many records. See below for available fragment types
+- if you only specify `one` or `many`, it will fall back to the default behavior if either would be used.
+
+Gotcha: when using different fragments for one and many, the detail view might be loaded with certain fields being `undefined`. [See this discussion](https://github.com/panter/ra-data-prisma/issues/40#issuecomment-779441155)
+
+#### Fragment type blacklist / whitelist
+
+Use this if you want to exclude certain fields (blacklist) or only include certain fields:
+
+```ts
+// whitelist
+buildGraphQLProvider({
+  clientOptions: { uri: "/api/graphql" } as any,
+  resourceViews: {
+    Users: {
+      resource: "Users",
+      fragment: {
+        many: {
+          type: "whitelist",
+          fields: ["id", "firstName", "lastName"],
+        },
+      },
+    },
+  },
+});
+```
+
+```ts
+// blacklist
+buildGraphQLProvider({
+  clientOptions: { uri: "/api/graphql" } as any,
+  resourceViews: {
+    Users: {
+      resource: "Users",
+      fragment: {
+        many: {
+          type: "blacklist",
+          fields: ["roles", "avatarImage"],
+        },
+      },
+    },
+  },
+});
+```
+
+#### Fragment type DocumentNode
+
+You can use graphql Fragments (DocumentNode) to presicely select fields.
+This is more verbose than using blacklists / whitelists,
+but enables you to deeply select fields. Additionaly your IDE can typecheck the fragment
+(e.g. when using the apollo extension in vscode).
+
+```ts
+import gql from "graphql-tag";
+
+buildGraphQLProvider({
+  clientOptions: { uri: "/api/graphql" } as any,
+  resourceViews: {
+    Users: {
+      resource: "Users",
+      fragment: {
+        many: gql`
+          fragment OneUserWithTwitter on User {
+            id
+            firstName
+            lastName
+            userSocialMedia {
+              twitter
+            }
+          }
+        `,
+      },
+    },
+  },
+});
+```
+
+#### Virtual Resources
+
+You can use a different name for a resource, that does not exist on the backend:
 
 ```ts
 // real world example
@@ -327,8 +410,6 @@ const { data } = await dataProvider.getList("ParticipantsToInvoice", {
   filter: {},
 });
 ```
-
-It's currently also possible to override an existing resource, altough this is not battle tested.
 
 ## Usage with typegraphql-prisma
 

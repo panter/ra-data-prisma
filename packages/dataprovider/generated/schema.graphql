@@ -409,6 +409,12 @@ type Company {
   name: String!
 }
 
+input CompanyCreateInput {
+  id: String
+  name: String!
+  user: UserCreateNestedOneWithoutCompaniesInput!
+}
+
 input CompanyCreateManyUserInput {
   id: String
   name: String!
@@ -446,6 +452,13 @@ input CompanyOrderByRelationAggregateInput {
   count: SortOrder!
 }
 
+input CompanyOrderByWithRelationInput {
+  id: SortOrder
+  name: SortOrder
+  user: UserOrderByWithRelationInput
+  userId: SortOrder
+}
+
 input CompanyScalarWhereInput {
   AND: [CompanyScalarWhereInput!]
   NOT: [CompanyScalarWhereInput!]
@@ -453,6 +466,12 @@ input CompanyScalarWhereInput {
   id: StringFilter
   name: StringFilter
   userId: StringFilter
+}
+
+input CompanyUpdateInput {
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  user: UserUpdateOneRequiredWithoutCompaniesInput
 }
 
 input CompanyUpdateManyMutationInput {
@@ -699,36 +718,42 @@ input JsonNullableFilter {
 type Mutation {
   createOneBlogPost(data: BlogPostCreateInput!): BlogPost!
   createOneBlogPostComment(data: BlogPostCommentCreateInput!): BlogPostComment!
+  createOneCompany(data: CompanyCreateInput!): Company!
   createOneFilteringTest(data: FilteringTestCreateInput!): FilteringTest!
   createOneSomePublicRecordWithIntId(data: SomePublicRecordWithIntIdCreateInput!): SomePublicRecordWithIntId!
   createOneUser(data: UserCreateInput!): User!
   createOneUserRole(data: UserRoleCreateInput!): UserRole!
   deleteManyBlogPost(where: BlogPostWhereInput): AffectedRowsOutput!
   deleteManyBlogPostComment(where: BlogPostCommentWhereInput): AffectedRowsOutput!
+  deleteManyCompany(where: CompanyWhereInput): AffectedRowsOutput!
   deleteManyFilteringTest(where: FilteringTestWhereInput): AffectedRowsOutput!
   deleteManySomePublicRecordWithIntId(where: SomePublicRecordWithIntIdWhereInput): AffectedRowsOutput!
   deleteManyUser(where: UserWhereInput): AffectedRowsOutput!
   deleteManyUserRole(where: UserRoleWhereInput): AffectedRowsOutput!
   deleteOneBlogPost(where: BlogPostWhereUniqueInput!): BlogPost
   deleteOneBlogPostComment(where: BlogPostCommentWhereUniqueInput!): BlogPostComment
+  deleteOneCompany(where: CompanyWhereUniqueInput!): Company
   deleteOneFilteringTest(where: FilteringTestWhereUniqueInput!): FilteringTest
   deleteOneSomePublicRecordWithIntId(where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId
   deleteOneUser(where: UserWhereUniqueInput!): User
   deleteOneUserRole(where: UserRoleWhereUniqueInput!): UserRole
   updateManyBlogPost(data: BlogPostUpdateManyMutationInput!, where: BlogPostWhereInput): AffectedRowsOutput!
   updateManyBlogPostComment(data: BlogPostCommentUpdateManyMutationInput!, where: BlogPostCommentWhereInput): AffectedRowsOutput!
+  updateManyCompany(data: CompanyUpdateManyMutationInput!, where: CompanyWhereInput): AffectedRowsOutput!
   updateManyFilteringTest(data: FilteringTestUpdateManyMutationInput!, where: FilteringTestWhereInput): AffectedRowsOutput!
   updateManySomePublicRecordWithIntId(data: SomePublicRecordWithIntIdUpdateManyMutationInput!, where: SomePublicRecordWithIntIdWhereInput): AffectedRowsOutput!
   updateManyUser(data: UserUpdateManyMutationInput!, where: UserWhereInput): AffectedRowsOutput!
   updateManyUserRole(data: UserRoleUpdateManyMutationInput!, where: UserRoleWhereInput): AffectedRowsOutput!
   updateOneBlogPost(data: BlogPostUpdateInput!, where: BlogPostWhereUniqueInput!): BlogPost
   updateOneBlogPostComment(data: BlogPostCommentUpdateInput!, where: BlogPostCommentWhereUniqueInput!): BlogPostComment
+  updateOneCompany(data: CompanyUpdateInput!, where: CompanyWhereUniqueInput!): Company
   updateOneFilteringTest(data: FilteringTestUpdateInput!, where: FilteringTestWhereUniqueInput!): FilteringTest
   updateOneSomePublicRecordWithIntId(data: SomePublicRecordWithIntIdUpdateInput!, where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId
   updateOneUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateOneUserRole(data: UserRoleUpdateInput!, where: UserRoleWhereUniqueInput!): UserRole
   upsertOneBlogPost(create: BlogPostCreateInput!, update: BlogPostUpdateInput!, where: BlogPostWhereUniqueInput!): BlogPost!
   upsertOneBlogPostComment(create: BlogPostCommentCreateInput!, update: BlogPostCommentUpdateInput!, where: BlogPostCommentWhereUniqueInput!): BlogPostComment!
+  upsertOneCompany(create: CompanyCreateInput!, update: CompanyUpdateInput!, where: CompanyWhereUniqueInput!): Company!
   upsertOneFilteringTest(create: FilteringTestCreateInput!, update: FilteringTestUpdateInput!, where: FilteringTestWhereUniqueInput!): FilteringTest!
   upsertOneSomePublicRecordWithIntId(create: SomePublicRecordWithIntIdCreateInput!, update: SomePublicRecordWithIntIdUpdateInput!, where: SomePublicRecordWithIntIdWhereUniqueInput!): SomePublicRecordWithIntId!
   upsertOneUser(create: UserCreateInput!, update: UserUpdateInput!, where: UserWhereUniqueInput!): User!
@@ -857,6 +882,9 @@ type Query {
   blogPostCommentsCount(cursor: BlogPostCommentWhereUniqueInput, orderBy: BlogPostCommentOrderByWithRelationInput, skip: Int, take: Int, where: BlogPostCommentWhereInput): Int
   blogPosts(cursor: BlogPostWhereUniqueInput, orderBy: [BlogPostOrderByWithRelationInput!], skip: Int, take: Int, where: BlogPostWhereInput): [BlogPost!]!
   blogPostsCount(cursor: BlogPostWhereUniqueInput, orderBy: BlogPostOrderByWithRelationInput, skip: Int, take: Int, where: BlogPostWhereInput): Int
+  companies(cursor: CompanyWhereUniqueInput, orderBy: [CompanyOrderByWithRelationInput!], skip: Int, take: Int, where: CompanyWhereInput): [Company!]!
+  companiesCount(cursor: CompanyWhereUniqueInput, orderBy: CompanyOrderByWithRelationInput, skip: Int, take: Int, where: CompanyWhereInput): Int
+  company(where: CompanyWhereUniqueInput!): Company
   filteringTest(where: FilteringTestWhereUniqueInput!): FilteringTest
   filteringTests(cursor: FilteringTestWhereUniqueInput, orderBy: [FilteringTestOrderByWithRelationInput!], skip: Int, take: Int, where: FilteringTestWhereInput): [FilteringTest!]!
   filteringTestsCount(cursor: FilteringTestWhereUniqueInput, orderBy: FilteringTestOrderByWithRelationInput, skip: Int, take: Int, where: FilteringTestWhereInput): Int
@@ -1010,6 +1038,12 @@ input UserCreateNestedOneWithoutCommentsInput {
   create: UserCreateWithoutCommentsInput
 }
 
+input UserCreateNestedOneWithoutCompaniesInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutCompaniesInput
+  create: UserCreateWithoutCompaniesInput
+}
+
 input UserCreateOneWithoutCommentsInput {
   connect: UserWhereUniqueInput
 }
@@ -1021,6 +1055,11 @@ input UserCreateOrConnectWithoutBlogPostsInput {
 
 input UserCreateOrConnectWithoutCommentsInput {
   create: UserCreateWithoutCommentsInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateOrConnectWithoutCompaniesInput {
+  create: UserCreateWithoutCompaniesInput!
   where: UserWhereUniqueInput!
 }
 
@@ -1050,6 +1089,23 @@ input UserCreateWithoutCommentsInput {
   address: Json
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
+  email: String!
+  firstName: String
+  gender: Gender
+  id: String
+  interests: UserCreateinterestsInput
+  lastName: String
+  roles: UserRoleCreateNestedManyWithoutUsersInput
+  userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
+  wantsNewsletter: Boolean!
+  weddingDate: DateTime
+  yearOfBirth: Int
+}
+
+input UserCreateWithoutCompaniesInput {
+  address: Json
+  blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
+  comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   email: String!
   firstName: String
   gender: Gender
@@ -1354,6 +1410,14 @@ input UserUpdateManyWithoutRolesInput {
   upsert: [UserUpsertWithWhereUniqueWithoutRolesInput!]
 }
 
+input UserUpdateOneRequiredWithoutCompaniesInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutCompaniesInput
+  create: UserCreateWithoutCompaniesInput
+  update: UserUpdateWithoutCompaniesInput
+  upsert: UserUpsertWithoutCompaniesInput
+}
+
 input UserUpdateOneWithoutBlogPostsInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutBlogPostsInput
@@ -1413,6 +1477,23 @@ input UserUpdateWithoutCommentsInput {
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
+input UserUpdateWithoutCompaniesInput {
+  address: Json
+  blogPosts: BlogPostUpdateManyWithoutAuthorInput
+  comments: BlogPostCommentUpdateManyWithoutAuthorInput
+  email: StringFieldUpdateOperationsInput
+  firstName: NullableStringFieldUpdateOperationsInput
+  gender: NullableEnumGenderFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  interests: UserUpdateinterestsInput
+  lastName: NullableStringFieldUpdateOperationsInput
+  roles: UserRoleUpdateManyWithoutUsersInput
+  userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
+  wantsNewsletter: BoolFieldUpdateOperationsInput
+  weddingDate: NullableDateTimeFieldUpdateOperationsInput
+  yearOfBirth: NullableIntFieldUpdateOperationsInput
+}
+
 input UserUpdateWithoutRolesInput {
   address: Json
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
@@ -1449,6 +1530,11 @@ input UserUpsertWithoutBlogPostsInput {
 input UserUpsertWithoutCommentsInput {
   create: UserCreateWithoutCommentsInput!
   update: UserUpdateWithoutCommentsInput!
+}
+
+input UserUpsertWithoutCompaniesInput {
+  create: UserCreateWithoutCompaniesInput!
+  update: UserUpdateWithoutCompaniesInput!
 }
 
 input UserWhereInput {

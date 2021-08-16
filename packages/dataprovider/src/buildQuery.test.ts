@@ -64,6 +64,119 @@ describe("buildQueryFactory", () => {
       );
     });
 
+    it("enables to whitelist fields", () => {
+      const buildQuery = buildQueryFactory(testIntrospection, {
+        ...defaultOurOptions,
+        resourceViews: {
+          UserWithTwitter: {
+            resource: "User",
+            fragment: {
+              type: "whitelist",
+              fields: ["id", "firstName", "lastName", "userSocialMedia"],
+            },
+          },
+        },
+      });
+
+      const { query } = buildQuery("GET_LIST", "UserWithTwitter", {
+        pagination: {
+          page: 1,
+          perPage: 50,
+        },
+        filter: {},
+        sort: {},
+      } as GetListParams);
+
+      expect(query).toEqualGraphql(gql`
+        query users(
+          $where: UserWhereInput
+          $orderBy: [UserOrderByWithRelationInput!]
+          $take: Int
+          $skip: Int
+        ) {
+          items: users(
+            where: $where
+            orderBy: $orderBy
+            take: $take
+            skip: $skip
+          ) {
+            id
+            firstName
+            lastName
+            userSocialMedia {
+              id
+              instagram
+              twitter
+              user {
+                id
+              }
+            }
+          }
+          total: usersCount(where: $where)
+        }
+      `);
+    });
+
+    it("enables to blacklist fields", () => {
+      const buildQuery = buildQueryFactory(testIntrospection, {
+        ...defaultOurOptions,
+        resourceViews: {
+          UserWithTwitter: {
+            resource: "User",
+            fragment: {
+              type: "blacklist",
+              fields: [
+                "userSocialMedia",
+                "blogPosts",
+                "comments",
+                "companies",
+                "address",
+                "roles",
+              ],
+            },
+          },
+        },
+      });
+
+      const { query } = buildQuery("GET_LIST", "UserWithTwitter", {
+        pagination: {
+          page: 1,
+          perPage: 50,
+        },
+        filter: {},
+        sort: {},
+      } as GetListParams);
+
+      expect(query).toEqualGraphql(gql`
+        query users(
+          $where: UserWhereInput
+          $orderBy: [UserOrderByWithRelationInput!]
+          $take: Int
+          $skip: Int
+        ) {
+          items: users(
+            where: $where
+            orderBy: $orderBy
+            take: $take
+            skip: $skip
+          ) {
+            id
+            email
+            firstName
+            lastName
+            yearOfBirth
+
+            gender
+            wantsNewsletter
+
+            interests
+            weddingDate
+          }
+          total: usersCount(where: $where)
+        }
+      `);
+    });
+
     it("allows to use a single custom virtual view resources for one and many", () => {
       const buildQuery = buildQueryFactory(testIntrospection, {
         ...defaultOurOptions,
@@ -125,7 +238,7 @@ describe("buildQueryFactory", () => {
                 one: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -135,7 +248,7 @@ describe("buildQueryFactory", () => {
                     id
                     email
                     wantsNewsletter
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -151,7 +264,7 @@ describe("buildQueryFactory", () => {
           query user($where: UserWhereUniqueInput!) {
             data: user(where: $where) {
               id
-              socialMedia {
+              userSocialMedia {
                 twitter
               }
             }
@@ -168,7 +281,7 @@ describe("buildQueryFactory", () => {
                 one: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -178,7 +291,7 @@ describe("buildQueryFactory", () => {
                     id
                     email
                     wantsNewsletter
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -213,7 +326,7 @@ describe("buildQueryFactory", () => {
               id
               email
               wantsNewsletter
-              socialMedia {
+              userSocialMedia {
                 twitter
               }
             }
@@ -231,7 +344,7 @@ describe("buildQueryFactory", () => {
                 one: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -241,7 +354,7 @@ describe("buildQueryFactory", () => {
                     id
                     email
                     wantsNewsletter
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -276,7 +389,7 @@ describe("buildQueryFactory", () => {
               id
               email
               wantsNewsletter
-              socialMedia {
+              userSocialMedia {
                 twitter
               }
             }
@@ -365,7 +478,7 @@ describe("buildQueryFactory", () => {
                 one: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -375,7 +488,7 @@ describe("buildQueryFactory", () => {
                     id
                     email
                     wantsNewsletter
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -400,7 +513,7 @@ describe("buildQueryFactory", () => {
               id
               email
               wantsNewsletter
-              socialMedia {
+              userSocialMedia {
                 twitter
               }
             }
@@ -423,7 +536,7 @@ describe("buildQueryFactory", () => {
                 one: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -433,7 +546,7 @@ describe("buildQueryFactory", () => {
                     id
                     email
                     wantsNewsletter
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -453,7 +566,7 @@ describe("buildQueryFactory", () => {
               id
               email
               wantsNewsletter
-              socialMedia {
+              userSocialMedia {
                 twitter
               }
             }
@@ -471,7 +584,7 @@ describe("buildQueryFactory", () => {
                 one: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -481,7 +594,7 @@ describe("buildQueryFactory", () => {
                     id
                     email
                     wantsNewsletter
-                    socialMedia {
+                    userSocialMedia {
                       twitter
                     }
                   }
@@ -517,7 +630,7 @@ describe("buildQueryFactory", () => {
               id
               email
               wantsNewsletter
-              socialMedia {
+              userSocialMedia {
                 twitter
               }
             }
@@ -525,8 +638,8 @@ describe("buildQueryFactory", () => {
           }
         `);
       });
-      describe("should throw an error if only one fragment is defined", () => {
-        it("only one", () => {
+      describe("supports defining only one or many", () => {
+        it("uses the fragment for one, but the default for many", () => {
           const buildQuery = buildQueryFactory(testIntrospection, {
             resourceViews: {
               UserWithTwitter: {
@@ -536,7 +649,7 @@ describe("buildQueryFactory", () => {
                   one: gqlReal`
                     fragment OneUserWithTwitter on User {
                       id
-                      socialMedia {
+                      userSocialMedia {
                         twitter
                       }
                     }
@@ -545,54 +658,83 @@ describe("buildQueryFactory", () => {
               },
             },
           });
-
-          expect(() => {
-            buildQuery("GET_LIST", "UserWithTwitter", {
-              pagination: {
-                page: 1,
-                perPage: 50,
-              },
-              filter: {},
-              sort: {},
-            } as GetListParams);
-          }).toThrowError(
-            "Error in resource view UserWithTwitter - you either must specify both 'one' and 'many' fragments or use a single fragment for both.",
-          );
-        });
-        it("only many", () => {
-          const buildQuery = buildQueryFactory(testIntrospection, {
-            resourceViews: {
-              UserWithTwitter: {
-                resource: "User",
-                // @ts-ignore
-                fragment: {
-                  many: gqlReal`
-                    fragment ManyUsersWithTwitter on User {
-                      id
-                      email
-                      wantsNewsletter
-                      socialMedia {
-                        twitter
-                      }
-                    }
-                  `,
-                },
-              },
+          const { query } = buildQuery("GET_LIST", "UserWithTwitter", {
+            pagination: {
+              page: 1,
+              perPage: 50,
             },
-          });
+            filter: {},
+            sort: {},
+          } as GetListParams);
+          expect(query).toEqualGraphql(gql`
+            query users(
+              $where: UserWhereInput
+              $orderBy: [UserOrderByWithRelationInput!]
+              $take: Int
+              $skip: Int
+            ) {
+              items: users(
+                where: $where
+                orderBy: $orderBy
+                take: $take
+                skip: $skip
+              ) {
+                id
+                email
+                firstName
+                lastName
+                yearOfBirth
+                roles {
+                  id
+                }
+                gender
+                wantsNewsletter
+                userSocialMedia {
+                  id
+                  instagram
+                  twitter
+                  user {
+                    id
+                  }
+                }
+                blogPosts {
+                  id
+                }
+                comments {
+                  id
+                }
+                companies {
+                  id
+                }
+                interests
+                weddingDate
+                address {
+                  street
+                  city
+                  countryCode
+                }
+              }
+            }
+          `);
 
-          expect(() => {
-            buildQuery("GET_LIST", "UserWithTwitter", {
-              pagination: {
-                page: 1,
-                perPage: 50,
-              },
-              filter: {},
-              sort: {},
-            } as GetListParams);
-          }).toThrowError(
-            "Error in resource view UserWithTwitter - you either must specify both 'one' and 'many' fragments or use a single fragment for both.",
-          );
+          const { query: oneQuery } = buildQuery("GET_ONE", "UserWithTwitter", {
+            pagination: {
+              page: 1,
+              perPage: 50,
+            },
+            filter: {},
+            sort: {},
+          } as GetListParams);
+          expect(oneQuery).toEqualGraphql(gql`
+            query user($where: UserWhereUniqueInput!) {
+              data: user(where: $where) {
+                id
+                userSocialMedia {
+                  twitter
+                }
+              }
+            }
+          `);
         });
       });
     });
