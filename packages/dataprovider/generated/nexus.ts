@@ -339,53 +339,6 @@ export interface NexusGenInputs {
     equals?: boolean | null; // Boolean
     not?: NexusGenInputs['NestedBoolFilter'] | null; // NestedBoolFilter
   }
-  CatCreateNestedOneWithoutOwnerInput: { // input type
-    connect?: NexusGenInputs['CatWhereUniqueInput'] | null; // CatWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['CatCreateOrConnectWithoutOwnerInput'] | null; // CatCreateOrConnectWithoutOwnerInput
-    create?: NexusGenInputs['CatCreateWithoutOwnerInput'] | null; // CatCreateWithoutOwnerInput
-  }
-  CatCreateOrConnectWithoutOwnerInput: { // input type
-    create: NexusGenInputs['CatCreateWithoutOwnerInput']; // CatCreateWithoutOwnerInput!
-    where: NexusGenInputs['CatWhereUniqueInput']; // CatWhereUniqueInput!
-  }
-  CatCreateWithoutOwnerInput: { // input type
-    id?: string | null; // String
-    name: string; // String!
-  }
-  CatOrderByWithRelationInput: { // input type
-    id?: NexusGenEnums['SortOrder'] | null; // SortOrder
-    name?: NexusGenEnums['SortOrder'] | null; // SortOrder
-    owner?: NexusGenInputs['UserOrderByWithRelationInput'] | null; // UserOrderByWithRelationInput
-    userId?: NexusGenEnums['SortOrder'] | null; // SortOrder
-  }
-  CatUpdateOneWithoutOwnerInput: { // input type
-    connect?: NexusGenInputs['CatWhereUniqueInput'] | null; // CatWhereUniqueInput
-    connectOrCreate?: NexusGenInputs['CatCreateOrConnectWithoutOwnerInput'] | null; // CatCreateOrConnectWithoutOwnerInput
-    create?: NexusGenInputs['CatCreateWithoutOwnerInput'] | null; // CatCreateWithoutOwnerInput
-    delete?: boolean | null; // Boolean
-    update?: NexusGenInputs['CatUpdateWithoutOwnerInput'] | null; // CatUpdateWithoutOwnerInput
-    upsert?: NexusGenInputs['CatUpsertWithoutOwnerInput'] | null; // CatUpsertWithoutOwnerInput
-  }
-  CatUpdateWithoutOwnerInput: { // input type
-    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
-    name?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
-  }
-  CatUpsertWithoutOwnerInput: { // input type
-    create?: NexusGenInputs['CatCreateWithoutOwnerInput'] | null; // CatCreateWithoutOwnerInput
-    update?: NexusGenInputs['CatUpdateWithoutOwnerInput'] | null; // CatUpdateWithoutOwnerInput
-  }
-  CatWhereInput: { // input type
-    AND?: NexusGenInputs['CatWhereInput'][] | null; // [CatWhereInput!]
-    NOT?: NexusGenInputs['CatWhereInput'][] | null; // [CatWhereInput!]
-    OR?: NexusGenInputs['CatWhereInput'][] | null; // [CatWhereInput!]
-    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    name?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    owner?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
-    userId?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
-  }
-  CatWhereUniqueInput: { // input type
-    id?: string | null; // String
-  }
   CompanyCreateInput: { // input type
     id?: string | null; // String
     name: string; // String!
@@ -735,6 +688,57 @@ export interface NexusGenInputs {
   NullableStringFieldUpdateOperationsInput: { // input type
     set?: string | null; // String
   }
+  SiteCreateNestedOneWithoutOwnerInput: { // input type
+    connect?: NexusGenInputs['SiteWhereUniqueInput'] | null; // SiteWhereUniqueInput
+    connectOrCreate?: NexusGenInputs['SiteCreateOrConnectWithoutOwnerInput'] | null; // SiteCreateOrConnectWithoutOwnerInput
+    create?: NexusGenInputs['SiteCreateWithoutOwnerInput'] | null; // SiteCreateWithoutOwnerInput
+  }
+  SiteCreateOrConnectWithoutOwnerInput: { // input type
+    create: NexusGenInputs['SiteCreateWithoutOwnerInput']; // SiteCreateWithoutOwnerInput!
+    where: NexusGenInputs['SiteWhereUniqueInput']; // SiteWhereUniqueInput!
+  }
+  SiteCreateWithoutOwnerInput: { // input type
+    id?: string | null; // String
+    name: string; // String!
+    url: string; // String!
+  }
+  SiteOrderByWithRelationInput: { // input type
+    id?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    name?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    owner?: NexusGenInputs['UserOrderByWithRelationInput'] | null; // UserOrderByWithRelationInput
+    url?: NexusGenEnums['SortOrder'] | null; // SortOrder
+    userId?: NexusGenEnums['SortOrder'] | null; // SortOrder
+  }
+  SiteUpdateOneWithoutOwnerInput: { // input type
+    connect?: NexusGenInputs['SiteWhereUniqueInput'] | null; // SiteWhereUniqueInput
+    connectOrCreate?: NexusGenInputs['SiteCreateOrConnectWithoutOwnerInput'] | null; // SiteCreateOrConnectWithoutOwnerInput
+    create?: NexusGenInputs['SiteCreateWithoutOwnerInput'] | null; // SiteCreateWithoutOwnerInput
+    delete?: boolean | null; // Boolean
+    update?: NexusGenInputs['SiteUpdateWithoutOwnerInput'] | null; // SiteUpdateWithoutOwnerInput
+    upsert?: NexusGenInputs['SiteUpsertWithoutOwnerInput'] | null; // SiteUpsertWithoutOwnerInput
+  }
+  SiteUpdateWithoutOwnerInput: { // input type
+    id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    name?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+    url?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
+  }
+  SiteUpsertWithoutOwnerInput: { // input type
+    create?: NexusGenInputs['SiteCreateWithoutOwnerInput'] | null; // SiteCreateWithoutOwnerInput
+    update?: NexusGenInputs['SiteUpdateWithoutOwnerInput'] | null; // SiteUpdateWithoutOwnerInput
+  }
+  SiteWhereInput: { // input type
+    AND?: NexusGenInputs['SiteWhereInput'][] | null; // [SiteWhereInput!]
+    NOT?: NexusGenInputs['SiteWhereInput'][] | null; // [SiteWhereInput!]
+    OR?: NexusGenInputs['SiteWhereInput'][] | null; // [SiteWhereInput!]
+    id?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    name?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    owner?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
+    url?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    userId?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
+  }
+  SiteWhereUniqueInput: { // input type
+    id?: string | null; // String
+  }
   SomePublicRecordWithIntIdCreateInput: { // input type
     title: string; // String!
   }
@@ -792,7 +796,6 @@ export interface NexusGenInputs {
   UserCreateInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCreateNestedManyWithoutAuthorInput
-    cat?: NexusGenInputs['CatCreateNestedOneWithoutOwnerInput'] | null; // CatCreateNestedOneWithoutOwnerInput
     comments?: NexusGenInputs['BlogPostCommentCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCommentCreateNestedManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyCreateNestedManyWithoutUserInput'] | null; // CompanyCreateNestedManyWithoutUserInput
     email: string; // String!
@@ -802,6 +805,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['UserCreateinterestsInput'] | null; // UserCreateinterestsInput
     lastName?: string | null; // String
     roles?: NexusGenInputs['UserRoleCreateNestedManyWithoutUsersInput'] | null; // UserRoleCreateNestedManyWithoutUsersInput
+    site?: NexusGenInputs['SiteCreateNestedOneWithoutOwnerInput'] | null; // SiteCreateNestedOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaCreateNestedOneWithoutUserInput'] | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
     weddingDate?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -848,7 +852,6 @@ export interface NexusGenInputs {
   }
   UserCreateWithoutBlogPostsInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
-    cat?: NexusGenInputs['CatCreateNestedOneWithoutOwnerInput'] | null; // CatCreateNestedOneWithoutOwnerInput
     comments?: NexusGenInputs['BlogPostCommentCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCommentCreateNestedManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyCreateNestedManyWithoutUserInput'] | null; // CompanyCreateNestedManyWithoutUserInput
     email: string; // String!
@@ -858,6 +861,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['UserCreateinterestsInput'] | null; // UserCreateinterestsInput
     lastName?: string | null; // String
     roles?: NexusGenInputs['UserRoleCreateNestedManyWithoutUsersInput'] | null; // UserRoleCreateNestedManyWithoutUsersInput
+    site?: NexusGenInputs['SiteCreateNestedOneWithoutOwnerInput'] | null; // SiteCreateNestedOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaCreateNestedOneWithoutUserInput'] | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
     weddingDate?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -866,7 +870,6 @@ export interface NexusGenInputs {
   UserCreateWithoutCommentsInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCreateNestedManyWithoutAuthorInput
-    cat?: NexusGenInputs['CatCreateNestedOneWithoutOwnerInput'] | null; // CatCreateNestedOneWithoutOwnerInput
     companies?: NexusGenInputs['CompanyCreateNestedManyWithoutUserInput'] | null; // CompanyCreateNestedManyWithoutUserInput
     email: string; // String!
     firstName?: string | null; // String
@@ -875,6 +878,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['UserCreateinterestsInput'] | null; // UserCreateinterestsInput
     lastName?: string | null; // String
     roles?: NexusGenInputs['UserRoleCreateNestedManyWithoutUsersInput'] | null; // UserRoleCreateNestedManyWithoutUsersInput
+    site?: NexusGenInputs['SiteCreateNestedOneWithoutOwnerInput'] | null; // SiteCreateNestedOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaCreateNestedOneWithoutUserInput'] | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
     weddingDate?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -883,7 +887,6 @@ export interface NexusGenInputs {
   UserCreateWithoutCompaniesInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCreateNestedManyWithoutAuthorInput
-    cat?: NexusGenInputs['CatCreateNestedOneWithoutOwnerInput'] | null; // CatCreateNestedOneWithoutOwnerInput
     comments?: NexusGenInputs['BlogPostCommentCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCommentCreateNestedManyWithoutAuthorInput
     email: string; // String!
     firstName?: string | null; // String
@@ -892,6 +895,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['UserCreateinterestsInput'] | null; // UserCreateinterestsInput
     lastName?: string | null; // String
     roles?: NexusGenInputs['UserRoleCreateNestedManyWithoutUsersInput'] | null; // UserRoleCreateNestedManyWithoutUsersInput
+    site?: NexusGenInputs['SiteCreateNestedOneWithoutOwnerInput'] | null; // SiteCreateNestedOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaCreateNestedOneWithoutUserInput'] | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
     weddingDate?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -900,7 +904,6 @@ export interface NexusGenInputs {
   UserCreateWithoutRolesInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCreateNestedManyWithoutAuthorInput
-    cat?: NexusGenInputs['CatCreateNestedOneWithoutOwnerInput'] | null; // CatCreateNestedOneWithoutOwnerInput
     comments?: NexusGenInputs['BlogPostCommentCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCommentCreateNestedManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyCreateNestedManyWithoutUserInput'] | null; // CompanyCreateNestedManyWithoutUserInput
     email: string; // String!
@@ -909,6 +912,7 @@ export interface NexusGenInputs {
     id?: string | null; // String
     interests?: NexusGenInputs['UserCreateinterestsInput'] | null; // UserCreateinterestsInput
     lastName?: string | null; // String
+    site?: NexusGenInputs['SiteCreateNestedOneWithoutOwnerInput'] | null; // SiteCreateNestedOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaCreateNestedOneWithoutUserInput'] | null; // UserSocialMediaCreateNestedOneWithoutUserInput
     wantsNewsletter: boolean; // Boolean!
     weddingDate?: NexusGenScalars['DateTime'] | null; // DateTime
@@ -928,7 +932,6 @@ export interface NexusGenInputs {
   UserOrderByWithRelationInput: { // input type
     address?: NexusGenEnums['SortOrder'] | null; // SortOrder
     blogPosts?: NexusGenInputs['BlogPostOrderByRelationAggregateInput'] | null; // BlogPostOrderByRelationAggregateInput
-    cat?: NexusGenInputs['CatOrderByWithRelationInput'] | null; // CatOrderByWithRelationInput
     comments?: NexusGenInputs['BlogPostCommentOrderByRelationAggregateInput'] | null; // BlogPostCommentOrderByRelationAggregateInput
     companies?: NexusGenInputs['CompanyOrderByRelationAggregateInput'] | null; // CompanyOrderByRelationAggregateInput
     email?: NexusGenEnums['SortOrder'] | null; // SortOrder
@@ -938,6 +941,7 @@ export interface NexusGenInputs {
     interests?: NexusGenEnums['SortOrder'] | null; // SortOrder
     lastName?: NexusGenEnums['SortOrder'] | null; // SortOrder
     roles?: NexusGenInputs['UserRoleOrderByRelationAggregateInput'] | null; // UserRoleOrderByRelationAggregateInput
+    site?: NexusGenInputs['SiteOrderByWithRelationInput'] | null; // SiteOrderByWithRelationInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaOrderByWithRelationInput'] | null; // UserSocialMediaOrderByWithRelationInput
     wantsNewsletter?: NexusGenEnums['SortOrder'] | null; // SortOrder
     weddingDate?: NexusGenEnums['SortOrder'] | null; // SortOrder
@@ -1100,7 +1104,6 @@ export interface NexusGenInputs {
   UserUpdateInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
-    cat?: NexusGenInputs['CatUpdateOneWithoutOwnerInput'] | null; // CatUpdateOneWithoutOwnerInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyUpdateManyWithoutUserInput'] | null; // CompanyUpdateManyWithoutUserInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -1110,6 +1113,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
     lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
+    site?: NexusGenInputs['SiteUpdateOneWithoutOwnerInput'] | null; // SiteUpdateOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
     weddingDate?: NexusGenInputs['NullableDateTimeFieldUpdateOperationsInput'] | null; // NullableDateTimeFieldUpdateOperationsInput
@@ -1174,7 +1178,6 @@ export interface NexusGenInputs {
   }
   UserUpdateWithoutBlogPostsInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
-    cat?: NexusGenInputs['CatUpdateOneWithoutOwnerInput'] | null; // CatUpdateOneWithoutOwnerInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyUpdateManyWithoutUserInput'] | null; // CompanyUpdateManyWithoutUserInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -1184,6 +1187,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
     lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
+    site?: NexusGenInputs['SiteUpdateOneWithoutOwnerInput'] | null; // SiteUpdateOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
     weddingDate?: NexusGenInputs['NullableDateTimeFieldUpdateOperationsInput'] | null; // NullableDateTimeFieldUpdateOperationsInput
@@ -1192,7 +1196,6 @@ export interface NexusGenInputs {
   UserUpdateWithoutCommentsInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
-    cat?: NexusGenInputs['CatUpdateOneWithoutOwnerInput'] | null; // CatUpdateOneWithoutOwnerInput
     companies?: NexusGenInputs['CompanyUpdateManyWithoutUserInput'] | null; // CompanyUpdateManyWithoutUserInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
@@ -1201,6 +1204,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
     lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
+    site?: NexusGenInputs['SiteUpdateOneWithoutOwnerInput'] | null; // SiteUpdateOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
     weddingDate?: NexusGenInputs['NullableDateTimeFieldUpdateOperationsInput'] | null; // NullableDateTimeFieldUpdateOperationsInput
@@ -1209,7 +1213,6 @@ export interface NexusGenInputs {
   UserUpdateWithoutCompaniesInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
-    cat?: NexusGenInputs['CatUpdateOneWithoutOwnerInput'] | null; // CatUpdateOneWithoutOwnerInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
@@ -1218,6 +1221,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
     lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     roles?: NexusGenInputs['UserRoleUpdateManyWithoutUsersInput'] | null; // UserRoleUpdateManyWithoutUsersInput
+    site?: NexusGenInputs['SiteUpdateOneWithoutOwnerInput'] | null; // SiteUpdateOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
     weddingDate?: NexusGenInputs['NullableDateTimeFieldUpdateOperationsInput'] | null; // NullableDateTimeFieldUpdateOperationsInput
@@ -1226,7 +1230,6 @@ export interface NexusGenInputs {
   UserUpdateWithoutRolesInput: { // input type
     address?: NexusGenScalars['Json'] | null; // Json
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
-    cat?: NexusGenInputs['CatUpdateOneWithoutOwnerInput'] | null; // CatUpdateOneWithoutOwnerInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyUpdateManyWithoutUserInput'] | null; // CompanyUpdateManyWithoutUserInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -1235,6 +1238,7 @@ export interface NexusGenInputs {
     id?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     interests?: NexusGenInputs['UserUpdateinterestsInput'] | null; // UserUpdateinterestsInput
     lastName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
+    site?: NexusGenInputs['SiteUpdateOneWithoutOwnerInput'] | null; // SiteUpdateOneWithoutOwnerInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaUpdateOneWithoutUserInput'] | null; // UserSocialMediaUpdateOneWithoutUserInput
     wantsNewsletter?: NexusGenInputs['BoolFieldUpdateOperationsInput'] | null; // BoolFieldUpdateOperationsInput
     weddingDate?: NexusGenInputs['NullableDateTimeFieldUpdateOperationsInput'] | null; // NullableDateTimeFieldUpdateOperationsInput
@@ -1267,7 +1271,6 @@ export interface NexusGenInputs {
     OR?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
     address?: NexusGenInputs['JsonNullableFilter'] | null; // JsonNullableFilter
     blogPosts?: NexusGenInputs['BlogPostListRelationFilter'] | null; // BlogPostListRelationFilter
-    cat?: NexusGenInputs['CatWhereInput'] | null; // CatWhereInput
     comments?: NexusGenInputs['BlogPostCommentListRelationFilter'] | null; // BlogPostCommentListRelationFilter
     companies?: NexusGenInputs['CompanyListRelationFilter'] | null; // CompanyListRelationFilter
     email?: NexusGenInputs['StringFilter'] | null; // StringFilter
@@ -1277,6 +1280,7 @@ export interface NexusGenInputs {
     interests?: NexusGenInputs['EnumTopicNullableListFilter'] | null; // EnumTopicNullableListFilter
     lastName?: NexusGenInputs['StringNullableFilter'] | null; // StringNullableFilter
     roles?: NexusGenInputs['UserRoleListRelationFilter'] | null; // UserRoleListRelationFilter
+    site?: NexusGenInputs['SiteWhereInput'] | null; // SiteWhereInput
     userSocialMedia?: NexusGenInputs['UserSocialMediaWhereInput'] | null; // UserSocialMediaWhereInput
     wantsNewsletter?: NexusGenInputs['BoolFilter'] | null; // BoolFilter
     weddingDate?: NexusGenInputs['DateTimeNullableFilter'] | null; // DateTimeNullableFilter

@@ -47,9 +47,10 @@ model BlogPostComment {
   authorId String?
 }
 
-model Cat {
+model Site {
   id     String  @id @default(uuid())
   name   String
+  url    String
 
   owner  User?   @relation(fields: [userId], references: [id])
   userId String?
@@ -77,7 +78,7 @@ model User {
   comments        BlogPostComment[]
   companies       Company[]
   weddingDate     DateTime?
-  cat             Cat?
+  site            Site?
 }
 
 model FilteringTest {

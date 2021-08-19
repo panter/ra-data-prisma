@@ -152,8 +152,8 @@ export const testSchema = (options: CommonOptions) => {
     },
   );
 
-  const CatUpdateOneWithoutOwnerInput = prismaInputObjectType(
-    "CatUpdateOneWithoutOwnerInput",
+  const SiteUpdateOneWithoutOwnerInput = prismaInputObjectType(
+    "SiteUpdateOneWithoutOwnerInput",
     {
       // @ts-ignore
       filteredFields: ["disconnect"],
@@ -170,7 +170,7 @@ export const testSchema = (options: CommonOptions) => {
     BlogPostComment,
     UserCreateOneWithoutCommentsInput,
     BlogPostUpdateManyWithoutAuthorInput,
-    CatUpdateOneWithoutOwnerInput,
+    SiteUpdateOneWithoutOwnerInput,
     FilteringTest,
     Company,
 

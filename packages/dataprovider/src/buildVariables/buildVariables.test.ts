@@ -726,7 +726,7 @@ describe("buildVariables", () => {
           id: "einstein",
         },
         previousData: {
-          cat: { id: "kitty" },
+          site: { id: 123, url: "thor.com", name: "Theory of relativity" },
         },
       };
 
@@ -739,7 +739,7 @@ describe("buildVariables", () => {
       ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
         where: { id: "einstein" },
         data: {
-          cat: {
+          site: {
             delete: true,
           },
         },
