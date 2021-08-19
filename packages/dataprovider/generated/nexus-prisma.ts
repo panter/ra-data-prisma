@@ -18,6 +18,7 @@ interface PrismaModels {
   UserSocialMedia: Prisma.UserSocialMedia
   BlogPost: Prisma.BlogPost
   BlogPostComment: Prisma.BlogPostComment
+  Cat: Prisma.Cat
   User: Prisma.User
   FilteringTest: Prisma.FilteringTest
   SomePublicRecordWithIntId: Prisma.SomePublicRecordWithIntId
@@ -46,9 +47,13 @@ interface NexusPrismaInputs {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
       ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
     }
+    cats: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'owner' | 'userId'
+      ordering: 'id' | 'name' | 'owner' | 'userId'
+    }
     users: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate'
-      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate' | 'cat'
+      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate' | 'cat'
     }
     filteringTests: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
@@ -61,8 +66,8 @@ interface NexusPrismaInputs {
   },
   UserRole: {
     users: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate'
-      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate' | 'cat'
+      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate' | 'cat'
     }
   }
   Company: {
@@ -78,6 +83,9 @@ interface NexusPrismaInputs {
     }
   }
   BlogPostComment: {
+
+  }
+  Cat: {
 
   }
   User: {
@@ -119,6 +127,8 @@ interface NexusPrismaOutputs {
     blogPosts: 'BlogPost'
     blogPostComment: 'BlogPostComment'
     blogPostComments: 'BlogPostComment'
+    cat: 'Cat'
+    cats: 'Cat'
     user: 'User'
     users: 'User'
     filteringTest: 'FilteringTest'
@@ -157,6 +167,12 @@ interface NexusPrismaOutputs {
     deleteOneBlogPostComment: 'BlogPostComment'
     deleteManyBlogPostComment: 'AffectedRowsOutput'
     upsertOneBlogPostComment: 'BlogPostComment'
+    createOneCat: 'Cat'
+    updateOneCat: 'Cat'
+    updateManyCat: 'AffectedRowsOutput'
+    deleteOneCat: 'Cat'
+    deleteManyCat: 'AffectedRowsOutput'
+    upsertOneCat: 'Cat'
     createOneUser: 'User'
     updateOneUser: 'User'
     updateManyUser: 'AffectedRowsOutput'
@@ -210,6 +226,12 @@ interface NexusPrismaOutputs {
     author: 'User'
     authorId: 'String'
   }
+  Cat: {
+    id: 'String'
+    name: 'String'
+    owner: 'User'
+    userId: 'String'
+  }
   User: {
     id: 'String'
     email: 'String'
@@ -226,6 +248,7 @@ interface NexusPrismaOutputs {
     comments: 'BlogPostComment'
     companies: 'Company'
     weddingDate: 'DateTime'
+    cat: 'Cat'
   }
   FilteringTest: {
     id: 'Int'
@@ -252,6 +275,7 @@ interface NexusPrismaMethods {
   UserSocialMedia: Typegen.NexusPrismaFields<'UserSocialMedia'>
   BlogPost: Typegen.NexusPrismaFields<'BlogPost'>
   BlogPostComment: Typegen.NexusPrismaFields<'BlogPostComment'>
+  Cat: Typegen.NexusPrismaFields<'Cat'>
   User: Typegen.NexusPrismaFields<'User'>
   FilteringTest: Typegen.NexusPrismaFields<'FilteringTest'>
   SomePublicRecordWithIntId: Typegen.NexusPrismaFields<'SomePublicRecordWithIntId'>
