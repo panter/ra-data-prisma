@@ -297,9 +297,9 @@ input BlogPostOrderByWithRelationInput {
 }
 
 input BlogPostScalarWhereInput {
-  AND: [BlogPostScalarWhereInput!]
-  NOT: [BlogPostScalarWhereInput!]
-  OR: [BlogPostScalarWhereInput!]
+  AND: [BlogPostScalarWhereInput]
+  NOT: [BlogPostScalarWhereInput]
+  OR: [BlogPostScalarWhereInput]
   authorId: StringNullableFilter
   id: StringFilter
   text: StringFilter
@@ -321,22 +321,21 @@ input BlogPostUpdateManyMutationInput {
 }
 
 input BlogPostUpdateManyWithWhereWithoutAuthorInput {
-  data: BlogPostUpdateManyMutationInput!
-  where: BlogPostScalarWhereInput!
+  data: BlogPostUpdateManyMutationInput
+  where: BlogPostScalarWhereInput
 }
 
 input BlogPostUpdateManyWithoutAuthorInput {
-  connect: [BlogPostWhereUniqueInput!]
-  connectOrCreate: [BlogPostCreateOrConnectWithoutAuthorInput!]
-  create: [BlogPostCreateWithoutAuthorInput!]
+  connect: [BlogPostWhereUniqueInput]
+  connectOrCreate: [BlogPostCreateOrConnectWithoutAuthorInput]
+  create: [BlogPostCreateWithoutAuthorInput]
   createMany: BlogPostCreateManyAuthorInputEnvelope
-  delete: [BlogPostWhereUniqueInput!]
-  deleteMany: [BlogPostScalarWhereInput!]
-  disconnect: [BlogPostWhereUniqueInput!]
-  set: [BlogPostWhereUniqueInput!]
-  update: [BlogPostUpdateWithWhereUniqueWithoutAuthorInput!]
-  updateMany: [BlogPostUpdateManyWithWhereWithoutAuthorInput!]
-  upsert: [BlogPostUpsertWithWhereUniqueWithoutAuthorInput!]
+  delete: [BlogPostWhereUniqueInput]
+  deleteMany: [BlogPostScalarWhereInput]
+  set: [BlogPostWhereUniqueInput]
+  update: [BlogPostUpdateWithWhereUniqueWithoutAuthorInput]
+  updateMany: [BlogPostUpdateManyWithWhereWithoutAuthorInput]
+  upsert: [BlogPostUpsertWithWhereUniqueWithoutAuthorInput]
 }
 
 input BlogPostUpdateOneWithoutCommentsInput {
@@ -350,8 +349,8 @@ input BlogPostUpdateOneWithoutCommentsInput {
 }
 
 input BlogPostUpdateWithWhereUniqueWithoutAuthorInput {
-  data: BlogPostUpdateWithoutAuthorInput!
-  where: BlogPostWhereUniqueInput!
+  data: BlogPostUpdateWithoutAuthorInput
+  where: BlogPostWhereUniqueInput
 }
 
 input BlogPostUpdateWithoutAuthorInput {
@@ -369,9 +368,9 @@ input BlogPostUpdateWithoutCommentsInput {
 }
 
 input BlogPostUpsertWithWhereUniqueWithoutAuthorInput {
-  create: BlogPostCreateWithoutAuthorInput!
-  update: BlogPostUpdateWithoutAuthorInput!
-  where: BlogPostWhereUniqueInput!
+  create: BlogPostCreateWithoutAuthorInput
+  update: BlogPostUpdateWithoutAuthorInput
+  where: BlogPostWhereUniqueInput
 }
 
 input BlogPostUpsertWithoutCommentsInput {
@@ -904,6 +903,66 @@ enum QueryMode {
   insensitive
 }
 
+input SiteCreateNestedOneWithoutOwnerInput {
+  connect: SiteWhereUniqueInput
+  connectOrCreate: SiteCreateOrConnectWithoutOwnerInput
+  create: SiteCreateWithoutOwnerInput
+}
+
+input SiteCreateOrConnectWithoutOwnerInput {
+  create: SiteCreateWithoutOwnerInput!
+  where: SiteWhereUniqueInput!
+}
+
+input SiteCreateWithoutOwnerInput {
+  id: String
+  name: String!
+  url: String!
+}
+
+input SiteOrderByWithRelationInput {
+  id: SortOrder
+  name: SortOrder
+  owner: UserOrderByWithRelationInput
+  url: SortOrder
+  userId: SortOrder
+}
+
+input SiteUpdateOneWithoutOwnerInput {
+  connect: SiteWhereUniqueInput
+  connectOrCreate: SiteCreateOrConnectWithoutOwnerInput
+  create: SiteCreateWithoutOwnerInput
+  delete: Boolean
+  update: SiteUpdateWithoutOwnerInput
+  upsert: SiteUpsertWithoutOwnerInput
+}
+
+input SiteUpdateWithoutOwnerInput {
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  url: StringFieldUpdateOperationsInput
+}
+
+input SiteUpsertWithoutOwnerInput {
+  create: SiteCreateWithoutOwnerInput
+  update: SiteUpdateWithoutOwnerInput
+}
+
+input SiteWhereInput {
+  AND: [SiteWhereInput!]
+  NOT: [SiteWhereInput!]
+  OR: [SiteWhereInput!]
+  id: StringFilter
+  name: StringFilter
+  owner: UserWhereInput
+  url: StringFilter
+  userId: StringNullableFilter
+}
+
+input SiteWhereUniqueInput {
+  id: String
+}
+
 type SomePublicRecordWithIntId {
   id: Int!
   title: String!
@@ -1014,6 +1073,7 @@ input UserCreateInput {
   interests: UserCreateinterestsInput
   lastName: String
   roles: UserRoleCreateNestedManyWithoutUsersInput
+  site: SiteCreateNestedOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
   weddingDate: DateTime
@@ -1079,6 +1139,7 @@ input UserCreateWithoutBlogPostsInput {
   interests: UserCreateinterestsInput
   lastName: String
   roles: UserRoleCreateNestedManyWithoutUsersInput
+  site: SiteCreateNestedOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
   weddingDate: DateTime
@@ -1096,6 +1157,7 @@ input UserCreateWithoutCommentsInput {
   interests: UserCreateinterestsInput
   lastName: String
   roles: UserRoleCreateNestedManyWithoutUsersInput
+  site: SiteCreateNestedOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
   weddingDate: DateTime
@@ -1113,6 +1175,7 @@ input UserCreateWithoutCompaniesInput {
   interests: UserCreateinterestsInput
   lastName: String
   roles: UserRoleCreateNestedManyWithoutUsersInput
+  site: SiteCreateNestedOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
   weddingDate: DateTime
@@ -1130,6 +1193,7 @@ input UserCreateWithoutRolesInput {
   id: String
   interests: UserCreateinterestsInput
   lastName: String
+  site: SiteCreateNestedOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaCreateNestedOneWithoutUserInput
   wantsNewsletter: Boolean!
   weddingDate: DateTime
@@ -1162,6 +1226,7 @@ input UserOrderByWithRelationInput {
   interests: SortOrder
   lastName: SortOrder
   roles: UserRoleOrderByRelationAggregateInput
+  site: SiteOrderByWithRelationInput
   userSocialMedia: UserSocialMediaOrderByWithRelationInput
   wantsNewsletter: SortOrder
   weddingDate: SortOrder
@@ -1373,6 +1438,7 @@ input UserUpdateInput {
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
   roles: UserRoleUpdateManyWithoutUsersInput
+  site: SiteUpdateOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
@@ -1454,6 +1520,7 @@ input UserUpdateWithoutBlogPostsInput {
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
   roles: UserRoleUpdateManyWithoutUsersInput
+  site: SiteUpdateOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
@@ -1471,6 +1538,7 @@ input UserUpdateWithoutCommentsInput {
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
   roles: UserRoleUpdateManyWithoutUsersInput
+  site: SiteUpdateOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
@@ -1488,6 +1556,7 @@ input UserUpdateWithoutCompaniesInput {
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
   roles: UserRoleUpdateManyWithoutUsersInput
+  site: SiteUpdateOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
@@ -1505,6 +1574,7 @@ input UserUpdateWithoutRolesInput {
   id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
+  site: SiteUpdateOneWithoutOwnerInput
   userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
@@ -1552,6 +1622,7 @@ input UserWhereInput {
   interests: EnumTopicNullableListFilter
   lastName: StringNullableFilter
   roles: UserRoleListRelationFilter
+  site: SiteWhereInput
   userSocialMedia: UserSocialMediaWhereInput
   wantsNewsletter: BoolFilter
   weddingDate: DateTimeNullableFilter

@@ -44,6 +44,7 @@ export type UpdateManyInput = {
   connect?: Array<{ id: any }>;
   set?: Array<{ id: any }>;
   disconnect?: Array<{ id: any }>;
+  delete?: Array<{ id: any }>;
   update?: Array<{ where: { id: any }; data: { [key: string]: any } }>;
 };
 
@@ -140,7 +141,11 @@ const buildNewInputValue = (
         (i) => i.name === ModifiersParams.disconnect,
       );
 
-      if (setModifier && !connectModifier && !disconnectModifier) {
+      const deleteModifier = fullFieldObjectType?.inputFields.find(
+        (i) => i.name === ModifiersParams.delete,
+      );
+
+      if (setModifier && !connectModifier && !disconnectModifier && !deleteModifier) {
         // if its a date, convert it to a date
         if (
           setModifier.type.kind === "SCALAR" &&
@@ -257,7 +262,7 @@ const buildNewInputValue = (
 
             // disconnect the ones that are not referenced anymore
             if (Array.isArray(previousFieldData)) {
-              const disconnect = (previousFieldData as any[]).reduce<
+              const removableRelations = (previousFieldData as any[]).reduce<
                 Array<{ id: any }>
               >((inputs, data) => {
                 // TODO: we assume "data.id" to be the id
@@ -273,8 +278,12 @@ const buildNewInputValue = (
                 }
                 return inputs;
               }, []);
-              if (disconnect.length && disconnectModifier) {
-                variables.disconnect = disconnect;
+              if (removableRelations.length) {
+                if (disconnectModifier) {
+                  variables.disconnect = removableRelations;
+                } else if (deleteModifier) {
+                  variables.delete = removableRelations;
+                }
               }
             }
             return variables;
@@ -283,11 +292,15 @@ const buildNewInputValue = (
           }
         } else {
           if (!fieldData) {
-            return !disconnectModifier
-              ? undefined
-              : {
-                  disconnect: true,
-                };
+            if (disconnectModifier) {
+              return {
+                disconnect: true,
+              };
+            } else if (deleteModifier) {
+              return {
+                delete: true,
+              };
+            }
           }
 
           if (isObject(fieldData)) {

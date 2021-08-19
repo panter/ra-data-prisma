@@ -694,7 +694,7 @@ describe("buildVariables", () => {
       });
     });
 
-    it("update an entity and disconnect the related entity", () => {
+    it("update an entity and disconnect the related entity (if disconnect operation is present)", () => {
       const params = {
         data: {
           id: "einstein",
@@ -715,6 +715,32 @@ describe("buildVariables", () => {
         data: {
           userSocialMedia: {
             disconnect: true,
+          },
+        },
+      });
+    });
+
+    it("update an entity and delete the related entity (if disconnect operation is not present)", () => {
+      const params = {
+        data: {
+          id: "einstein",
+        },
+        previousData: {
+          site: { id: 123, url: "thor.com", name: "Theory of relativity" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          site: {
+            delete: true,
           },
         },
       });
@@ -981,6 +1007,37 @@ describe("buildVariables", () => {
             street: "Forth Avenue",
             city: "Ney York",
             countryCode: "US",
+          },
+        },
+      });
+    });
+
+    it("update an entity and delete the related entities if disconnect is not present", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          blogPosts: [],
+        },
+        previousData: {
+          blogPosts: [{ id: "oldId" }],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          blogPosts: {
+            delete: [
+              {
+                id: "oldId",
+              },
+            ],
           },
         },
       });

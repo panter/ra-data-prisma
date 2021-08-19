@@ -47,6 +47,15 @@ model BlogPostComment {
   authorId String?
 }
 
+model Site {
+  id     String  @id @default(uuid())
+  name   String
+  url    String
+
+  owner  User?   @relation(fields: [userId], references: [id])
+  userId String?
+}
+
 enum Gender {
   MALE
   FEMALE
@@ -69,6 +78,7 @@ model User {
   comments        BlogPostComment[]
   companies       Company[]
   weddingDate     DateTime?
+  site            Site?
 }
 
 model FilteringTest {
