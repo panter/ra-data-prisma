@@ -197,7 +197,7 @@ export const UserEdit = (props) => (
 ### Customize fetching & virtual Resources
 
 react-admin has [no mechanism to tell the dataprovider which fields are requested for any resources](https://github.com/marmelab/react-admin/issues/4751),
-we therefore load all fields for a resource. Ff a field points to an existing `Resource`, we only fetch the id of that resource.
+we therefore load all fields for a resource. If a field points to an existing `Resource`, we only fetch the id of that resource.
 
 But sometimes you need to customize this behaviour, e.g.:
 
