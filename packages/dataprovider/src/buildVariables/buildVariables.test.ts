@@ -11,7 +11,7 @@ import { NexusGenArgTypes } from "../../generated/nexus";
 import { buildVariables } from "./";
 import { IntrospectionResult, Resource } from "./../constants/interfaces";
 import { getTestIntrospection } from "../testUtils/getTestIntrospection";
-import { OurOptions } from "../types";
+import { CustomizeInputData, OurOptions } from "../types";
 
 describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
@@ -537,6 +537,69 @@ describe("buildVariables", () => {
         },
       });
     });
+
+    describe("customize input data on create", () => {
+      it("allows to customize data on create", () => {
+        const params = {
+          data: {
+            email: "albert.einstein@patentamt-bern.ch",
+            firstName: "Albert",
+            lastName: "Einstein",
+            wantsNewsletter: true,
+            company: {
+              name: "Einstein Company",
+              id: "einstein-company",
+            },
+          },
+        };
+        const customizeInputData: CustomizeInputData = {
+          User: {
+            create: (data, params) => {
+              return {
+                ...data,
+                companies: {
+                  connectOrCreate: [
+                    {
+                      create: params.company,
+                      where: {
+                        id: params.company.id,
+                      },
+                    },
+                  ],
+                },
+              };
+            },
+          },
+        };
+
+        expect(
+          buildVariables(testIntrospection, {
+            ...options,
+            customizeInputData,
+          })(testUserResource, CREATE, params),
+        ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+          data: {
+            email: "albert.einstein@patentamt-bern.ch",
+            firstName: "Albert",
+            lastName: "Einstein",
+            wantsNewsletter: true,
+            companies: {
+              connectOrCreate: [
+                {
+                  create: {
+                    name: "Einstein Company",
+                    id: "einstein-company",
+                  },
+                  where: {
+                    id: "einstein-company",
+                  },
+                },
+              ],
+            },
+          },
+        });
+      });
+    });
   });
 
   describe("UPDATE", () => {
@@ -1040,6 +1103,68 @@ describe("buildVariables", () => {
             ],
           },
         },
+      });
+    });
+    describe("customize input data on update", () => {
+      it("allows to customize data on update", () => {
+        const params = {
+          data: {
+            id: "einstein",
+            wantsNewsletter: true,
+            company: {
+              name: "Einstein Company",
+              id: "einstein-company",
+            },
+          },
+        };
+        const customizeInputData: CustomizeInputData = {
+          User: {
+            update: (data, params) => {
+              return {
+                ...data,
+                companies: {
+                  connectOrCreate: [
+                    {
+                      create: params.company,
+                      where: {
+                        id: params.company.id,
+                      },
+                    },
+                  ],
+                },
+              };
+            },
+          },
+        };
+
+        expect(
+          buildVariables(testIntrospection, {
+            ...options,
+            customizeInputData,
+          })(testUserResource, UPDATE, params),
+        ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+          where: {
+            id: "einstein",
+          },
+          data: {
+            wantsNewsletter: {
+              set: true,
+            },
+            companies: {
+              connectOrCreate: [
+                {
+                  create: {
+                    name: "Einstein Company",
+                    id: "einstein-company",
+                  },
+                  where: {
+                    id: "einstein-company",
+                  },
+                },
+              ],
+            },
+          },
+        });
       });
     });
   });

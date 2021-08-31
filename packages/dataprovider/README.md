@@ -411,6 +411,36 @@ const { data } = await dataProvider.getList("ParticipantsToInvoice", {
 });
 ```
 
+### Customize input data on create / update (experimental)
+
+You can alter the data sent to create / update mutations.
+
+E.g. Consider having a field `<TextField source="userEmail" />`. `userEmail` does not exist on the Resource,
+but you want to use this field to customize the data sent to the backend:
+
+```ts
+const dataProvider = useDataProvider({
+  customizeInputData: {
+    MyResource: {
+      create: (data, params) => ({
+        ...data,
+        user: {
+          connectOrCreate: {
+            create: {
+              email: params.userEmail,
+            },
+            where: {
+              email: params.userEmail,
+            },
+          },
+        },
+      }),
+      update: // ...
+    },
+  },
+});
+```
+
 ## Usage with typegraphql-prisma
 
 (beta)

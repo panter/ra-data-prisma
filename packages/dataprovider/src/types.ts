@@ -50,6 +50,18 @@ export type ResourceView = {
 export type QueryDialect = "nexus-prisma" | "typegraphql";
 
 type Filter = Record<string, unknown>;
+
+export type CustomizeInputDataFunction = (
+  data: Record<string, any>,
+  rawParams: Record<string, any>,
+) => Record<string, unknown>;
+
+export type CustomizeInputData = {
+  [name: string]: {
+    create?: CustomizeInputDataFunction;
+    update?: CustomizeInputDataFunction;
+  };
+};
 export type ConfigOptions = {
   resourceViews?: {
     [name: string]: ResourceView;
@@ -58,6 +70,7 @@ export type ConfigOptions = {
   filters?: {
     [filterName: string]: (value: any) => Filter | void;
   };
+  customizeInputData?: CustomizeInputData;
 };
 
 export type FetchType =

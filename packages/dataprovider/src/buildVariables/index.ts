@@ -42,7 +42,7 @@ const buildGetListVariables =
   };
 
 const buildGetOneVariables =
-  (introspectionResults: IntrospectionResult) =>
+  (introspectionResults: IntrospectionResult, options: OurOptions) =>
   (
     resource: Resource,
 
@@ -82,7 +82,7 @@ export interface UpdateParams {
 }
 
 const buildUpdateVariables =
-  (introspectionResults: IntrospectionResult) =>
+  (introspectionResults: IntrospectionResult, options: OurOptions) =>
   (resource: Resource, params: UpdateParams, parentResource?: Resource) => {
     const inputType = introspectionResults.types.find(
       (t) => t.name === `${resource.type.name}UpdateInput`,
@@ -91,26 +91,35 @@ const buildUpdateVariables =
     const id = params.id ?? params.data.id; // TODO: do we still need params.data.id?
     delete params.data.id;
     delete params.previousData?.id;
+    let data = buildData(inputType, params, introspectionResults);
 
     return {
       where: {
         id,
       },
-      data: buildData(inputType, params, introspectionResults),
+      data:
+        options?.customizeInputData?.[resource.type.name]?.update?.(
+          data,
+          params.data,
+        ) ?? data,
     };
   };
 
 const buildCreateVariables =
-  (introspectionResults: IntrospectionResult) =>
+  (introspectionResults: IntrospectionResult, options: OurOptions) =>
   (resource: Resource, params: CreateParams, parentResource?: Resource) => {
     const inputType = introspectionResults.types.find(
       (t) => t.name === `${resource.type.name}CreateInput`,
     ) as IntrospectionInputObjectType;
 
-    const variables = {
-      data: buildData(inputType, params, introspectionResults),
+    const data = buildData(inputType, params, introspectionResults);
+    return {
+      data:
+        options?.customizeInputData?.[resource.type.name]?.create?.(
+          data,
+          params.data,
+        ) ?? data,
     };
-    return variables;
   };
 
 export const buildVariables =
@@ -145,14 +154,23 @@ export const buildVariables =
         );
       }
       case GET_ONE: {
-        return buildGetOneVariables(introspectionResults)(resource, params);
+        return buildGetOneVariables(introspectionResults, options)(
+          resource,
+          params,
+        );
       }
       case UPDATE: {
-        return buildUpdateVariables(introspectionResults)(resource, params);
+        return buildUpdateVariables(introspectionResults, options)(
+          resource,
+          params,
+        );
       }
 
       case CREATE: {
-        return buildCreateVariables(introspectionResults)(resource, params);
+        return buildCreateVariables(introspectionResults, options)(
+          resource,
+          params,
+        );
       }
 
       case DELETE:
