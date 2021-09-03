@@ -41,6 +41,34 @@ const buildGetListVariables =
     };
   };
 
+const getId = (
+  introspectionResults: IntrospectionResult,
+  resource: Resource,
+  params: any,
+): string | number => {
+  let id: string | number = params.id ?? params.data?.id;
+
+  const type = introspectionResults.types.find(
+    (t) => t.name === `${resource.type.name}WhereUniqueInput`,
+  );
+
+  if (!type || type.kind !== "INPUT_OBJECT") return id;
+
+  const idType = type.inputFields.find((f) => f.name === "id");
+
+  if (!idType || idType.type.kind !== "SCALAR") return id;
+
+  if (idType.type.name === "String") {
+    id = String(id);
+  }
+  if (idType.type.name === "Int") {
+    id = parseInt(String(id));
+  }
+
+  // should usually not happen
+  return id;
+};
+
 const buildGetOneVariables =
   (introspectionResults: IntrospectionResult, options: OurOptions) =>
   (
@@ -48,29 +76,9 @@ const buildGetOneVariables =
 
     params: any,
   ) => {
-    const type = introspectionResults.types.find(
-      (t) => t.name === `${resource.type.name}WhereUniqueInput`,
-    ) as IntrospectionInputObjectType;
-
-    const idType = type?.inputFields.find((f) => f.name === "id");
-    if (idType.type.kind === "SCALAR" && idType.type.name === "String") {
-      return {
-        where: {
-          id: String(params.id),
-        },
-      };
-    }
-    if (idType.type.kind === "SCALAR" && idType.type.name === "Int") {
-      return {
-        where: {
-          id: parseInt(params.id),
-        },
-      };
-    }
-    // should usually not happen
     return {
       where: {
-        id: params.id,
+        id: getId(introspectionResults, resource, params),
       },
     };
   };
@@ -88,7 +96,7 @@ const buildUpdateVariables =
       (t) => t.name === `${resource.type.name}UpdateInput`,
     ) as IntrospectionInputObjectType;
 
-    const id = params.id ?? params.data.id; // TODO: do we still need params.data.id?
+    const id = getId(introspectionResults, resource, params); // TODO: do we still need params.data.id?
     delete params.data.id;
     delete params.previousData?.id;
     let data = buildData(inputType, params, introspectionResults);
