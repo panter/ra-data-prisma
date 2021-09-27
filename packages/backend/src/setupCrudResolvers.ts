@@ -1,4 +1,5 @@
 import { upperFirst, lowerFirst } from "lodash";
+import * as Helpers from "nexus-plugin-prisma/src/typegen/helpers";
 
 import pluralize from "pluralize";
 import { ResourceOptions, CommonOptions } from "./types";
@@ -14,15 +15,17 @@ const makePrefixedFullName = (name: string, prefix?: string) => {
   return !prefix ? name : prefix + upperFirst(name);
 };
 
-const setupCrudResolvers = (
+const setupCrudResolvers = <
+  ModelName extends keyof Helpers.GetGen<"outputs"> & string,
+>(
   { extendType, arg, intArg },
-  resourceName: string,
+  resourceName: ModelName,
   {
     printSecurityWarning = true,
     customize,
     aliasPrefix,
     enableOrderByRelation = false,
-  }: ResourceOptions & CommonOptions = {},
+  }: ResourceOptions<ModelName> & CommonOptions = {},
 ) => {
   const typeName = upperFirst(resourceName);
 
