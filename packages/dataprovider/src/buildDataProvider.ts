@@ -4,6 +4,7 @@ import {
   DataProvider,
   DELETE,
   DELETE_MANY,
+  LegacyDataProvider,
   UPDATE,
   UPDATE_MANY,
 } from "react-admin";
@@ -21,7 +22,7 @@ export const defaultOptions: Options = {
   ...defaultOurOptions,
 };
 
-const buildDataProvider = (options: Options): Promise<DataProvider> => {
+const buildDataProvider = (options: Options): Promise<LegacyDataProvider> => {
   const fullOptions = merge({}, defaultOptions, options);
   return buildRaGraphqlDataProvider(
     merge(

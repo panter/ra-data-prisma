@@ -1,10 +1,10 @@
 import buildDataProvider, { defaultOurOptions } from "./buildDataProvider";
 import { useEffect, useState } from "react";
 import { DataProviderOptions } from "./types";
-import { DataProvider } from "react-admin";
+import { LegacyDataProvider } from "react-admin";
 
 const useDataProvider = (options: DataProviderOptions) => {
-  const [dataProvider, setDataProvider] = useState<DataProvider>();
+  const [dataProvider, setDataProvider] = useState<LegacyDataProvider>();
 
   useEffect(() => {
     buildDataProvider({ ...defaultOurOptions, ...options }).then((p) => {
