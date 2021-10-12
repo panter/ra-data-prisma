@@ -3,6 +3,10 @@ generator client {
   previewFeatures = ["orderByRelation"]
 }
 
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
 datasource db {
   provider = "postgresql"
   url      = env("POSTGRESQL_URL")
@@ -15,9 +19,9 @@ model UserRole {
 }
 
 model Company {
-  id    String @id @default(uuid())
-  name  String
-  user  User   @relation(fields: [userId], references: [id])
+  id     String @id @default(uuid())
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
   userId String
 }
 
@@ -26,7 +30,7 @@ model UserSocialMedia {
   instagram String
   twitter   String
   user      User   @relation(fields: [userId], references: [id])
-  userId    String
+  userId    String @unique
 }
 
 model BlogPost {
@@ -48,12 +52,12 @@ model BlogPostComment {
 }
 
 model Site {
-  id     String  @id @default(uuid())
-  name   String
-  url    String
+  id   String @id @default(uuid())
+  name String
+  url  String
 
   owner  User?   @relation(fields: [userId], references: [id])
-  userId String?
+  userId String? @unique
 }
 
 enum Gender {
@@ -73,11 +77,13 @@ model User {
   wantsNewsletter Boolean
   interests       Topic[]
   userSocialMedia UserSocialMedia?
+  /// @TypeGraphQL.omit(output: true)
   address         Json?
   blogPosts       BlogPost[]
   comments        BlogPostComment[]
   companies       Company[]
   weddingDate     DateTime?
+  /// @TypeGraphQL.omit(output: true)
   site            Site?
 }
 

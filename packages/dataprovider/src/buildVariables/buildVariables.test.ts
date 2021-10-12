@@ -10,7 +10,7 @@ import {
 import { NexusGenArgTypes } from "../../generated/nexus";
 import { buildVariables } from "./";
 import { IntrospectionResult, Resource } from "./../constants/interfaces";
-import { getTestIntrospection } from "../testUtils/getTestIntrospection";
+import { getTestIntrospectionNexus } from "../testUtils/getTestIntrospection";
 import { CustomizeInputData, OurOptions } from "../types";
 
 describe("buildVariables", () => {
@@ -20,7 +20,7 @@ describe("buildVariables", () => {
   const options: OurOptions = {};
 
   beforeAll(async () => {
-    testIntrospection = await getTestIntrospection();
+    testIntrospection = await getTestIntrospectionNexus();
     testUserResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
     );
@@ -533,7 +533,7 @@ describe("buildVariables", () => {
             street: "Fifth Avenue",
             city: "Ney York",
             countryCode: "US",
-          },
+          } as any,
         },
       });
     });
@@ -1070,7 +1070,7 @@ describe("buildVariables", () => {
             street: "Forth Avenue",
             city: "Ney York",
             countryCode: "US",
-          },
+          } as any,
         },
       });
     });

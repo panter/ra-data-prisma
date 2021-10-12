@@ -55,7 +55,7 @@ export default (
     {
       shouldSanitizeLinkedResources = true,
       queryDialect,
-    }: { shouldSanitizeLinkedResources: boolean; queryDialect: QueryDialect },
+    }: { shouldSanitizeLinkedResources?: boolean; queryDialect: QueryDialect },
   ) =>
   (aorFetchType: FetchType, resource: Resource) =>
   (response: { [key: string]: any }) => {
@@ -71,7 +71,7 @@ export default (
         case "nexus-prisma":
           return response.data.total;
         case "typegraphql":
-          return response.data.total.count._all;
+          return (response.data.total._count ?? response.data.total.count)._all;
       }
     };
 

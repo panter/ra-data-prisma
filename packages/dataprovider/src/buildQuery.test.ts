@@ -3,24 +3,30 @@ import gql from "plain-tag";
 import gqlReal from "graphql-tag";
 import { GetListParams } from "./buildVariables";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { getTestIntrospection } from "./testUtils/getTestIntrospection";
+import {
+  getTestIntrospectionNexus,
+  getTestIntrospectionTypeGraphql,
+} from "./testUtils/getTestIntrospection";
 
 import "./testUtils/testTypes";
 import { defaultOurOptions } from "./buildDataProvider";
 
 describe("buildQueryFactory", () => {
-  let testIntrospection: IntrospectionResult;
+  let testIntrospectionNexus: IntrospectionResult;
+
+  let testIntrospectionTypeGraphql: IntrospectionResult;
   let testUserResource: Resource;
   beforeAll(async () => {
-    testIntrospection = await getTestIntrospection();
-    testUserResource = testIntrospection.resources.find(
+    testIntrospectionNexus = await getTestIntrospectionNexus();
+    testIntrospectionTypeGraphql = await getTestIntrospectionTypeGraphql();
+    testUserResource = testIntrospectionNexus.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
     );
   });
 
   it("throws an error if resource is unknown", () => {
     expect(() =>
-      buildQueryFactory(testIntrospection, defaultOurOptions)(
+      buildQueryFactory(testIntrospectionNexus, defaultOurOptions)(
         "GET_LIST",
         "Airplane",
         {} as any,
@@ -43,7 +49,7 @@ describe("buildQueryFactory", () => {
   describe("resourceViews", () => {
     it("throws an error if a view resource point to a non-existing resource", () => {
       expect(() =>
-        buildQueryFactory(testIntrospection, {
+        buildQueryFactory(testIntrospectionNexus, {
           ...defaultOurOptions,
           resourceViews: {
             AirplaneWithManufacturer: {
@@ -65,7 +71,7 @@ describe("buildQueryFactory", () => {
     });
 
     it("enables to whitelist fields", () => {
-      const buildQuery = buildQueryFactory(testIntrospection, {
+      const buildQuery = buildQueryFactory(testIntrospectionNexus, {
         ...defaultOurOptions,
         resourceViews: {
           UserWithTwitter: {
@@ -118,7 +124,7 @@ describe("buildQueryFactory", () => {
     });
 
     it("enables to blacklist fields", () => {
-      const buildQuery = buildQueryFactory(testIntrospection, {
+      const buildQuery = buildQueryFactory(testIntrospectionNexus, {
         ...defaultOurOptions,
         resourceViews: {
           UserWithTwitter: {
@@ -178,7 +184,7 @@ describe("buildQueryFactory", () => {
     });
 
     it("allows to use a single custom virtual view resources for one and many", () => {
-      const buildQuery = buildQueryFactory(testIntrospection, {
+      const buildQuery = buildQueryFactory(testIntrospectionNexus, {
         ...defaultOurOptions,
         resourceViews: {
           UserWithTwitter: {
@@ -229,7 +235,7 @@ describe("buildQueryFactory", () => {
 
     describe("allows to use different custom virtual view resources", () => {
       it("for get one fetch", () => {
-        const buildQuery = buildQueryFactory(testIntrospection, {
+        const buildQuery = buildQueryFactory(testIntrospectionNexus, {
           ...defaultOurOptions,
           resourceViews: {
             UserWithTwitter: {
@@ -272,7 +278,7 @@ describe("buildQueryFactory", () => {
         `);
       });
       it("for get list fetch", () => {
-        const buildQuery = buildQueryFactory(testIntrospection, {
+        const buildQuery = buildQueryFactory(testIntrospectionNexus, {
           ...defaultOurOptions,
           resourceViews: {
             UserWithTwitter: {
@@ -335,7 +341,7 @@ describe("buildQueryFactory", () => {
         `);
       });
       it("for get list fetch with typegraphql count option", () => {
-        const buildQuery = buildQueryFactory(testIntrospection, {
+        const buildQuery = buildQueryFactory(testIntrospectionTypeGraphql, {
           queryDialect: "typegraphql",
           resourceViews: {
             UserWithTwitter: {
@@ -394,7 +400,7 @@ describe("buildQueryFactory", () => {
               }
             }
             total: aggregateUser(where: $where) {
-              count {
+              _count {
                 _all
               }
             }
@@ -402,7 +408,7 @@ describe("buildQueryFactory", () => {
         `);
       });
       it("for get list fetch with typegraphql count option - plural ending in 'ies'", () => {
-        const buildQuery = buildQueryFactory(testIntrospection, {
+        const buildQuery = buildQueryFactory(testIntrospectionTypeGraphql, {
           queryDialect: "typegraphql",
           resourceViews: {
             CompanyWithUser: {
@@ -460,7 +466,7 @@ describe("buildQueryFactory", () => {
               }
             }
             total: aggregateCompany(where: $where) {
-              count {
+              _count {
                 _all
               }
             }
@@ -469,7 +475,7 @@ describe("buildQueryFactory", () => {
       });
 
       it("for get list fetch with typegraphql count option, without order", () => {
-        const buildQuery = buildQueryFactory(testIntrospection, {
+        const buildQuery = buildQueryFactory(testIntrospectionTypeGraphql, {
           queryDialect: "typegraphql",
           resourceViews: {
             UserWithTwitter: {
@@ -518,7 +524,7 @@ describe("buildQueryFactory", () => {
               }
             }
             total: aggregateUser(where: $where) {
-              count {
+              _count {
                 _all
               }
             }
@@ -527,7 +533,7 @@ describe("buildQueryFactory", () => {
       });
 
       it("for get many fetch", () => {
-        const buildQuery = buildQueryFactory(testIntrospection, {
+        const buildQuery = buildQueryFactory(testIntrospectionNexus, {
           ...defaultOurOptions,
           resourceViews: {
             UserWithTwitter: {
@@ -575,7 +581,7 @@ describe("buildQueryFactory", () => {
         `);
       });
       it("for get many reference fetch", () => {
-        const buildQuery = buildQueryFactory(testIntrospection, {
+        const buildQuery = buildQueryFactory(testIntrospectionNexus, {
           ...defaultOurOptions,
           resourceViews: {
             UserWithTwitter: {
@@ -640,7 +646,7 @@ describe("buildQueryFactory", () => {
       });
       describe("supports defining only one or many", () => {
         it("uses the fragment for one, but the default for many", () => {
-          const buildQuery = buildQueryFactory(testIntrospection, {
+          const buildQuery = buildQueryFactory(testIntrospectionNexus, {
             resourceViews: {
               UserWithTwitter: {
                 resource: "User",
@@ -714,6 +720,7 @@ describe("buildQueryFactory", () => {
                   countryCode
                 }
               }
+              total: usersCount(where: $where)
             }
           `);
 

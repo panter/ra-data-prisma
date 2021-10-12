@@ -99,7 +99,7 @@ input BlogPostCommentListRelationFilter {
 }
 
 input BlogPostCommentOrderByRelationAggregateInput {
-  count: SortOrder!
+  _count: SortOrder
 }
 
 input BlogPostCommentOrderByWithRelationInput {
@@ -284,7 +284,7 @@ input BlogPostListRelationFilter {
 }
 
 input BlogPostOrderByRelationAggregateInput {
-  count: SortOrder!
+  _count: SortOrder
 }
 
 input BlogPostOrderByWithRelationInput {
@@ -448,7 +448,7 @@ input CompanyListRelationFilter {
 }
 
 input CompanyOrderByRelationAggregateInput {
-  count: SortOrder!
+  _count: SortOrder
 }
 
 input CompanyOrderByWithRelationInput {
@@ -707,11 +707,15 @@ input IntNullableFilter {
   notIn: [Int!]
 }
 
-scalar Json
+enum JsonNullValueFilter {
+  AnyNull
+  DbNull
+  JsonNull
+}
 
 input JsonNullableFilter {
-  equals: Json
-  not: Json
+  equals: JsonNullValueFilter
+  not: JsonNullValueFilter
 }
 
 type Mutation {
@@ -870,6 +874,11 @@ input NullableIntFieldUpdateOperationsInput {
   set: Int
 }
 
+enum NullableJsonNullValueInput {
+  DbNull
+  JsonNull
+}
+
 input NullableStringFieldUpdateOperationsInput {
   set: String
 }
@@ -961,6 +970,7 @@ input SiteWhereInput {
 
 input SiteWhereUniqueInput {
   id: String
+  userId: String
 }
 
 type SomePublicRecordWithIntId {
@@ -1062,7 +1072,7 @@ type User {
 }
 
 input UserCreateInput {
-  address: Json
+  address: NullableJsonNullValueInput
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
@@ -1129,7 +1139,7 @@ input UserCreateOrConnectWithoutRolesInput {
 }
 
 input UserCreateWithoutBlogPostsInput {
-  address: Json
+  address: NullableJsonNullValueInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
   email: String!
@@ -1147,7 +1157,7 @@ input UserCreateWithoutBlogPostsInput {
 }
 
 input UserCreateWithoutCommentsInput {
-  address: Json
+  address: NullableJsonNullValueInput
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
   email: String!
@@ -1165,7 +1175,7 @@ input UserCreateWithoutCommentsInput {
 }
 
 input UserCreateWithoutCompaniesInput {
-  address: Json
+  address: NullableJsonNullValueInput
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   email: String!
@@ -1183,7 +1193,7 @@ input UserCreateWithoutCompaniesInput {
 }
 
 input UserCreateWithoutRolesInput {
-  address: Json
+  address: NullableJsonNullValueInput
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
@@ -1211,7 +1221,7 @@ input UserListRelationFilter {
 }
 
 input UserOrderByRelationAggregateInput {
-  count: SortOrder!
+  _count: SortOrder
 }
 
 input UserOrderByWithRelationInput {
@@ -1267,7 +1277,7 @@ input UserRoleListRelationFilter {
 }
 
 input UserRoleOrderByRelationAggregateInput {
-  count: SortOrder!
+  _count: SortOrder
 }
 
 input UserRoleOrderByWithRelationInput {
@@ -1424,10 +1434,11 @@ input UserSocialMediaWhereInput {
 
 input UserSocialMediaWhereUniqueInput {
   id: String
+  userId: String
 }
 
 input UserUpdateInput {
-  address: Json
+  address: NullableJsonNullValueInput
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
   companies: CompanyUpdateManyWithoutUserInput
@@ -1446,7 +1457,7 @@ input UserUpdateInput {
 }
 
 input UserUpdateManyMutationInput {
-  address: Json
+  address: NullableJsonNullValueInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
@@ -1510,7 +1521,7 @@ input UserUpdateWithWhereUniqueWithoutRolesInput {
 }
 
 input UserUpdateWithoutBlogPostsInput {
-  address: Json
+  address: NullableJsonNullValueInput
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
   companies: CompanyUpdateManyWithoutUserInput
   email: StringFieldUpdateOperationsInput
@@ -1528,7 +1539,7 @@ input UserUpdateWithoutBlogPostsInput {
 }
 
 input UserUpdateWithoutCommentsInput {
-  address: Json
+  address: NullableJsonNullValueInput
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
   companies: CompanyUpdateManyWithoutUserInput
   email: StringFieldUpdateOperationsInput
@@ -1546,7 +1557,7 @@ input UserUpdateWithoutCommentsInput {
 }
 
 input UserUpdateWithoutCompaniesInput {
-  address: Json
+  address: NullableJsonNullValueInput
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
   email: StringFieldUpdateOperationsInput
@@ -1564,7 +1575,7 @@ input UserUpdateWithoutCompaniesInput {
 }
 
 input UserUpdateWithoutRolesInput {
-  address: Json
+  address: NullableJsonNullValueInput
   blogPosts: BlogPostUpdateManyWithoutAuthorInput
   comments: BlogPostCommentUpdateManyWithoutAuthorInput
   companies: CompanyUpdateManyWithoutUserInput
