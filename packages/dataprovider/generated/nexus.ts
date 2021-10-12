@@ -79,7 +79,7 @@ export interface NexusGenInputs {
     some?: NexusGenInputs['BlogPostCommentWhereInput'] | null; // BlogPostCommentWhereInput
   }
   BlogPostCommentOrderByRelationAggregateInput: { // input type
-    count: NexusGenEnums['SortOrder']; // SortOrder!
+    _count?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   BlogPostCommentOrderByWithRelationInput: { // input type
     author?: NexusGenInputs['UserOrderByWithRelationInput'] | null; // UserOrderByWithRelationInput
@@ -237,7 +237,7 @@ export interface NexusGenInputs {
     some?: NexusGenInputs['BlogPostWhereInput'] | null; // BlogPostWhereInput
   }
   BlogPostOrderByRelationAggregateInput: { // input type
-    count: NexusGenEnums['SortOrder']; // SortOrder!
+    _count?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   BlogPostOrderByWithRelationInput: { // input type
     author?: NexusGenInputs['UserOrderByWithRelationInput'] | null; // UserOrderByWithRelationInput
@@ -372,7 +372,7 @@ export interface NexusGenInputs {
     some?: NexusGenInputs['CompanyWhereInput'] | null; // CompanyWhereInput
   }
   CompanyOrderByRelationAggregateInput: { // input type
-    count: NexusGenEnums['SortOrder']; // SortOrder!
+    _count?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   CompanyOrderByWithRelationInput: { // input type
     id?: NexusGenEnums['SortOrder'] | null; // SortOrder
@@ -583,8 +583,8 @@ export interface NexusGenInputs {
     notIn?: number[] | null; // [Int!]
   }
   JsonNullableFilter: { // input type
-    equals?: NexusGenScalars['Json'] | null; // Json
-    not?: NexusGenScalars['Json'] | null; // Json
+    equals?: NexusGenEnums['JsonNullValueFilter'] | null; // JsonNullValueFilter
+    not?: NexusGenEnums['JsonNullValueFilter'] | null; // JsonNullValueFilter
   }
   NestedBoolFilter: { // input type
     equals?: boolean | null; // Boolean
@@ -738,6 +738,7 @@ export interface NexusGenInputs {
   }
   SiteWhereUniqueInput: { // input type
     id?: string | null; // String
+    userId?: string | null; // String
   }
   SomePublicRecordWithIntIdCreateInput: { // input type
     title: string; // String!
@@ -794,7 +795,7 @@ export interface NexusGenInputs {
     startsWith?: string | null; // String
   }
   UserCreateInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     blogPosts?: NexusGenInputs['BlogPostCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCreateNestedManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCommentCreateNestedManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyCreateNestedManyWithoutUserInput'] | null; // CompanyCreateNestedManyWithoutUserInput
@@ -851,7 +852,7 @@ export interface NexusGenInputs {
     where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
   }
   UserCreateWithoutBlogPostsInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     comments?: NexusGenInputs['BlogPostCommentCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCommentCreateNestedManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyCreateNestedManyWithoutUserInput'] | null; // CompanyCreateNestedManyWithoutUserInput
     email: string; // String!
@@ -868,7 +869,7 @@ export interface NexusGenInputs {
     yearOfBirth?: number | null; // Int
   }
   UserCreateWithoutCommentsInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     blogPosts?: NexusGenInputs['BlogPostCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCreateNestedManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyCreateNestedManyWithoutUserInput'] | null; // CompanyCreateNestedManyWithoutUserInput
     email: string; // String!
@@ -885,7 +886,7 @@ export interface NexusGenInputs {
     yearOfBirth?: number | null; // Int
   }
   UserCreateWithoutCompaniesInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     blogPosts?: NexusGenInputs['BlogPostCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCreateNestedManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCommentCreateNestedManyWithoutAuthorInput
     email: string; // String!
@@ -902,7 +903,7 @@ export interface NexusGenInputs {
     yearOfBirth?: number | null; // Int
   }
   UserCreateWithoutRolesInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     blogPosts?: NexusGenInputs['BlogPostCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCreateNestedManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentCreateNestedManyWithoutAuthorInput'] | null; // BlogPostCommentCreateNestedManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyCreateNestedManyWithoutUserInput'] | null; // CompanyCreateNestedManyWithoutUserInput
@@ -927,7 +928,7 @@ export interface NexusGenInputs {
     some?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
   }
   UserOrderByRelationAggregateInput: { // input type
-    count: NexusGenEnums['SortOrder']; // SortOrder!
+    _count?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   UserOrderByWithRelationInput: { // input type
     address?: NexusGenEnums['SortOrder'] | null; // SortOrder
@@ -971,7 +972,7 @@ export interface NexusGenInputs {
     some?: NexusGenInputs['UserRoleWhereInput'] | null; // UserRoleWhereInput
   }
   UserRoleOrderByRelationAggregateInput: { // input type
-    count: NexusGenEnums['SortOrder']; // SortOrder!
+    _count?: NexusGenEnums['SortOrder'] | null; // SortOrder
   }
   UserRoleOrderByWithRelationInput: { // input type
     id?: NexusGenEnums['SortOrder'] | null; // SortOrder
@@ -1100,9 +1101,10 @@ export interface NexusGenInputs {
   }
   UserSocialMediaWhereUniqueInput: { // input type
     id?: string | null; // String
+    userId?: string | null; // String
   }
   UserUpdateInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyUpdateManyWithoutUserInput'] | null; // CompanyUpdateManyWithoutUserInput
@@ -1120,7 +1122,7 @@ export interface NexusGenInputs {
     yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateManyMutationInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
     firstName?: NexusGenInputs['NullableStringFieldUpdateOperationsInput'] | null; // NullableStringFieldUpdateOperationsInput
     gender?: NexusGenInputs['NullableEnumGenderFieldUpdateOperationsInput'] | null; // NullableEnumGenderFieldUpdateOperationsInput
@@ -1177,7 +1179,7 @@ export interface NexusGenInputs {
     where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
   }
   UserUpdateWithoutBlogPostsInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyUpdateManyWithoutUserInput'] | null; // CompanyUpdateManyWithoutUserInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -1194,7 +1196,7 @@ export interface NexusGenInputs {
     yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateWithoutCommentsInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyUpdateManyWithoutUserInput'] | null; // CompanyUpdateManyWithoutUserInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -1211,7 +1213,7 @@ export interface NexusGenInputs {
     yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateWithoutCompaniesInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
     email?: NexusGenInputs['StringFieldUpdateOperationsInput'] | null; // StringFieldUpdateOperationsInput
@@ -1228,7 +1230,7 @@ export interface NexusGenInputs {
     yearOfBirth?: NexusGenInputs['NullableIntFieldUpdateOperationsInput'] | null; // NullableIntFieldUpdateOperationsInput
   }
   UserUpdateWithoutRolesInput: { // input type
-    address?: NexusGenScalars['Json'] | null; // Json
+    address?: NexusGenEnums['NullableJsonNullValueInput'] | null; // NullableJsonNullValueInput
     blogPosts?: NexusGenInputs['BlogPostUpdateManyWithoutAuthorInput'] | null; // BlogPostUpdateManyWithoutAuthorInput
     comments?: NexusGenInputs['BlogPostCommentUpdateManyWithoutAuthorInput'] | null; // BlogPostCommentUpdateManyWithoutAuthorInput
     companies?: NexusGenInputs['CompanyUpdateManyWithoutUserInput'] | null; // CompanyUpdateManyWithoutUserInput
@@ -1294,6 +1296,8 @@ export interface NexusGenInputs {
 
 export interface NexusGenEnums {
   Gender: "FEMALE" | "MALE" | "OTHER"
+  JsonNullValueFilter: "AnyNull" | "DbNull" | "JsonNull"
+  NullableJsonNullValueInput: "DbNull" | "JsonNull"
   QueryMode: "default" | "insensitive"
   SortOrder: "asc" | "desc"
   Topic: "TOPIC_ONE" | "TOPIC_THREE" | "TOPIC_TWO"
@@ -1306,7 +1310,6 @@ export interface NexusGenScalars {
   Boolean: boolean
   ID: string
   DateTime: any
-  Json: any
 }
 
 export interface NexusGenObjects {

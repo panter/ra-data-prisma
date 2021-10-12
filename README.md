@@ -24,7 +24,7 @@ call `yarn install` to set it up.
 Some tests use an actual introspection result from a nexus-prisma backend. If you want to extend the underlying model do:
 
 - edit [datamodel.prisma](packages/dataprovider/test-data/datamodel.prisma) to alter the underlying prisma model
-- edit [testSchema.ts](packages/dataprovider/test-data/testSchema.ts) to modify the nexus types
+- edit [testSchemaNexus.ts](packages/dataprovider/test-data/testSchemaNexus.ts) to modify the nexus types
 - call `yarn install` in the root to update all types and the test introspection schema
 
 ## Prior work

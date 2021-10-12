@@ -4,13 +4,6 @@ import * as Helpers from "nexus-plugin-prisma/src/typegen/helpers";
 import pluralize from "pluralize";
 import { ResourceOptions, CommonOptions } from "./types";
 
-declare global {
-  interface NexusGenCustomOutputProperties<TypeName extends string> {
-    //@ts-ignore
-    crud: any;
-  }
-}
-
 const makePrefixedFullName = (name: string, prefix?: string) => {
   return !prefix ? name : prefix + upperFirst(name);
 };
@@ -65,14 +58,16 @@ const setupCrudResolvers = <
         const oneConfig = {
           alias: makePrefixedFullName(queryName, aliasPrefix),
         };
-        t.crud[queryName](customize?.one?.(oneConfig) ?? oneConfig);
+        t.crud[queryName](customize?.one?.(oneConfig as any) ?? oneConfig);
         const manyConfig = {
           filtering: true,
           pagination: true,
           ordering: true,
           alias: makePrefixedFullName(queryAllName, aliasPrefix),
         };
-        t.crud[queryAllName](customize?.many?.(manyConfig) ?? manyConfig);
+        t.crud[queryAllName](
+          customize?.many?.(manyConfig as any) ?? manyConfig,
+        );
 
         t.int(makePrefixedFullName(queryCountName, aliasPrefix), {
           args: {

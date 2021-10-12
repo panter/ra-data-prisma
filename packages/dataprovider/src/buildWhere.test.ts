@@ -1,7 +1,7 @@
 import { NexusGenArgTypes } from "../generated/nexus";
 import { buildWhere } from "./buildWhere";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { getTestIntrospection } from "./testUtils/getTestIntrospection";
+import { getTestIntrospectionNexus } from "./testUtils/getTestIntrospection";
 import { OurOptions } from "./types";
 
 describe("buildWhere", () => {
@@ -12,7 +12,7 @@ describe("buildWhere", () => {
   const options: OurOptions = {};
 
   beforeAll(async () => {
-    testIntrospection = await getTestIntrospection();
+    testIntrospection = await getTestIntrospectionNexus();
     testUserResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
     );
@@ -1290,7 +1290,7 @@ describe("buildWhere", () => {
           users: {
             every: {
               address: {
-                equals: "asd",
+                equals: "asd" as any,
               },
             },
           },
