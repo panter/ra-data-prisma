@@ -297,7 +297,7 @@ describe("buildGqlQuery", () => {
               }
             }
             total: aggregateUser(where: $where) {
-              count {
+              _count {
                 _all
               }
             }

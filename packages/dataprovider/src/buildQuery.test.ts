@@ -394,7 +394,7 @@ describe("buildQueryFactory", () => {
               }
             }
             total: aggregateUser(where: $where) {
-              count {
+              _count {
                 _all
               }
             }
@@ -460,7 +460,7 @@ describe("buildQueryFactory", () => {
               }
             }
             total: aggregateCompany(where: $where) {
-              count {
+              _count {
                 _all
               }
             }
@@ -518,7 +518,7 @@ describe("buildQueryFactory", () => {
               }
             }
             total: aggregateUser(where: $where) {
-              count {
+              _count {
                 _all
               }
             }

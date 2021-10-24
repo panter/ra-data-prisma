@@ -272,7 +272,7 @@ export default (
           alias: gqlTypes.name("total"),
           arguments: countArgs,
           selectionSet: gqlTypes.selectionSet([
-            gqlTypes.field(gqlTypes.name("count"), {
+            gqlTypes.field(gqlTypes.name("_count"), {
               selectionSet: gqlTypes.selectionSet([
                 gqlTypes.field(gqlTypes.name("_all")),
               ]),

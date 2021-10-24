@@ -98,7 +98,7 @@ const testListTypes = (type: string) => {
             ],
           },
         ],
-        total: { count: { _all: 100 } },
+        total: { _count: { _all: 100 } },
       },
     };
 
