@@ -2,6 +2,11 @@
 // https://jestjs.io/docs/en/configuration.html
 
 module.exports = {
+  globals: {
+    "ts-jest": {
+      tsconfig: "tsconfig-test.json",
+    },
+  },
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -91,7 +96,7 @@ module.exports = {
   // notifyMode: "failure-change",
 
   // A preset that is used as a base for Jest's configuration
-  // preset: undefined,
+  preset: "ts-jest",
 
   // Run tests from one or more projects
   // projects: undefined,

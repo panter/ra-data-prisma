@@ -16,10 +16,10 @@ import {
   BlackListFragment,
   FetchType,
   isDocumentNodeFragment,
-  QueryDialect,
   ResourceFragment,
   WhiteListFragment,
 } from "./types";
+import upperFirst from "lodash/upperFirst";
 import getFinalType from "./utils/getFinalType";
 import * as gqlTypes from "./utils/gqlTypes";
 import isList from "./utils/isList";
@@ -224,7 +224,7 @@ export default (
     fragment: ResourceFragment,
   ) => {
     const queryType = resource[aorFetchType];
-    const { queryDialect } = options;
+    const { queryDialect = "nexus-prisma" } = options;
 
     if (!queryType) {
       throw new Error(
@@ -246,8 +246,8 @@ export default (
           filterFields(buildRawFields(), fragment)
       : buildRawFields();
 
-    const totals: Record<QueryDialect, FieldNode> = {
-      "nexus-prisma": (() => {
+    const totals = {
+      "nexus-prisma": (): FieldNode => {
         const countName = `${queryType.name}Count`;
 
         const supportsCountArgs =
@@ -261,25 +261,31 @@ export default (
           alias: gqlTypes.name("total"),
           arguments: supportsCountArgs ? countArgs : undefined,
         });
-      })(),
-      typegraphql: gqlTypes.field(
-        gqlTypes.name(
-          `aggregate${resource.type.name
-            .substring(0, 1)
-            .toUpperCase()}${resource.type.name.substring(1)}`,
-        ),
-        {
+      },
+      typegraphql: (): FieldNode => {
+        const resourceName = upperFirst(resource.type.name);
+
+        const aggregateType = introspectionResults.types.find(
+          (n) => n.name === `Aggregate${resourceName}`,
+        );
+        // older versions use "count", newer "_count"
+        const countName =
+          aggregateType.kind === "OBJECT" &&
+          aggregateType.fields.find((f) => f.name === "_count")
+            ? "_count"
+            : "count";
+        return gqlTypes.field(gqlTypes.name(`aggregate${resourceName}`), {
           alias: gqlTypes.name("total"),
           arguments: countArgs,
           selectionSet: gqlTypes.selectionSet([
-            gqlTypes.field(gqlTypes.name("count"), {
+            gqlTypes.field(gqlTypes.name(countName), {
               selectionSet: gqlTypes.selectionSet([
                 gqlTypes.field(gqlTypes.name("_all")),
               ]),
             }),
           ]),
-        },
-      ),
+        });
+      },
     };
 
     if (
@@ -296,7 +302,7 @@ export default (
               arguments: args,
               selectionSet: gqlTypes.selectionSet(fields),
             }),
-            totals[queryDialect],
+            totals[queryDialect](),
           ]),
           gqlTypes.name(queryType.name!),
           apolloArgs,

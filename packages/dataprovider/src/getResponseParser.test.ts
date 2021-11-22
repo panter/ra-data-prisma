@@ -10,14 +10,17 @@ import {
 import getResponseParser from "./getResponseParser";
 import { Resource, IntrospectionResult } from "./constants/interfaces";
 
-import { getTestIntrospection } from "./testUtils/getTestIntrospection";
-import { OurOptions } from "./types";
+import { getTestIntrospectionNexus } from "./testUtils/getTestIntrospection";
+import { FetchType, OurOptions } from "./types";
 
-const defaultOptions: OurOptions = { queryDialect: "nexus-prisma" };
+const defaultOptions: Required<Pick<OurOptions, "queryDialect">> = {
+  queryDialect: "nexus-prisma",
+};
 
-const testListTypes = (type: string) => {
+const testListTypes = (type: FetchType) => {
   it(`returns the response expected by RA for ${type}`, async () => {
-    const testIntrospection: IntrospectionResult = await getTestIntrospection();
+    const testIntrospection: IntrospectionResult =
+      await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
     );
@@ -71,7 +74,8 @@ const testListTypes = (type: string) => {
   });
 
   it(`returns the response expected by RA for ${type}, with typegraphql count format`, async () => {
-    const testIntrospection: IntrospectionResult = await getTestIntrospection();
+    const testIntrospection: IntrospectionResult =
+      await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
     );
@@ -98,7 +102,7 @@ const testListTypes = (type: string) => {
             ],
           },
         ],
-        total: { count: { _all: 100 } },
+        total: { _count: { _all: 100 } },
       },
     };
 
@@ -125,9 +129,10 @@ const testListTypes = (type: string) => {
   });
 };
 
-const testSingleTypes = (type: string) => {
+const testSingleTypes = (type: FetchType) => {
   it(`returns the response expected by RA for ${type}`, async () => {
-    const testIntrospection: IntrospectionResult = await getTestIntrospection();
+    const testIntrospection: IntrospectionResult =
+      await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
     );

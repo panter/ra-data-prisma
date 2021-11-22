@@ -1,0 +1,11 @@
+{
+  "extends": "./tsconfig.json",
+
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es2018",
+    "lib": ["es2018", "esnext.asynciterable"],
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true
+  }
+}

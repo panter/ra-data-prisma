@@ -1,5 +1,5 @@
 import { print, ASTNode } from "graphql";
-import diff from "jest-diff";
+import { diff } from "jest-diff";
 import { matcherHint, printExpected, printReceived } from "jest-matcher-utils";
 
 // replace whitespace
