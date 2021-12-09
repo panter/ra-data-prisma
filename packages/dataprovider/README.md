@@ -26,7 +26,7 @@ const AdminApp = () => {
     clientOptions: { uri: "/graphql" }
     aliasPrefix: "admin" // 👈 set this, if you use a aliasPrefix on your backend as well (recommended)
     filters: {} // custom filters
-    queryDialect: "nexus-prisma" // customize query dialect, defaults to nexus-prisma
+    queryDialect: "nexus-prisma" // customize query dialect, defaults to nexus-prisma,
   })
   const authProvider = useAuthProvider()
 
@@ -439,6 +439,50 @@ const dataProvider = useDataProvider({
     },
   },
 });
+```
+
+## Use without introspection
+
+the dataprovider uses introspection in order to create the right queries for your backend.
+But if you bundle the IntrospectionSchema or graphql schema, you can use it directly.
+
+### use the introspection schema
+
+you can download a introspection schema (in the json format) with:
+
+`npx apollo schema:download --endpoint=http://localhost:3000 ./src/graphql-schema.json`
+
+and then:
+
+```
+import schema from "../graphql-schema.json";
+
+useDataProvider({
+ // ...
+ introspection: {
+   schema: schema.__schema
+ }
+})
+```
+
+### use with graphql file:
+
+this assumes that you can load and bundle the graphql file (e.g. with raw-loader):
+
+```
+import { buildSchema, introspectionFromSchema } from "graphql";
+
+
+useDataProvider({
+ // ...
+ introspection: {
+   schema: introspectionFromSchema(
+      buildSchema(
+        require("!!raw-loader!../schema.graphql").default
+      )
+    ).__schema
+ }
+})
 ```
 
 ## Usage with typegraphql-prisma
