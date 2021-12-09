@@ -43,5 +43,6 @@ export const makeIntrospectionOptions = (options: OurOptions) => {
     },
     exclude: undefined,
     include: undefined,
+    ...options.introspection,
   };
 };

@@ -62,6 +62,10 @@ export type CustomizeInputData = {
     update?: CustomizeInputDataFunction;
   };
 };
+
+export type IntrospectionOptions = {
+  schema?: any;
+};
 export type ConfigOptions = {
   resourceViews?: {
     [name: string]: ResourceView;
@@ -71,6 +75,7 @@ export type ConfigOptions = {
     [filterName: string]: (value: any) => Filter | void;
   };
   customizeInputData?: CustomizeInputData;
+  introspection?: IntrospectionOptions;
 };
 
 export type FetchType =
