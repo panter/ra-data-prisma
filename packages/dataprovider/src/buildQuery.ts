@@ -5,7 +5,7 @@ import { IntrospectionResult } from "./constants/interfaces";
 import getResponseParser from "./getResponseParser";
 import {
   FetchType,
-  isDocumentNodeFragment,
+  isDeprecatedDocumentNodeFragment,
   isOneAndManyFragment,
   OurOptions,
   ResourceFragment,
@@ -83,7 +83,10 @@ export const buildQueryFactory = (
     const parseResponse = getResponseParser(introspectionResults, {
       shouldSanitizeLinkedResources: !(
         // don't sanitze on real fragments
-        (resourceViewFragment && isDocumentNodeFragment(resourceViewFragment))
+        (
+          resourceViewFragment &&
+          isDeprecatedDocumentNodeFragment(resourceViewFragment)
+        )
       ),
       queryDialect: options.queryDialect,
     })(aorFetchType, resource);

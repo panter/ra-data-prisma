@@ -20,7 +20,7 @@ export type BlackListFragment = {
   fields: string[];
 };
 
-export const isDocumentNodeFragment = (
+export const isDeprecatedDocumentNodeFragment = (
   fragment: ResourceFragment,
 ): fragment is DocumentNode => {
   return "kind" in fragment && fragment.kind === "Document";
@@ -31,8 +31,15 @@ export const isOneAndManyFragment = (
 ): fragment is DoubleFragment => {
   return "one" in fragment || "many" in fragment;
 };
+
+export type DocumentFragment = {
+  type: "document";
+  doc: DocumentNode;
+  mode?: "replace" | "extend"; // defaults to replace
+};
 export type ResourceFragment =
   | DocumentNode
+  | DocumentFragment
   | WhiteListFragment
   | BlackListFragment;
 
