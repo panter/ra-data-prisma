@@ -291,12 +291,14 @@ buildGraphQLProvider({
 });
 ```
 
-#### Fragment type DocumentNode
+#### Fragment type "document"
 
 You can use graphql Fragments (DocumentNode) to presicely select fields.
 This is more verbose than using blacklists / whitelists,
 but enables you to deeply select fields. Additionaly your IDE can typecheck the fragment
 (e.g. when using the apollo extension in vscode).
+
+By default, the fragment replaces the default fields.
 
 ```ts
 import gql from "graphql-tag";
@@ -307,21 +309,55 @@ buildGraphQLProvider({
     Users: {
       resource: "Users",
       fragment: {
-        many: gql`
-          fragment OneUserWithTwitter on User {
-            id
-            firstName
-            lastName
-            userSocialMedia {
-              twitter
+        many: {
+          type: "document",
+          // mode: "replace" <--- that is the default
+          doc: gql`
+            fragment OneUserWithTwitter on User {
+              id
+              firstName
+              lastName
+              userSocialMedia {
+                twitter
+              }
             }
-          }
-        `,
+          `,
+        },
       },
     },
   },
 });
 ```
+
+If you want to extend the default fields with a fragment, use `mode: "extend"` instead:
+
+```ts
+import gql from "graphql-tag";
+
+buildGraphQLProvider({
+  clientOptions: { uri: "/api/graphql" } as any,
+  resourceViews: {
+    Users: {
+      resource: "Users",
+      fragment: {
+        many: {
+          type: "document",
+          mode: "extend"
+          doc: gql`
+            fragment OneUserWithTwitter on User {
+              userSocialMedia {
+                twitter
+              }
+            }
+          `,
+        },
+      },
+    },
+  },
+});
+```
+
+this will fetch all default fields plus the fields of the fragment. If the fragment declares a field with the same name as a default field, the fragment's field replaces the default one.
 
 #### Virtual Resources
 
@@ -335,52 +371,58 @@ buildGraphQLProvider({
     ParticipantsToInvoice: {
       resource: "ChallengeParticipation",
       fragment: {
-        one: gql`
-          fragment OneBilling on ChallengeParticipation {
-            challenge {
-              title
-            }
-            user {
-              email
-              firstname
-              lastname
-              school {
-                name
-                address
-                city {
+        one: {
+          type: "document",
+          doc: gql`
+            fragment OneBilling on ChallengeParticipation {
+              challenge {
+                title
+              }
+              user {
+                email
+                firstname
+                lastname
+                school {
                   name
-                  zipCode
-                  canton {
-                    id
+                  address
+                  city {
+                    name
+                    zipCode
+                    canton {
+                      id
+                    }
                   }
                 }
               }
-            }
-            teamsCount
-            teams {
-              name
-            }
-          }
-        `,
-        many: gql`
-          fragment ManyBillings on ChallengeParticipation {
-            challenge {
-              title
-            }
-            user {
-              email
-              firstname
-              lastname
-              school {
+              teamsCount
+              teams {
                 name
-                address
               }
             }
-            teams {
-              name
+          `,
+        },
+        many: {
+          type: "document",
+          doc: gql`
+            fragment ManyBillings on ChallengeParticipation {
+              challenge {
+                title
+              }
+              user {
+                email
+                firstname
+                lastname
+                school {
+                  name
+                  address
+                }
+              }
+              teams {
+                name
+              }
             }
-          }
-        `,
+          `,
+        },
       },
     },
   },
