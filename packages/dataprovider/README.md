@@ -342,7 +342,7 @@ buildGraphQLProvider({
       fragment: {
         many: {
           type: "document",
-          mode: "extend"
+          mode: "extend" // <---
           doc: gql`
             fragment OneUserWithTwitter on User {
               userSocialMedia {
