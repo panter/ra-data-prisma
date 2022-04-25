@@ -14,6 +14,7 @@ import isObject from "lodash/isObject";
 import { IntrospectionResult } from "../constants/interfaces";
 import exhaust from "../utils/exhaust";
 import getFinalType from "../utils/getFinalType";
+import { sanitizeData } from "../utils/sanitizeData";
 
 enum ModifiersParams {
   connect = "connect",
@@ -145,7 +146,12 @@ const buildNewInputValue = (
         (i) => i.name === ModifiersParams.delete,
       );
 
-      if (setModifier && !connectModifier && !disconnectModifier && !deleteModifier) {
+      if (
+        setModifier &&
+        !connectModifier &&
+        !disconnectModifier &&
+        !deleteModifier
+      ) {
         // if its a date, convert it to a date
         if (
           setModifier.type.kind === "SCALAR" &&
@@ -378,14 +384,15 @@ export const buildData = (
   if (!inputType) {
     return {};
   }
+  const data = sanitizeData(params.data);
+  const previousData =
+    "previousData" in params ? sanitizeData(params.previousData) : null;
   return inputType.inputFields.reduce((acc, field) => {
     const key = field.name;
     const fieldType =
       field.type.kind === "NON_NULL" ? field.type.ofType : field.type;
-    const fieldData = params.data[key];
-    //console.log(key, fieldData, fieldType);
-    const previousFieldData =
-      (params as UpdateParams)?.previousData?.[key] ?? null;
+    const fieldData = data[key];
+    const previousFieldData = previousData?.[key] ?? null;
     // TODO in case the content of the array has changed but not the array itself?
     if (
       isEqual(fieldData, previousFieldData) ||
@@ -395,7 +402,7 @@ export const buildData = (
     }
 
     const newVaue = buildNewInputValue(
-      params.data[key],
+      fieldData,
       previousFieldData,
       field.name,
       fieldType,

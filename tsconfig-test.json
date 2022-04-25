@@ -3,8 +3,8 @@
 
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es2018",
-    "lib": ["es2018", "esnext.asynciterable"],
+    "target": "es2019",
+    "lib": ["es2019", "esnext.asynciterable"],
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true
   }

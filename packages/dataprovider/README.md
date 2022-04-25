@@ -126,11 +126,9 @@ const UserFilter = (props) => (
 
 If you have relations, you can use `ReferenceArrayField/Input` or `Referenceinput/Field`. Make sure that the reference Model is also compatible (by calling `addCrudResolvers("MyReferenceModel")` from `@ra-data-prisma/backend` on your backend).
 
-### Sorting by relations
+Make sure to add the suffix `_id` or `_ids` (if its an array field) to the `source` property.
 
-`<List />`s can be sorted by relations. [Enable it in the backend](../backend#enable-sort-by-relation)
-
-#### some examples:
+#### Examples:
 
 _show a list of cities with the country_
 
@@ -140,7 +138,11 @@ export const CityList = (props) => (
     <Datagrid>
       <TextField source="id" />
       <TextField source="name" />
-      <ReferenceField label="Country" source="country" reference="Country">
+      <ReferenceField
+        label="Country"
+        source="country_id" // <-- suffix _id
+        reference="Country"
+      >
         <TextField source="name" />
       </ReferenceField>
       <EditButton />
@@ -160,7 +162,7 @@ export const UserList = (props) => (
       <ReferenceArrayField
         alwaysOn
         label="Roles"
-        source="roles"
+        source="roles_ids" // <-- suffix _ids because it is an array field
         reference="UserRole"
       >
         <SingleFieldList>
@@ -182,7 +184,7 @@ export const UserEdit = (props) => (
       <TextInput source="userName" />
       <ReferenceArrayInput
         label="Roles"
-        source="roles"
+        source="roles_ids" // <-- suffix _ids because it is an array field
         reference="UserRole"
         allowEmpty
         fullWidth
@@ -193,6 +195,10 @@ export const UserEdit = (props) => (
   </Edit>
 );
 ```
+
+### Sorting by relations
+
+`<List />`s can be sorted by relations. [Enable it in the backend](../backend#enable-sort-by-relation)
 
 ### Customize fetching & virtual Resources
 
@@ -342,7 +348,7 @@ buildGraphQLProvider({
       fragment: {
         many: {
           type: "document",
-          mode: "extend"
+          mode: "extend" // <---
           doc: gql`
             fragment OneUserWithTwitter on User {
               userSocialMedia {
