@@ -12,6 +12,7 @@ import {
   Resource,
 } from "./constants/interfaces";
 import { OurOptions } from "./types";
+import { sanitizeKey } from "./utils/sanitizeData";
 
 const getStringFilter = (
   key: string,
@@ -491,11 +492,13 @@ const buildWhereWithType = (
   const hasAnd = whereType.inputFields.some((i) => i.name === "AND");
   const where = hasAnd
     ? Object.keys(filter ?? {}).reduce(
-        (acc, key) => {
+        (acc, keyRaw) => {
+          const value = filter[keyRaw];
+          const key = sanitizeKey(keyRaw);
           // defaults to AND
           const filters = getFilters(
             key,
-            filter[key],
+            value,
             whereType,
 
             introspectionResults,
@@ -506,10 +509,12 @@ const buildWhereWithType = (
         },
         { AND: [] },
       )
-    : Object.keys(filter ?? {}).reduce((acc, key) => {
+    : Object.keys(filter ?? {}).reduce((acc, keyRaw) => {
+        const value = filter[keyRaw];
+        const key = sanitizeKey(keyRaw);
         const filters = getFilters(
           key,
-          filter[key],
+          value,
           whereType,
 
           introspectionResults,
