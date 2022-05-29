@@ -1433,10 +1433,10 @@ queue-microtask@^1.2.2:
   resolved "https://registry.yarnpkg.com/queue-microtask/-/queue-microtask-1.2.3.tgz#4929228bbc724dfac43e0efb058caf7b6cfb6243"
   integrity sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==
 
-ra-data-graphql@^3.2.2:
-  version "3.2.2"
-  resolved "https://registry.yarnpkg.com/ra-data-graphql/-/ra-data-graphql-3.2.2.tgz#19ad698eb8343fefb5a54cfa5c9c5923d5437c74"
-  integrity sha512-zPyd+vwL2ItMtqXydQyIn4EbUmFqICeWJPspQpYAe8qrY3/ImSIT3AZKjcyMZ71hHqqmRPOcIpJrJqBIr63C1Q==
+ra-data-graphql@3.11.4:
+  version "3.11.4"
+  resolved "https://registry.npmjs.org/ra-data-graphql/-/ra-data-graphql-3.11.4.tgz#d4ab31fffd0e7494960fa6e5777865a4b782f34b"
+  integrity sha512-AZVQLscTQ99a6eLkALWiUFQR4l23unos4PjLwZRG8vqEN9DnwAdkZyvei7DOr/Nd0Tq90eaJm7Xi3+q9H3jtcw==
   dependencies:
     apollo-client "^2.6.3"
     apollo-client-preset "^1.0.8"
