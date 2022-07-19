@@ -23,10 +23,10 @@ describe("buildVariables", () => {
     testIntrospection = await getTestIntrospectionNexus();
     testUserResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    )!;
     testBlogPostCommentResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "BlogPostComment",
-    );
+    )!;
   });
 
   describe("GET_LIST", () => {
@@ -654,7 +654,7 @@ describe("buildVariables", () => {
 
     // one
 
-    it("update an entity and change the relation", () => {
+    it("update an entity and change the relation when objects with new id is passed", () => {
       const params = {
         data: {
           id: "einstein",
@@ -681,7 +681,34 @@ describe("buildVariables", () => {
       });
     });
 
-    it("update an entity and update also it's related entity", () => {
+    it("update an entity and change the relation when _id suffixed field is passed", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia_id: "newId",
+        },
+        previousData: {
+          userSocialMedia: "oldId",
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            connect: { id: "newId" },
+          },
+        },
+      });
+    });
+
+    it("update an entity and update also it's related entity when id is the same", () => {
       const params = {
         data: {
           id: "einstein",
@@ -965,6 +992,34 @@ describe("buildVariables", () => {
       });
     });
 
+    it("update an entity and connects and disconnects entities when _ids array is passed", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          roles_ids: ["professor", "husband", "human"],
+        },
+        previousData: {
+          roles_ids: ["human", "student"],
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          roles: {
+            connect: [{ id: "professor" }, { id: "husband" }],
+            disconnect: [{ id: "student" }],
+          },
+        },
+      });
+    });
+
     it("update an entity and it's related entities accordingly even with mixed primitive and object ids", () => {
       const params = {
         data: {
@@ -1194,7 +1249,7 @@ describe("buildVariables", () => {
         (r) =>
           r.type.kind === "OBJECT" &&
           r.type.name === "SomePublicRecordWithIntId",
-      );
+      )!;
       expect(
         buildVariables(testIntrospection, options)(resource, GET_ONE, params),
       ).toEqual<NexusGenArgTypes["Query"]["somePublicRecordWithIntId"]>({
@@ -1209,7 +1264,7 @@ describe("buildVariables", () => {
         (r) =>
           r.type.kind === "OBJECT" &&
           r.type.name === "SomePublicRecordWithIntId",
-      );
+      )!;
       const result = buildVariables(testIntrospection, options)(
         resource,
         GET_ONE,
