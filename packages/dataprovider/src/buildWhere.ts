@@ -12,7 +12,7 @@ import {
   Resource,
 } from "./constants/interfaces";
 import { OurOptions } from "./types";
-import { sanitizeKey } from "./utils/sanitizeData";
+import { sanitizeKey } from "./utils/sanitizeKey";
 
 const getStringFilter = (
   key: string,
@@ -414,7 +414,6 @@ const getFilters = (
     ) as IntrospectionInputObjectType;
 
     if (!isObject(value)) {
-      //console.log({ inputObjectType });
       const hasSomeFilter = inputObjectType.inputFields.some(
         (s) => s.name === "some",
       );

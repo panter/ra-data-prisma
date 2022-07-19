@@ -1,4 +1,3 @@
-import { debug } from "console";
 import {
   IntrospectionInputObjectType,
   IntrospectionInputTypeRef,
@@ -14,7 +13,7 @@ import isObject from "lodash/isObject";
 import { IntrospectionResult } from "../constants/interfaces";
 import exhaust from "../utils/exhaust";
 import getFinalType from "../utils/getFinalType";
-import { sanitizeData } from "../utils/sanitizeData";
+import { getSanitizedFieldData } from "./sanitizeData";
 
 enum ModifiersParams {
   connect = "connect",
@@ -384,15 +383,18 @@ export const buildData = (
   if (!inputType) {
     return {};
   }
-  const data = sanitizeData(params.data);
-  const previousData =
-    "previousData" in params ? sanitizeData(params.previousData) : null;
+  const data = params.data;
+  const previousData = "previousData" in params ? params.previousData : null;
   return inputType.inputFields.reduce((acc, field) => {
     const key = field.name;
     const fieldType =
       field.type.kind === "NON_NULL" ? field.type.ofType : field.type;
-    const fieldData = data[key];
-    const previousFieldData = previousData?.[key] ?? null;
+    // we have to handle the convenience convention that adds _id(s)  to the data
+    // the sanitize function merges that with other data
+    const fieldData = getSanitizedFieldData(data, field);
+    const previousFieldData = previousData
+      ? getSanitizedFieldData(previousData, field)
+      : null;
     // TODO in case the content of the array has changed but not the array itself?
     if (
       isEqual(fieldData, previousFieldData) ||
