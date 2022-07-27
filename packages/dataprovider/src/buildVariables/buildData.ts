@@ -7,13 +7,14 @@ import {
   IntrospectionNonNullTypeRef,
   IntrospectionTypeRef,
 } from "graphql";
+import { uniq } from "lodash";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
 import isObject from "lodash/isObject";
 import { IntrospectionResult } from "../constants/interfaces";
 import exhaust from "../utils/exhaust";
 import getFinalType from "../utils/getFinalType";
-import { getSanitizedFieldData } from "./sanitizeData";
+import { getSanitizedFieldData, hasFieldData } from "./sanitizeData";
 
 enum ModifiersParams {
   connect = "connect",
@@ -385,23 +386,45 @@ export const buildData = (
   }
   const data = params.data;
   const previousData = "previousData" in params ? params.previousData : null;
+
+  const allKeys = uniq([
+    ...Object.keys(data),
+    ...Object.keys(previousData ?? {}),
+  ]);
+
+  // we only deal with the changedData set
+  const changedData = Object.fromEntries(
+    allKeys
+      .filter((key) => {
+        if (!previousData) {
+          return true;
+        }
+        const value = data[key];
+        const previousValue = previousData[key];
+        if (isEqual(value, previousValue)) {
+          return false; // remove
+        }
+        if (isNil(value) && isNil(previousValue)) {
+          return false;
+        }
+        return true;
+      })
+      .map((key) => [key, data[key]]),
+  );
   return inputType.inputFields.reduce((acc, field) => {
-    const key = field.name;
+    // ignore unchanged field
+    if (!hasFieldData(changedData, field)) {
+      return acc;
+    }
     const fieldType =
       field.type.kind === "NON_NULL" ? field.type.ofType : field.type;
     // we have to handle the convenience convention that adds _id(s)  to the data
     // the sanitize function merges that with other data
-    const fieldData = getSanitizedFieldData(data, field);
-    const previousFieldData = previousData
-      ? getSanitizedFieldData(previousData, field)
-      : null;
-    // TODO in case the content of the array has changed but not the array itself?
-    if (
-      isEqual(fieldData, previousFieldData) ||
-      (isNil(previousFieldData) && isNil(fieldData))
-    ) {
-      return acc;
-    }
+    const { fieldData, previousFieldData } = getSanitizedFieldData(
+      changedData,
+      previousData,
+      field,
+    );
 
     const newVaue = buildNewInputValue(
       fieldData,
@@ -410,6 +433,7 @@ export const buildData = (
       fieldType,
       introspectionResults,
     );
+    const key = field.name;
 
     return {
       ...acc,
