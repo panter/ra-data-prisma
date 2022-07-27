@@ -688,7 +688,7 @@ describe("buildVariables", () => {
           userSocialMedia_id: "newId",
         },
         previousData: {
-          userSocialMedia: "oldId",
+          userSocialMedia_id: "oldId",
         },
       };
 
@@ -706,6 +706,27 @@ describe("buildVariables", () => {
           },
         },
       });
+    });
+    it("throws when both suffixed and non suffixed version is passed", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia_id: "newId",
+          userSocialMedia: {
+            id: "newId",
+          },
+        },
+        previousData: {
+          userSocialMedia_id: "oldId",
+        },
+      };
+      const func = () =>
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        );
+      expect(func).toThrow();
     });
 
     it("update an entity and update also it's related entity when id is the same", () => {
