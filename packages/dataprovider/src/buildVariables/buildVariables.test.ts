@@ -681,6 +681,86 @@ describe("buildVariables", () => {
       });
     });
 
+    it("disconnects an entity if id is null", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: { id: null },
+        },
+        previousData: {
+          userSocialMedia: { id: "oldId" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            disconnect: true,
+          },
+        },
+      });
+    });
+    it("disconnects an entity if id is empty string", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: { id: "" },
+        },
+        previousData: {
+          userSocialMedia: { id: "oldId" },
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            disconnect: true,
+          },
+        },
+      });
+    });
+
+    it("disconnects an entity if id is null when using _id suffix", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia_id: null,
+        },
+        previousData: {
+          userSocialMedia_id: "oldId",
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          UPDATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            disconnect: true,
+          },
+        },
+      });
+    });
+
     it("update an entity and change the relation when _id suffixed field is passed", () => {
       const params = {
         data: {

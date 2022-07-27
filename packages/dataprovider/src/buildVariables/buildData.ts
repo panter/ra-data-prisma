@@ -98,8 +98,13 @@ type ThingWithId = {
   id: string;
 };
 function isObjectWithId(data: any): data is ThingWithId {
-  return Boolean(data?.id);
+  if (!data) return false;
+  if (!isObject(data)) return false;
+  return "id" in data;
 }
+
+const isNullReferenceObject = (data: any) =>
+  isObjectWithId(data) && (data.id === null || data.id === "");
 const buildNewInputValue = (
   fieldData: any,
   previousFieldData: any,
@@ -297,7 +302,8 @@ const buildNewInputValue = (
             throw new Error(`${fieldName} should be an array`);
           }
         } else {
-          if (!fieldData) {
+          // disconnect if field data is empty or if its a {id: null} or {id: ""} object
+          if (!fieldData || isNullReferenceObject(fieldData)) {
             if (disconnectModifier) {
               return {
                 disconnect: true,
