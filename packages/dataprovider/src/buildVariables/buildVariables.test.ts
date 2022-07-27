@@ -297,6 +297,33 @@ describe("buildVariables", () => {
       });
     });
 
+    it("create a new entity and ignores null references or empty strings", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          userSocialMedia_id: "",
+        },
+      };
+
+      expect(
+        buildVariables(testIntrospection, options)(
+          testUserResource,
+          CREATE,
+          params,
+        ),
+      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+        },
+      });
+    });
+
     it("create a new entity and connect an already existing related entity identified by object with id property", () => {
       const params = {
         data: {

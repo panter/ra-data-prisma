@@ -313,6 +313,8 @@ const buildNewInputValue = (
                 delete: true,
               };
             }
+            // else skip it
+            return;
           }
 
           if (isObject(fieldData)) {
