@@ -8205,10 +8205,10 @@ nerf-dart@^1.0.0:
   resolved "https://registry.yarnpkg.com/nerf-dart/-/nerf-dart-1.0.0.tgz#e6dab7febf5ad816ea81cf5c629c5a0ebde72c1a"
   integrity sha1-5tq3/r9a2Bbqgc9cYpxaDr3nLBo=
 
-nexus-plugin-prisma@^0.34.1:
-  version "0.34.1"
-  resolved "https://registry.yarnpkg.com/nexus-plugin-prisma/-/nexus-plugin-prisma-0.34.1.tgz#a2a8680b6997c3854a61d64b7865354918cebc11"
-  integrity sha512-MeaBj95nI/nONPRQ73ayQsJkHEm3RSdZkcfgjV7eR0dqWPnqwpbuV2BI5rbyQmFFqr68rEu5j/jtd1Hn2IzSeg==
+nexus-plugin-prisma@^0.35.0:
+  version "0.35.0"
+  resolved "https://registry.yarnpkg.com/nexus-plugin-prisma/-/nexus-plugin-prisma-0.35.0.tgz#ab725c88823ab38c18fed90cca72f05ee73f3425"
+  integrity sha512-zZh96Ol6eqDGGd2caZLayjDW5ruUxNdoglyAMa/bOTBfnxu1Keb9kOyD+n7zVV+Mot8t0GRvWS4XilXoKZF/Tg==
   dependencies:
     camelcase "^6.2.0"
     endent "^2.0.1"

@@ -9,6 +9,7 @@ const makePrefixedFullName = (name: string, prefix?: string) => {
 };
 
 const setupCrudResolvers = <
+  AliasPrefix extends string,
   ModelName extends keyof Helpers.GetGen<"outputs"> & string,
 >(
   { extendType, arg, intArg },
@@ -18,7 +19,7 @@ const setupCrudResolvers = <
     customize,
     aliasPrefix,
     enableOrderByRelation = false,
-  }: ResourceOptions<ModelName> & CommonOptions = {},
+  }: ResourceOptions<AliasPrefix, ModelName> & CommonOptions<AliasPrefix> = {},
 ) => {
   const typeName = upperFirst(resourceName);
 

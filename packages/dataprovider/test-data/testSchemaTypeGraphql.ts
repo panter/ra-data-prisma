@@ -38,7 +38,9 @@ class CustomUserResolver {
   }
 }
 
-export const testSchemaTypeGraphql = async (options: CommonOptions) => {
+export const testSchemaTypeGraphql = async <Prefix extends string>(
+  options: CommonOptions<Prefix>,
+) => {
   return buildSchema({
     resolvers: [
       CustomUserResolver,
