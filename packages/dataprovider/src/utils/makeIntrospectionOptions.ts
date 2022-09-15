@@ -18,25 +18,42 @@ export const makeIntrospectionOptions = (options: OurOptions) => {
 
   const mutationOperationNames: Record<QueryDialect, object> = {
     "nexus-prisma": {
-      [CREATE]: (resource: Resource) => prefix(`createOne${resource.name}`),
-      [UPDATE]: (resource: Resource) => prefix(`updateOne${resource.name}`),
-      [DELETE]: (resource: Resource) => prefix(`deleteOne${resource.name}`),
+      [CREATE]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.create ||
+        prefix(`createOne${resource.name}`),
+      [UPDATE]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.update ||
+        prefix(`updateOne${resource.name}`),
+      [DELETE]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.delete ||
+        prefix(`deleteOne${resource.name}`),
     },
     typegraphql: {
-      [CREATE]: (resource: Resource) => prefix(`create${resource.name}`),
-      [UPDATE]: (resource: Resource) => prefix(`update${resource.name}`),
-      [DELETE]: (resource: Resource) => prefix(`delete${resource.name}`),
+      [CREATE]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.create ||
+        prefix(`create${resource.name}`),
+      [UPDATE]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.update ||
+        prefix(`update${resource.name}`),
+      [DELETE]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.delete ||
+        prefix(`delete${resource.name}`),
     },
   };
 
   return {
     operationNames: {
       [GET_LIST]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.many ||
         prefix(`${pluralize(camelCase(resource.name))}`),
-      [GET_ONE]: (resource: Resource) => prefix(`${camelCase(resource.name)}`),
+      [GET_ONE]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.one ||
+        prefix(`${camelCase(resource.name)}`),
       [GET_MANY]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.many ||
         prefix(`${pluralize(camelCase(resource.name))}`),
       [GET_MANY_REFERENCE]: (resource: Resource) =>
+        options?.operationNames?.[resource.name]?.many ||
         prefix(`${pluralize(camelCase(resource.name))}`),
 
       ...mutationOperationNames[options.queryDialect],

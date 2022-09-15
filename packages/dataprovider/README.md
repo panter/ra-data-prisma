@@ -485,6 +485,31 @@ useDataProvider({
 })
 ```
 
+## customize operation names:
+
+This allows you to customize operation names for example when the names cannot
+be pluralized (for one/many) or if you have custom operation names that you
+would like to be called instead.
+
+It will utilize the default operation names if one is not provided for any
+particular key.
+
+```
+
+useDataProvider({
+  // ...
+  operationNames: {
+    RESOURCE_NAME: {
+      create: "myCreateOperation",
+      update: "myUpdateOperation",
+      delete: "myDeleteOperation",
+      one: "myFindOneOperation",
+      many: "myFindManyOperation",
+    },
+  },
+})
+```
+
 ## Usage with typegraphql-prisma
 
 (beta)

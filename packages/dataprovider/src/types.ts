@@ -76,6 +76,11 @@ export type ConfigOptions = {
   };
   customizeInputData?: CustomizeInputData;
   introspection?: IntrospectionOptions;
+  operationNames?: {
+    [name: string]: {
+      [name: string]: string;
+    };
+  };
 };
 
 export type FetchType =
