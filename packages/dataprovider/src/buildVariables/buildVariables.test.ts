@@ -17,7 +17,9 @@ describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
   let testBlogPostCommentResource: Resource;
-  const options: OurOptions = {};
+  const options: OurOptions = {
+    queryDialect: "nexus-prisma",
+  };
 
   beforeAll(async () => {
     testIntrospection = await getTestIntrospectionNexus();
@@ -1443,6 +1445,26 @@ describe("buildVariables", () => {
         take: 10,
         orderBy: [{ email: "asc" }],
         where: { roles: { some: { id: { equals: "roleId" } } } },
+      });
+    });
+    it("returns correct variables for many relation reference with typegraphql query dialect", () => {
+      const params = {
+        target: "roles",
+        id: "roleId",
+        pagination: { page: 10, perPage: 10 },
+        sort: { field: "email", order: "ASC" },
+      };
+
+      expect(
+        buildVariables(testIntrospection, {
+          ...options,
+          queryDialect: "typegraphql",
+        })(testUserResource, GET_MANY_REFERENCE, params),
+      ).toEqual({
+        skip: 90,
+        take: 10,
+        orderBy: [{ email: "asc" }],
+        where: { roles: { is: { id: { equals: "roleId" } } } },
       });
     });
   });

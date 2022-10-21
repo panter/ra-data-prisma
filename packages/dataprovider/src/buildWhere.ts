@@ -4,6 +4,7 @@ import {
 } from "graphql";
 import upperFirst from "lodash/upperFirst";
 import isObject from "lodash/isObject";
+import { GET_MANY_REFERENCE } from "react-admin";
 import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
 import {
@@ -11,7 +12,7 @@ import {
   IntrospectionResult,
   Resource,
 } from "./constants/interfaces";
-import { OurOptions } from "./types";
+import { FetchType, OurOptions } from "./types";
 import { sanitizeKey } from "./utils/sanitizeKey";
 
 const getStringFilter = (
@@ -249,6 +250,7 @@ const getFilters = (
   whereType: IntrospectionInputObjectType,
   introspectionResults: IntrospectionResult,
   options: OurOptions,
+  aorFetchType: FetchType,
 ) => {
   const hasCaseInsensitive = supportsCaseInsensitive(introspectionResults);
   const { originalKey, key, comparator } = processKey(_key);
@@ -261,7 +263,13 @@ const getFilters = (
         value === null
           ? null
           : value.map((f) =>
-              buildWhereWithType(f, introspectionResults, options, whereType),
+              buildWhereWithType(
+                f,
+                introspectionResults,
+                options,
+                whereType,
+                aorFetchType,
+              ),
             ),
     };
   }
@@ -413,6 +421,22 @@ const getFilters = (
       (t) => t.name === fieldType.name,
     ) as IntrospectionInputObjectType;
 
+    if (
+      aorFetchType === GET_MANY_REFERENCE &&
+      options.queryDialect === "typegraphql" &&
+      fieldType.name.includes("RelationFilter")
+    ) {
+      return {
+        [originalKey]: {
+          is: {
+            id: {
+              equals: value,
+            },
+          },
+        },
+      };
+    }
+
     if (!isObject(value)) {
       const hasSomeFilter = inputObjectType.inputFields.some(
         (s) => s.name === "some",
@@ -467,6 +491,7 @@ const getFilters = (
         introspectionResults,
         options,
         inputObjectType,
+        aorFetchType,
       );
       return { [originalKey]: where };
     }
@@ -487,6 +512,7 @@ const buildWhereWithType = (
   introspectionResults: IntrospectionResult,
   options: OurOptions,
   whereType: IntrospectionInputObjectType,
+  aorFetchType: FetchType,
 ) => {
   const hasAnd = whereType.inputFields.some((i) => i.name === "AND");
   const where = hasAnd
@@ -502,6 +528,7 @@ const buildWhereWithType = (
 
             introspectionResults,
             options,
+            aorFetchType,
           );
 
           return { ...acc, AND: [...acc.AND, filters] };
@@ -518,6 +545,7 @@ const buildWhereWithType = (
 
           introspectionResults,
           options,
+          aorFetchType,
         );
 
         return { ...acc, ...filters };
@@ -541,10 +569,17 @@ export const buildWhere = (
   resource: Resource,
   introspectionResults: IntrospectionResult,
   options: OurOptions,
+  aorFetchType?: FetchType,
 ) => {
   const whereType = introspectionResults.types.find(
     (t) => t.name === `${resource.type.name}WhereInput`,
   ) as IntrospectionInputObjectType;
 
-  return buildWhereWithType(filter, introspectionResults, options, whereType);
+  return buildWhereWithType(
+    filter,
+    introspectionResults,
+    options,
+    whereType,
+    aorFetchType,
+  );
 };
