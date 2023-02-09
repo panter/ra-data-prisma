@@ -1,5 +1,3 @@
-import { DocumentNode } from "graphql";
-
 import {
   CREATE,
   DELETE,
@@ -9,6 +7,8 @@ import {
   GET_ONE,
   UPDATE,
 } from "react-admin";
+
+import { DocumentNode } from "graphql";
 
 export type WhiteListFragment = {
   type: "whitelist";
@@ -70,6 +70,8 @@ export type CustomizeInputData = {
   };
 };
 
+type PartialRecord<K extends string | number | symbol, T> = { [P in K]?: T };
+
 export type IntrospectionOptions = {
   schema?: any;
 };
@@ -83,6 +85,7 @@ export type ConfigOptions = {
   };
   customizeInputData?: CustomizeInputData;
   introspection?: IntrospectionOptions;
+  mutationOperationNames?: Partial<Record<QueryDialect, object>>;
 };
 
 export type FetchType =

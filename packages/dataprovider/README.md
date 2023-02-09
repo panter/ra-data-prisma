@@ -546,3 +546,26 @@ const dataProvider = useDataProvider({
     queryDialect: "typegraphql" // 👈
 })
 ```
+
+### override mutation operation names due to prisma versions breaking changes
+
+Now you can override mutation calls with your prefixes
+
+```ts
+import { Options } from "@ra-data-prisma/dataprovider";
+import { makePrefixedFullName } from "@ra-data-prisma/dataprovider/lib/utils/makePrefixedFullName";
+
+const options: Options = {
+  queryDialect: "typegraphql",
+  mutationOperationNames: {
+    typegraphql: {
+      [CREATE]: (resource: ResourceDataprovider) =>
+        makePrefixedFullName(`createOne${resource.name}`),
+      [UPDATE]: (resource: ResourceDataprovider) =>
+        makePrefixedFullName(`updateOne${resource.name}`),
+      [DELETE]: (resource: ResourceDataprovider) =>
+        makePrefixedFullName(`deleteOne${resource.name}`),
+    },
+  },
+};
+```
