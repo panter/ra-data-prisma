@@ -15,22 +15,18 @@ import { makePrefixedFullName } from "./makePrefixedFullName";
 import pluralize from "pluralize";
 
 export const makeIntrospectionOptions = (options: OurOptions) => {
+  const prefix = (s: string) => makePrefixedFullName(s, options?.aliasPrefix);
+
   const mutationOperationNames: Record<QueryDialect, object> = {
     "nexus-prisma": {
-      [CREATE]: (resource: Resource) =>
-        makePrefixedFullName(`createOne${resource.name}`, options?.aliasPrefix),
-      [UPDATE]: (resource: Resource) =>
-        makePrefixedFullName(`updateOne${resource.name}`, options?.aliasPrefix),
-      [DELETE]: (resource: Resource) =>
-        makePrefixedFullName(`deleteOne${resource.name}`, options?.aliasPrefix),
+      [CREATE]: (resource: Resource) => prefix(`createOne${resource.name}`),
+      [UPDATE]: (resource: Resource) => prefix(`updateOne${resource.name}`),
+      [DELETE]: (resource: Resource) => prefix(`deleteOne${resource.name}`),
     },
     typegraphql: {
-      [CREATE]: (resource: Resource) =>
-        makePrefixedFullName(`create${resource.name}`, options?.aliasPrefix),
-      [UPDATE]: (resource: Resource) =>
-        makePrefixedFullName(`update${resource.name}`, options?.aliasPrefix),
-      [DELETE]: (resource: Resource) =>
-        makePrefixedFullName(`delete${resource.name}`, options?.aliasPrefix),
+      [CREATE]: (resource: Resource) => prefix(`create${resource.name}`),
+      [UPDATE]: (resource: Resource) => prefix(`update${resource.name}`),
+      [DELETE]: (resource: Resource) => prefix(`delete${resource.name}`),
     },
     ...options.mutationOperationNames,
   };
@@ -38,25 +34,12 @@ export const makeIntrospectionOptions = (options: OurOptions) => {
   return {
     operationNames: {
       [GET_LIST]: (resource: Resource) =>
-        makePrefixedFullName(
-          `${pluralize(camelCase(resource.name))}`,
-          options?.aliasPrefix,
-        ),
-      [GET_ONE]: (resource: Resource) =>
-        makePrefixedFullName(
-          `${camelCase(resource.name)}`,
-          options?.aliasPrefix,
-        ),
+        prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_ONE]: (resource: Resource) => prefix(`${camelCase(resource.name)}`),
       [GET_MANY]: (resource: Resource) =>
-        makePrefixedFullName(
-          `${pluralize(camelCase(resource.name))}`,
-          options?.aliasPrefix,
-        ),
+        prefix(`${pluralize(camelCase(resource.name))}`),
       [GET_MANY_REFERENCE]: (resource: Resource) =>
-        makePrefixedFullName(
-          `${pluralize(camelCase(resource.name))}`,
-          options?.aliasPrefix,
-        ),
+        prefix(`${pluralize(camelCase(resource.name))}`),
 
       ...mutationOperationNames[options.queryDialect],
     },

@@ -70,8 +70,6 @@ export type CustomizeInputData = {
   };
 };
 
-type PartialRecord<K extends string | number | symbol, T> = { [P in K]?: T };
-
 export type IntrospectionOptions = {
   schema?: any;
 };

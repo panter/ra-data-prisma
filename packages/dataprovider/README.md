@@ -552,8 +552,7 @@ const dataProvider = useDataProvider({
 Now you can override mutation calls with your prefixes
 
 ```ts
-import { Options } from "@ra-data-prisma/dataprovider";
-import { makePrefixedFullName } from "@ra-data-prisma/dataprovider/lib/utils/makePrefixedFullName";
+import { Options, makePrefixedFullName } from "@ra-data-prisma/dataprovider";
 
 const options: Options = {
   queryDialect: "typegraphql",
