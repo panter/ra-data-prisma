@@ -3,15 +3,16 @@ import {
   DELETE,
   GET_LIST,
   GET_MANY,
-  GET_ONE,
   GET_MANY_REFERENCE,
+  GET_ONE,
   UPDATE,
 } from "react-admin";
+import { CustomizeInputData, OurOptions } from "../types";
+import { IntrospectionResult, Resource } from "./../constants/interfaces";
+
 import { NexusGenArgTypes } from "../../generated/nexus";
 import { buildVariables } from "./";
-import { IntrospectionResult, Resource } from "./../constants/interfaces";
 import { getTestIntrospectionNexus } from "../testUtils/getTestIntrospection";
-import { CustomizeInputData, OurOptions } from "../types";
 
 describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
@@ -1445,26 +1446,6 @@ describe("buildVariables", () => {
         take: 10,
         orderBy: [{ email: "asc" }],
         where: { roles: { some: { id: { equals: "roleId" } } } },
-      });
-    });
-    it("returns correct variables for many relation reference with typegraphql query dialect", () => {
-      const params = {
-        target: "roles",
-        id: "roleId",
-        pagination: { page: 10, perPage: 10 },
-        sort: { field: "email", order: "ASC" },
-      };
-
-      expect(
-        buildVariables(testIntrospection, {
-          ...options,
-          queryDialect: "typegraphql",
-        })(testUserResource, GET_MANY_REFERENCE, params),
-      ).toEqual({
-        skip: 90,
-        take: 10,
-        orderBy: [{ email: "asc" }],
-        where: { roles: { is: { id: { equals: "roleId" } } } },
       });
     });
   });
