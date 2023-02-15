@@ -1,6 +1,3 @@
-import { IntrospectionInputObjectType } from "graphql";
-import isNil from "lodash/isNil";
-import isObject from "lodash/isObject";
 import {
   CREATE,
   DELETE,
@@ -10,12 +7,15 @@ import {
   GET_ONE,
   UPDATE,
 } from "react-admin";
-import { buildWhere } from "../buildWhere";
-import { IntrospectionResult, Resource } from "../constants/interfaces";
-import { FetchType, OurOptions } from "../types";
 import { CreateParams, buildData } from "./buildData";
+import { FetchType, OurOptions } from "../types";
+import { IntrospectionResult, Resource } from "../constants/interfaces";
 
+import { IntrospectionInputObjectType } from "graphql";
 import { buildOrderBy } from "./buildOrderBy";
+import { buildWhere } from "../buildWhere";
+import isNil from "lodash/isNil";
+import isObject from "lodash/isObject";
 
 export interface GetListParams {
   filter: { [key: string]: any };
@@ -31,7 +31,6 @@ const buildGetListVariables =
       resource,
       introspectionResults,
       options,
-      aorFetchType,
     );
 
     return {
@@ -155,7 +154,7 @@ export const buildVariables =
       case GET_MANY_REFERENCE: {
         return buildGetListVariables(introspectionResults, options)(
           resource,
-          GET_MANY_REFERENCE,
+          GET_LIST,
           {
             ...params,
             filter: { [params.target]: params.id },
