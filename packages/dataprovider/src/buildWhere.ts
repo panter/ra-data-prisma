@@ -1,19 +1,18 @@
 import {
+  IntrospectionInputObjectType,
+  IntrospectionInputTypeRef,
+} from "graphql";
+import upperFirst from "lodash/upperFirst";
+import isObject from "lodash/isObject";
+import isArray from "lodash/isArray";
+import isEmpty from "lodash/isEmpty";
+import {
   CheckComparisonQueryResult,
   IntrospectionResult,
   Resource,
 } from "./constants/interfaces";
-import {
-  IntrospectionInputObjectType,
-  IntrospectionInputTypeRef,
-} from "graphql";
-
 import { OurOptions } from "./types";
-import isArray from "lodash/isArray";
-import isEmpty from "lodash/isEmpty";
-import isObject from "lodash/isObject";
 import { sanitizeKey } from "./utils/sanitizeKey";
-import upperFirst from "lodash/upperFirst";
 
 const getStringFilter = (
   key: string,

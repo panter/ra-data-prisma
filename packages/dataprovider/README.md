@@ -549,21 +549,42 @@ const dataProvider = useDataProvider({
 
 ### override mutation operation names due to prisma versions breaking changes
 
-Now you can override mutation calls with your prefixes
+You can override operation names depending on the version of typegraphql-prisma you are using:
 
 ```ts
-import { Options, makePrefixedFullName } from "@ra-data-prisma/dataprovider";
+import { CREATE, UPDATE, DELETE } from "react-admin";
+import { Options } from "@ra-data-prisma/dataprovider";
 
 const options: Options = {
   queryDialect: "typegraphql",
   mutationOperationNames: {
     typegraphql: {
-      [CREATE]: (resource: ResourceDataprovider) =>
-        makePrefixedFullName(`createOne${resource.name}`),
-      [UPDATE]: (resource: ResourceDataprovider) =>
-        makePrefixedFullName(`updateOne${resource.name}`),
-      [DELETE]: (resource: ResourceDataprovider) =>
-        makePrefixedFullName(`deleteOne${resource.name}`),
+      [CREATE]: (resource) => `createOne${resource.name}`,
+      [UPDATE]: (resource) => `updateOne${resource.name}`,
+      [DELETE]: (resource) => `deleteOne${resource.name}`,
+    },
+  },
+};
+```
+
+If you are using an alias prefix, be sure to include it in your custom operation names:
+
+```ts
+import { CREATE, UPDATE, DELETE } from "react-admin";
+import { Options, makePrefixedFullName } from "@ra-data-prisma/dataprovider";
+
+const aliasPrefix = "admin";
+
+const prefix = (s: string) => makePrefixedFullName(s, aliasPrefix);
+
+const options: Options = {
+  aliasPrefix,
+  queryDialect: "typegraphql",
+  mutationOperationNames: {
+    typegraphql: {
+      [CREATE]: (resource) => prefix(`createOne${resource.name}`),
+      [UPDATE]: (resource) => prefix(`updateOne${resource.name}`),
+      [DELETE]: (resource) => prefix(`deleteOne${resource.name}`),
     },
   },
 };
