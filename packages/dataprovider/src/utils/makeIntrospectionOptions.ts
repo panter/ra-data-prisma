@@ -1,3 +1,5 @@
+import camelCase from "lodash/camelCase";
+import pluralize from "pluralize";
 import {
   CREATE,
   DELETE,
@@ -7,12 +9,9 @@ import {
   GET_ONE,
   UPDATE,
 } from "react-admin";
-import { OurOptions, QueryDialect } from "../types";
-
 import { Resource } from "../constants/interfaces";
-import camelCase from "lodash/camelCase";
+import { OurOptions, QueryDialect } from "../types";
 import { makePrefixedFullName } from "./makePrefixedFullName";
-import pluralize from "pluralize";
 
 export const makeIntrospectionOptions = (options: OurOptions) => {
   const prefix = (s: string) => makePrefixedFullName(s, options?.aliasPrefix);

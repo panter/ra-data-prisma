@@ -29,6 +29,7 @@
     "generate:test:nexus": "yarn ts-node --project ../../tsconfig-test.json  --transpile-only test-data/buildTestSchemaNexus.ts"
   },
   "devDependencies": {
+    "@types/pluralize": "^0.0.29",
     "prisma": "3.2.1",
     "rimraf": "^3.0.2",
     "ts-node": "~8.9.1",
