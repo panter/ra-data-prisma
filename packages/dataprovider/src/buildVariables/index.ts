@@ -1,3 +1,7 @@
+import { IntrospectionInputObjectType } from "graphql";
+import isNil from "lodash/isNil";
+import isObject from "lodash/isObject";
+
 import {
   CREATE,
   DELETE,
@@ -7,15 +11,11 @@ import {
   GET_ONE,
   UPDATE,
 } from "react-admin";
-import { CreateParams, buildData } from "./buildData";
-import { FetchType, OurOptions } from "../types";
-import { IntrospectionResult, Resource } from "../constants/interfaces";
-
-import { IntrospectionInputObjectType } from "graphql";
-import { buildOrderBy } from "./buildOrderBy";
 import { buildWhere } from "../buildWhere";
-import isNil from "lodash/isNil";
-import isObject from "lodash/isObject";
+import { IntrospectionResult, Resource } from "../constants/interfaces";
+import { FetchType, OurOptions } from "../types";
+import { buildData, CreateParams } from "./buildData";
+import { buildOrderBy } from "./buildOrderBy";
 
 export interface GetListParams {
   filter: { [key: string]: any };

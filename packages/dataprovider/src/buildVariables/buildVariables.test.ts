@@ -3,16 +3,15 @@ import {
   DELETE,
   GET_LIST,
   GET_MANY,
-  GET_MANY_REFERENCE,
   GET_ONE,
+  GET_MANY_REFERENCE,
   UPDATE,
 } from "react-admin";
-import { CustomizeInputData, OurOptions } from "../types";
-import { IntrospectionResult, Resource } from "./../constants/interfaces";
-
 import { NexusGenArgTypes } from "../../generated/nexus";
 import { buildVariables } from "./";
+import { IntrospectionResult, Resource } from "./../constants/interfaces";
 import { getTestIntrospectionNexus } from "../testUtils/getTestIntrospection";
+import { CustomizeInputData, OurOptions } from "../types";
 
 describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
