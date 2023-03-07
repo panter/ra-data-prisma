@@ -17,7 +17,9 @@ describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
   let testBlogPostCommentResource: Resource;
-  const options: OurOptions = {};
+  const options: OurOptions = {
+    queryDialect: "nexus-prisma",
+  };
 
   beforeAll(async () => {
     testIntrospection = await getTestIntrospectionNexus();

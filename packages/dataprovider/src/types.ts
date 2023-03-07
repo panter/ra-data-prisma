@@ -1,5 +1,3 @@
-import { DocumentNode } from "graphql";
-
 import {
   CREATE,
   DELETE,
@@ -9,6 +7,9 @@ import {
   GET_ONE,
   UPDATE,
 } from "react-admin";
+
+import { DocumentNode } from "graphql";
+import { Resource } from "./constants/interfaces";
 
 export type WhiteListFragment = {
   type: "whitelist";
@@ -54,6 +55,16 @@ export type ResourceView = {
   fragment: ResourceViewFragment;
 };
 
+export type MutationFetchType = typeof CREATE | typeof DELETE | typeof UPDATE;
+
+export type MutationOperationNameMap = {
+  [K in MutationFetchType]: (resource: Resource) => string;
+};
+
+export type MutationOperationNames = Partial<
+  Record<QueryDialect, MutationOperationNameMap>
+>;
+
 export type QueryDialect = "nexus-prisma" | "typegraphql";
 
 type Filter = Record<string, unknown>;
@@ -83,16 +94,16 @@ export type ConfigOptions = {
   };
   customizeInputData?: CustomizeInputData;
   introspection?: IntrospectionOptions;
+  mutationOperationNames?: MutationOperationNames;
 };
 
-export type FetchType =
-  | typeof CREATE
-  | typeof DELETE
+export type QueryFetchType =
   | typeof GET_LIST
   | typeof GET_MANY
   | typeof GET_MANY_REFERENCE
-  | typeof GET_ONE
-  | typeof UPDATE;
+  | typeof GET_ONE;
+
+export type FetchType = QueryFetchType | MutationFetchType;
 
 export type VariantOptions = {
   queryDialect?: QueryDialect;
