@@ -62,11 +62,11 @@ export const buildQueryFactory = (
       }
     }
 
-    const variables = buildVariables(introspectionResults, options)(
+    const variables = buildVariables({
+      introspectionResults,
+      options,
       resource,
-      aorFetchType,
-      params,
-    )!;
+    })(aorFetchType, params)!;
 
     if (options.queryDialect === "typegraphql") {
       Object.keys(variables).forEach((key) => {

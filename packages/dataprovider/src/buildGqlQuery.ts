@@ -258,7 +258,7 @@ export default (
     resource: Resource,
     aorFetchType: FetchType,
     variables: { [key: string]: any },
-    fragment: ResourceFragment,
+    fragment?: ResourceFragment | null,
   ) => {
     const queryType = resource[aorFetchType];
     const { queryDialect = "nexus-prisma" } = options;

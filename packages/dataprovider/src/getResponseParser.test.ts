@@ -22,7 +22,7 @@ const testListTypes = (type: FetchType) => {
       await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
 
     const response = {
       data: {
@@ -71,7 +71,7 @@ const testListTypes = (type: FetchType) => {
       await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
 
     const response = {
       data: {
@@ -122,7 +122,7 @@ const testSingleTypes = (type: FetchType) => {
       await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
     const response = {
       data: {
         data: {

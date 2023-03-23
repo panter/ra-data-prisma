@@ -16,6 +16,7 @@ import { IntrospectionResult, Resource } from "../constants/interfaces";
 import { FetchType, OurOptions } from "../types";
 import { buildData, CreateParams } from "./buildData";
 import { buildOrderBy } from "./buildOrderBy";
+import { BuildVariablesContext } from "./types";
 
 export interface GetListParams {
   filter: { [key: string]: any };
@@ -24,32 +25,26 @@ export interface GetListParams {
 }
 
 const buildGetListVariables =
-  (introspectionResults: IntrospectionResult, options: OurOptions) =>
-  (resource: Resource, aorFetchType: FetchType, params: GetListParams) => {
-    const where = buildWhere(
-      params.filter,
-      resource,
-      introspectionResults,
-      options,
-    );
+  (context: BuildVariablesContext) =>
+  (aorFetchType: FetchType, params: GetListParams) => {
+    const where = buildWhere(params.filter, context);
 
     return {
       skip: (params.pagination.page - 1) * params.pagination.perPage,
       take: params.pagination.perPage,
-      orderBy: buildOrderBy(introspectionResults, resource, params?.sort),
+      orderBy: buildOrderBy(params?.sort, context),
       where,
     };
   };
 
 const getId = (
-  introspectionResults: IntrospectionResult,
-  resource: Resource,
+  context: BuildVariablesContext,
   params: any,
 ): string | number => {
   let id: string | number = params.id ?? params.data?.id;
 
-  const type = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}WhereUniqueInput`,
+  const type = context.introspectionResults.types.find(
+    (t) => t.name === `${context.resource.type.name}WhereUniqueInput`,
   );
 
   if (!type || type.kind !== "INPUT_OBJECT") return id;
@@ -70,15 +65,10 @@ const getId = (
 };
 
 const buildGetOneVariables =
-  (introspectionResults: IntrospectionResult, options: OurOptions) =>
-  (
-    resource: Resource,
-
-    params: any,
-  ) => {
+  (context: BuildVariablesContext) => (params: any) => {
     return {
       where: {
-        id: getId(introspectionResults, resource, params),
+        id: getId(context, params),
       },
     };
   };
@@ -90,56 +80,50 @@ export interface UpdateParams {
 }
 
 const buildUpdateVariables =
-  (introspectionResults: IntrospectionResult, options: OurOptions) =>
-  (resource: Resource, params: UpdateParams, parentResource?: Resource) => {
-    const inputType = introspectionResults.types.find(
-      (t) => t.name === `${resource.type.name}UpdateInput`,
+  (context: BuildVariablesContext) =>
+  (params: UpdateParams, parentResource?: Resource) => {
+    const inputType = context.introspectionResults.types.find(
+      (t) => t.name === `${context.resource.type.name}UpdateInput`,
     ) as IntrospectionInputObjectType;
 
-    const id = getId(introspectionResults, resource, params); // TODO: do we still need params.data.id?
+    const id = getId(context, params); // TODO: do we still need params.data.id?
     delete params.data.id;
     delete params.previousData?.id;
-    let data = buildData(inputType, params, introspectionResults);
+    let data = buildData(inputType, params, context);
 
     return {
       where: {
         id,
       },
       data:
-        options?.customizeInputData?.[resource.type.name]?.update?.(
-          data,
-          params.data,
-        ) ?? data,
+        context.options?.customizeInputData?.[
+          context.resource.type.name
+        ]?.update?.(data, params.data) ?? data,
     };
   };
 
 const buildCreateVariables =
-  (introspectionResults: IntrospectionResult, options: OurOptions) =>
-  (resource: Resource, params: CreateParams, parentResource?: Resource) => {
-    const inputType = introspectionResults.types.find(
-      (t) => t.name === `${resource.type.name}CreateInput`,
+  (context: BuildVariablesContext) =>
+  (params: CreateParams, parentResource?: Resource) => {
+    const inputType = context.introspectionResults.types.find(
+      (t) => t.name === `${context.resource.type.name}CreateInput`,
     ) as IntrospectionInputObjectType;
 
-    const data = buildData(inputType, params, introspectionResults);
+    const data = buildData(inputType, params, context);
     return {
       data:
-        options?.customizeInputData?.[resource.type.name]?.create?.(
-          data,
-          params.data,
-        ) ?? data,
+        context.options?.customizeInputData?.[
+          context.resource.type.name
+        ]?.create?.(data, params.data) ?? data,
     };
   };
 
 export const buildVariables =
-  (introspectionResults: IntrospectionResult, options: OurOptions) =>
-  (resource: Resource, aorFetchType: FetchType, params: any) => {
+  (context: BuildVariablesContext) =>
+  (aorFetchType: FetchType, params: any) => {
     switch (aorFetchType) {
       case GET_LIST: {
-        return buildGetListVariables(introspectionResults, options)(
-          resource,
-          aorFetchType,
-          params,
-        );
+        return buildGetListVariables(context)(aorFetchType, params);
       }
       case GET_MANY:
         return {
@@ -152,33 +136,20 @@ export const buildVariables =
           },
         };
       case GET_MANY_REFERENCE: {
-        return buildGetListVariables(introspectionResults, options)(
-          resource,
-          GET_LIST,
-          {
-            ...params,
-            filter: { [params.target]: params.id },
-          },
-        );
+        return buildGetListVariables(context)(GET_LIST, {
+          ...params,
+          filter: { [params.target]: params.id },
+        });
       }
       case GET_ONE: {
-        return buildGetOneVariables(introspectionResults, options)(
-          resource,
-          params,
-        );
+        return buildGetOneVariables(context)(params);
       }
       case UPDATE: {
-        return buildUpdateVariables(introspectionResults, options)(
-          resource,
-          params,
-        );
+        return buildUpdateVariables(context)(params);
       }
 
       case CREATE: {
-        return buildCreateVariables(introspectionResults, options)(
-          resource,
-          params,
-        );
+        return buildCreateVariables(context)(params);
       }
 
       case DELETE:
