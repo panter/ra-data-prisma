@@ -11,7 +11,7 @@ import {
   GET_ONE,
   UPDATE,
 } from "react-admin";
-import { buildWhere } from "../buildWhere";
+import { buildWhere } from "./buildWhere";
 import { IntrospectionResult, Resource } from "../constants/interfaces";
 import { FetchType, OurOptions } from "../types";
 import { buildData, CreateParams } from "./buildData";

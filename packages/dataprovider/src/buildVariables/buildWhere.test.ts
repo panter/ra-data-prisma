@@ -1,8 +1,8 @@
-import { NexusGenArgTypes } from "../generated/nexus";
+import { NexusGenArgTypes } from "../../generated/nexus";
 import { buildWhere } from "./buildWhere";
-import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { getTestIntrospectionNexus } from "./testUtils/getTestIntrospection";
-import { OurOptions } from "./types";
+import { IntrospectionResult, Resource } from "../constants/interfaces";
+import { getTestIntrospectionNexus } from "../testUtils/getTestIntrospection";
+import { OurOptions } from "../types";
 
 describe("buildWhere", () => {
   let testIntrospection: IntrospectionResult;

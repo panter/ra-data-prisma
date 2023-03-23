@@ -10,9 +10,9 @@ import {
   CheckComparisonQueryResult,
   IntrospectionResult,
   Resource,
-} from "./constants/interfaces";
-import { OurOptions } from "./types";
-import { sanitizeKey } from "./utils/sanitizeKey";
+} from "../constants/interfaces";
+import { OurOptions } from "../types";
+import { sanitizeKey } from "../utils/sanitizeKey";
 
 const getStringFilter = (
   key: string,
