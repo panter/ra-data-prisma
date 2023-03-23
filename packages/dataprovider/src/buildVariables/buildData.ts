@@ -151,6 +151,12 @@ const buildNewInputValue = (
         (i) => i.name === ModifiersParams.delete,
       );
 
+      const removeRelationMode = disconnectModifier
+        ? "disconnect"
+        : deleteModifier
+        ? "delete"
+        : null;
+
       if (
         setModifier &&
         !connectModifier &&
@@ -290,9 +296,9 @@ const buildNewInputValue = (
                 return inputs;
               }, []);
               if (removableRelations.length) {
-                if (disconnectModifier) {
+                if (removeRelationMode === "disconnect") {
                   variables.disconnect = removableRelations;
-                } else if (deleteModifier) {
+                } else if (removeRelationMode === "delete") {
                   variables.delete = removableRelations;
                 }
               }
@@ -304,11 +310,11 @@ const buildNewInputValue = (
         } else {
           // disconnect if field data is empty or if its a {id: null} or {id: ""} object
           if (!fieldData || isNullReferenceObject(fieldData)) {
-            if (disconnectModifier) {
+            if (removeRelationMode === "disconnect") {
               return {
                 disconnect: true,
               };
-            } else if (deleteModifier) {
+            } else if (removeRelationMode === "delete") {
               return {
                 delete: true,
               };
