@@ -25,7 +25,7 @@ jobs:
       - run: yarn run test
       - name: semantic release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: 'echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc'
       - run: lerna exec --concurrency 1 -- npx --no-install semantic-release -e semantic-release-monorepo
