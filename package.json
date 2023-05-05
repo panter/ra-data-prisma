@@ -64,5 +64,10 @@
   "dependencies": {},
   "lint-staged": {
     "*.ts": "eslint --cache --fix"
+  },
+  "release": {
+    "branches": [
+      "main"
+    ]
   }
 }
