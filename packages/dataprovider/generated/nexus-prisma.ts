@@ -1,5 +1,5 @@
 import * as Typegen from 'nexus-plugin-prisma/typegen'
-import * as Prisma from '@prisma/client';
+import * as Prisma from '../.prisma';
 
 // Pagination type
 type Pagination = {

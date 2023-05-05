@@ -10,6 +10,7 @@ import {
 } from "nexus-plugin-prisma/dist/dmmf";
 
 import { NexusGenInputs, NexusGenObjects } from "../generated/nexus";
+import { resolve } from "path";
 
 export type NexusInputObjectName = keyof NexusGenInputs;
 
@@ -25,8 +26,9 @@ export type InputObjectTypeConfig<TypeName extends NexusInputObjectName> = {
   filteredFields?: Array<FieldNames<TypeName>>;
   extraDefinition?: (t: InputDefinitionBlock<TypeName>) => void;
 };
+const path = resolve(__dirname, "../.prisma");
 
-const dmmf = getTransformedDmmf("@prisma/client");
+const dmmf = getTransformedDmmf(path);
 
 function installField(t: InputDefinitionBlock<any>) {
   return (field: InternalDMMF.SchemaArg) => {

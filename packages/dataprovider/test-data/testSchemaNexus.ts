@@ -5,7 +5,7 @@ import {
   inputObjectType,
   nonNull,
 } from "nexus";
-import { join } from "path";
+import path, { join } from "path";
 import { nexusSchemaPrisma } from "nexus-plugin-prisma/schema";
 import { addCrudResolvers } from "../../backend/src";
 import "../generated/nexus";
@@ -190,6 +190,9 @@ export const testSchemaNexus = <Prefix extends string>(
     plugins: [
       nexusSchemaPrisma({
         experimentalCRUD: true,
+        inputs: {
+          prismaClient: path.resolve(__dirname, "../.prisma/"),
+        },
         paginationStrategy: "prisma",
         outputs: {
           typegen:

@@ -1,0 +1,112 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../.prisma"
+}
+
+generator typegraphql {
+  provider = "typegraphql-prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRESQL_URL")
+}
+
+model UserRole {
+  id    String @id @default(uuid())
+  name  String
+  users User[]
+}
+
+model Company {
+  id     String @id @default(uuid())
+  name   String
+  user   User   @relation(fields: [userId], references: [id])
+  userId String
+}
+
+model UserSocialMedia {
+  id        String @id @default(uuid())
+  instagram String
+  twitter   String
+  user      User   @relation(fields: [userId], references: [id])
+  userId    String @unique
+}
+
+model BlogPost {
+  id       String            @id @default(uuid())
+  title    String
+  text     String
+  author   User?             @relation(fields: [authorId], references: [id])
+  authorId String?
+  comments BlogPostComment[]
+}
+
+model BlogPostComment {
+  id       String    @id @default(uuid())
+  text     String
+  post     BlogPost? @relation(fields: [postId], references: [id])
+  postId   String?
+  author   User?     @relation(fields: [authorId], references: [id])
+  authorId String?
+}
+
+model Site {
+  id   String @id @default(uuid())
+  name String
+  url  String
+
+  owner  User?   @relation(fields: [userId], references: [id])
+  userId String? @unique
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model User {
+  id              String            @id @default(uuid())
+  email           String            @unique
+  roles           UserRole[]
+  firstName       String?
+  lastName        String?
+  gender          Gender?
+  yearOfBirth     Int?
+  wantsNewsletter Boolean
+  interests       Topic[]
+  userSocialMedia UserSocialMedia?
+  /// @TypeGraphQL.omit(output: true)
+  address         Json?
+  blogPosts       BlogPost[]
+  comments        BlogPostComment[]
+  companies       Company[]
+  weddingDate     DateTime?
+  /// @TypeGraphQL.omit(output: true)
+  site            Site?
+}
+
+model FilteringTest {
+  id             Int      @id @default(autoincrement())
+  intField       Int
+  floatField     Float
+  stringField    String
+  dateTimeField  DateTime
+  boolField      Boolean
+  intField_lt    String
+  intField_bt    Int
+  snake_field    Int
+  snake_field_bt Int
+}
+
+model SomePublicRecordWithIntId {
+  id    Int    @id @default(autoincrement())
+  title String
+}
+
+enum Topic {
+  TOPIC_ONE
+  TOPIC_TWO
+  TOPIC_THREE
+}
