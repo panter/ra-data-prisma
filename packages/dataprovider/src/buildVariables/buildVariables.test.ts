@@ -12,21 +12,40 @@ import { buildVariables } from "./";
 import { IntrospectionResult, Resource } from "./../constants/interfaces";
 import { getTestIntrospectionNexus } from "../testUtils/getTestIntrospection";
 import { CustomizeInputData, OurOptions } from "../types";
+import { BuildVariablesContext } from "./types";
 
 describe("buildVariables", () => {
   let testIntrospection: IntrospectionResult;
   let testUserResource: Resource;
   let testBlogPostCommentResource: Resource;
-  const options: OurOptions = {};
+  const options: OurOptions = {
+    queryDialect: "nexus-prisma",
+  };
+
+  let userContext: BuildVariablesContext;
+
+  let blogPostCommentContext: BuildVariablesContext;
 
   beforeAll(async () => {
     testIntrospection = await getTestIntrospectionNexus();
     testUserResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    )!;
     testBlogPostCommentResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "BlogPostComment",
-    );
+    )!;
+
+    userContext = {
+      introspectionResults: testIntrospection,
+      options,
+      resource: testUserResource,
+    };
+
+    blogPostCommentContext = {
+      introspectionResults: testIntrospection,
+      options,
+      resource: testBlogPostCommentResource,
+    };
   });
 
   describe("GET_LIST", () => {
@@ -41,11 +60,7 @@ describe("buildVariables", () => {
           firstName: "fooBar",
         },
       };
-      const result = buildVariables(testIntrospection, options)(
-        testUserResource,
-        GET_LIST,
-        params,
-      );
+      const result = buildVariables(userContext)(GET_LIST, params);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]>({
         where: {
@@ -80,11 +95,7 @@ describe("buildVariables", () => {
         pagination: { page: 1, perPage: 10 },
         sort: { field: "text", order: "ASC" },
       };
-      const result = buildVariables(testIntrospection, options)(
-        testBlogPostCommentResource,
-        GET_LIST,
-        params,
-      );
+      const result = buildVariables(blogPostCommentContext)(GET_LIST, params);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["blogPostComments"]>({
         take: 10,
@@ -104,11 +115,7 @@ describe("buildVariables", () => {
         pagination: { page: 1, perPage: 10 },
         sort: { field: "post.text", order: "ASC" },
       };
-      const result = buildVariables(testIntrospection, options)(
-        testBlogPostCommentResource,
-        GET_LIST,
-        params,
-      );
+      const result = buildVariables(blogPostCommentContext)(GET_LIST, params);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["blogPostComments"]>({
         take: 10,
@@ -130,11 +137,7 @@ describe("buildVariables", () => {
         pagination: { page: 1, perPage: 10 },
         sort: { field: "post.author.firstName", order: "DESC" },
       };
-      const result = buildVariables(testIntrospection, options)(
-        testBlogPostCommentResource,
-        GET_LIST,
-        params,
-      );
+      const result = buildVariables(blogPostCommentContext)(GET_LIST, params);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["blogPostComments"]>({
         take: 10,
@@ -164,13 +167,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -191,13 +190,9 @@ describe("buildVariables", () => {
           weddingDate: "2020-06-25",
         },
       };
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -221,13 +216,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           wantsNewsletter: true,
           email: "albert.einstein@patentamt-bern.ch",
@@ -248,13 +239,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -278,13 +265,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -293,6 +276,29 @@ describe("buildVariables", () => {
           userSocialMedia: {
             connect: { id: "socialId" },
           },
+        },
+      });
+    });
+
+    it("create a new entity and ignores null references or empty strings", () => {
+      const params = {
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
+          userSocialMedia_id: "",
+        },
+      };
+
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
+        data: {
+          email: "albert.einstein@patentamt-bern.ch",
+          firstName: "Albert",
+          lastName: "Einstein",
+          wantsNewsletter: false,
         },
       });
     });
@@ -308,13 +314,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -338,13 +340,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -368,13 +366,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -398,13 +392,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -428,13 +418,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -457,13 +443,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testBlogPostCommentResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneBlogPostComment"]>({
+      expect(buildVariables(blogPostCommentContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneBlogPostComment"]
+      >({
         data: {
           text: "The body of the comment",
           post: { connect: { id: "postId" } },
@@ -483,13 +465,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -517,13 +495,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          CREATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+      expect(buildVariables(userContext)(CREATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["createOneUser"]
+      >({
         data: {
           email: "albert.einstein@patentamt-bern.ch",
           firstName: "Albert",
@@ -572,12 +546,17 @@ describe("buildVariables", () => {
           },
         };
 
-        expect(
-          buildVariables(testIntrospection, {
+        const context: BuildVariablesContext = {
+          ...userContext,
+          options: {
             ...options,
             customizeInputData,
-          })(testUserResource, CREATE, params),
-        ).toEqual<NexusGenArgTypes["Mutation"]["createOneUser"]>({
+          },
+        };
+
+        expect(buildVariables(context)(CREATE, params)).toEqual<
+          NexusGenArgTypes["Mutation"]["createOneUser"]
+        >({
           data: {
             email: "albert.einstein@patentamt-bern.ch",
             firstName: "Albert",
@@ -616,13 +595,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           lastName: { set: "Zweistein" },
@@ -638,13 +613,9 @@ describe("buildVariables", () => {
           weddingDate: "2020-06-25",
         },
       };
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           weddingDate: { set: date },
@@ -654,7 +625,7 @@ describe("buildVariables", () => {
 
     // one
 
-    it("update an entity and change the relation", () => {
+    it("update an entity and change the relation when objects with new id is passed", () => {
       const params = {
         data: {
           id: "einstein",
@@ -665,13 +636,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           userSocialMedia: {
@@ -681,7 +648,114 @@ describe("buildVariables", () => {
       });
     });
 
-    it("update an entity and update also it's related entity", () => {
+    it("disconnects an entity if id is null", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: { id: null },
+        },
+        previousData: {
+          userSocialMedia: { id: "oldId" },
+        },
+      };
+
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            disconnect: true,
+          },
+        },
+      });
+    });
+    it("disconnects an entity if id is empty string", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia: { id: "" },
+        },
+        previousData: {
+          userSocialMedia: { id: "oldId" },
+        },
+      };
+
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            disconnect: true,
+          },
+        },
+      });
+    });
+
+    it("disconnects an entity if id is null when using _id suffix", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia_id: null,
+        },
+        previousData: {
+          userSocialMedia_id: "oldId",
+        },
+      };
+
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            disconnect: true,
+          },
+        },
+      });
+    });
+
+    it("update an entity and change the relation when _id suffixed field is passed", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia_id: "newId",
+        },
+        previousData: {
+          userSocialMedia_id: "oldId",
+        },
+      };
+
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
+        where: { id: "einstein" },
+        data: {
+          userSocialMedia: {
+            connect: { id: "newId" },
+          },
+        },
+      });
+    });
+    it("throws when both suffixed and non suffixed version is passed", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          userSocialMedia_id: "newId",
+          userSocialMedia: {
+            id: "newId",
+          },
+        },
+        previousData: {
+          userSocialMedia_id: "oldId",
+        },
+      };
+      const func = () => buildVariables(userContext)(UPDATE, params);
+      expect(func).toThrow();
+    });
+
+    it("update an entity and update also it's related entity when id is the same", () => {
       const params = {
         data: {
           id: "einstein",
@@ -700,13 +774,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           userSocialMedia: {
@@ -741,13 +811,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           userSocialMedia: {
@@ -767,13 +833,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           userSocialMedia: {
@@ -793,13 +855,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           site: {
@@ -821,13 +879,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           roles: {
@@ -863,13 +917,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           roles: {
@@ -900,13 +950,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           roles: {
@@ -937,13 +983,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           roles: {
@@ -960,6 +1002,30 @@ describe("buildVariables", () => {
                 },
               },
             ],
+          },
+        },
+      });
+    });
+
+    it("update an entity and connects and disconnects entities when _ids array is passed", () => {
+      const params = {
+        data: {
+          id: "einstein",
+          roles_ids: ["professor", "husband", "human"],
+        },
+        previousData: {
+          roles_ids: ["human", "student"],
+        },
+      };
+
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
+        where: { id: "einstein" },
+        data: {
+          roles: {
+            connect: [{ id: "professor" }, { id: "husband" }],
+            disconnect: [{ id: "student" }],
           },
         },
       });
@@ -983,13 +1049,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           roles: {
@@ -1022,13 +1084,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           interests: {
@@ -1057,13 +1115,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           address: {
@@ -1086,13 +1140,9 @@ describe("buildVariables", () => {
         },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          UPDATE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+      expect(buildVariables(userContext)(UPDATE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["updateOneUser"]
+      >({
         where: { id: "einstein" },
         data: {
           blogPosts: {
@@ -1137,12 +1187,17 @@ describe("buildVariables", () => {
           },
         };
 
-        expect(
-          buildVariables(testIntrospection, {
+        const context: BuildVariablesContext = {
+          ...userContext,
+          options: {
             ...options,
             customizeInputData,
-          })(testUserResource, UPDATE, params),
-        ).toEqual<NexusGenArgTypes["Mutation"]["updateOneUser"]>({
+          },
+        };
+
+        expect(buildVariables(context)(UPDATE, params)).toEqual<
+          NexusGenArgTypes["Mutation"]["updateOneUser"]
+        >({
           where: {
             id: "einstein",
           },
@@ -1175,13 +1230,9 @@ describe("buildVariables", () => {
         id: "some-id",
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          GET_ONE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Query"]["user"]>({
+      expect(buildVariables(userContext)(GET_ONE, params)).toEqual<
+        NexusGenArgTypes["Query"]["user"]
+      >({
         where: { id: "some-id" },
       });
     });
@@ -1194,10 +1245,16 @@ describe("buildVariables", () => {
         (r) =>
           r.type.kind === "OBJECT" &&
           r.type.name === "SomePublicRecordWithIntId",
-      );
-      expect(
-        buildVariables(testIntrospection, options)(resource, GET_ONE, params),
-      ).toEqual<NexusGenArgTypes["Query"]["somePublicRecordWithIntId"]>({
+      )!;
+
+      const context: BuildVariablesContext = {
+        resource,
+        introspectionResults: testIntrospection,
+        options,
+      };
+      expect(buildVariables(context)(GET_ONE, params)).toEqual<
+        NexusGenArgTypes["Query"]["somePublicRecordWithIntId"]
+      >({
         where: { id: 1234 },
       });
     });
@@ -1209,12 +1266,14 @@ describe("buildVariables", () => {
         (r) =>
           r.type.kind === "OBJECT" &&
           r.type.name === "SomePublicRecordWithIntId",
-      );
-      const result = buildVariables(testIntrospection, options)(
+      )!;
+      const context: BuildVariablesContext = {
         resource,
-        GET_ONE,
-        params,
-      );
+        introspectionResults: testIntrospection,
+        options,
+      };
+
+      const result = buildVariables(context)(GET_ONE, params);
       expect(result).toEqual<
         NexusGenArgTypes["Query"]["somePublicRecordWithIntId"]
       >({
@@ -1228,13 +1287,9 @@ describe("buildVariables", () => {
       const params = {
         ids: ["einstein", "rosen", "penrose"],
       };
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          GET_MANY,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Query"]["users"]>({
+      expect(buildVariables(userContext)(GET_MANY, params)).toEqual<
+        NexusGenArgTypes["Query"]["users"]
+      >({
         where: { id: { in: ["einstein", "rosen", "penrose"] } },
       });
     });
@@ -1249,13 +1304,9 @@ describe("buildVariables", () => {
         sort: { field: "email", order: "ASC" },
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          GET_MANY_REFERENCE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Query"]["users"]>({
+      expect(buildVariables(userContext)(GET_MANY_REFERENCE, params)).toEqual<
+        NexusGenArgTypes["Query"]["users"]
+      >({
         skip: 90,
         take: 10,
         orderBy: [{ email: "asc" }],
@@ -1270,13 +1321,9 @@ describe("buildVariables", () => {
         id: "some-id",
       };
 
-      expect(
-        buildVariables(testIntrospection, options)(
-          testUserResource,
-          DELETE,
-          params,
-        ),
-      ).toEqual<NexusGenArgTypes["Mutation"]["deleteOneUser"]>({
+      expect(buildVariables(userContext)(DELETE, params)).toEqual<
+        NexusGenArgTypes["Mutation"]["deleteOneUser"]
+      >({
         where: { id: "some-id" },
       });
     });

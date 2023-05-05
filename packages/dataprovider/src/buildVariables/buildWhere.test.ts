@@ -1,8 +1,9 @@
-import { NexusGenArgTypes } from "../generated/nexus";
+import { NexusGenArgTypes } from "../../generated/nexus";
+import { OurOptions } from "../types";
 import { buildWhere } from "./buildWhere";
-import { IntrospectionResult, Resource } from "./constants/interfaces";
-import { getTestIntrospectionNexus } from "./testUtils/getTestIntrospection";
-import { OurOptions } from "./types";
+import { IntrospectionResult, Resource } from "../constants/interfaces";
+import { getTestIntrospectionNexus } from "../testUtils/getTestIntrospection";
+import { BuildVariablesContext } from "./types";
 
 describe("buildWhere", () => {
   let testIntrospection: IntrospectionResult;
@@ -11,17 +12,39 @@ describe("buildWhere", () => {
   let testFilterResource: Resource;
   const options: OurOptions = {};
 
+  let userContext: BuildVariablesContext;
+  let filterContext: BuildVariablesContext;
+
+  let blogPostContext: BuildVariablesContext;
+
   beforeAll(async () => {
     testIntrospection = await getTestIntrospectionNexus();
     testUserResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
     testBlogPostResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "BlogPost",
-    );
+    ) as Resource;
     testFilterResource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "FilteringTest",
-    );
+    ) as Resource;
+
+    userContext = {
+      introspectionResults: testIntrospection,
+      options,
+      resource: testUserResource,
+    };
+    filterContext = {
+      introspectionResults: testIntrospection,
+      options,
+      resource: testFilterResource,
+    };
+
+    blogPostContext = {
+      introspectionResults: testIntrospection,
+      options,
+      resource: testBlogPostResource,
+    };
   });
 
   describe("can handle true case insensitive string search", () => {
@@ -29,12 +52,7 @@ describe("buildWhere", () => {
       const filter = {
         firstName: "fooBar",
       };
-      const result = buildWhere(
-        filter,
-        testUserResource,
-        testIntrospection,
-        options,
-      );
+      const result = buildWhere(filter, userContext);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
         firstName: {
@@ -60,12 +78,12 @@ describe("buildWhere", () => {
         firstName: "aBc",
       };
 
-      const result = buildWhere(
-        filter,
-        testUserResource,
-        oldPrismaTestIntrospection,
-        options,
-      );
+      const oldPrismaContext: BuildVariablesContext = {
+        ...userContext,
+        introspectionResults: oldPrismaTestIntrospection,
+      };
+
+      const result = buildWhere(filter, oldPrismaContext);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
         OR: [
@@ -94,12 +112,7 @@ describe("buildWhere", () => {
         const filter = {
           intField_gt: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -113,12 +126,7 @@ describe("buildWhere", () => {
         const filter = {
           intField_bt: "12", // "bigger than"
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -132,12 +140,7 @@ describe("buildWhere", () => {
         const filter = {
           snake_field_gt: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -151,12 +154,7 @@ describe("buildWhere", () => {
         const filter = {
           snake_field_bt: "12", // "bigger than"
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -172,12 +170,7 @@ describe("buildWhere", () => {
         const filter = {
           intField: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -191,12 +184,7 @@ describe("buildWhere", () => {
         const filter = {
           intField_bt: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -210,12 +198,7 @@ describe("buildWhere", () => {
         const filter = {
           myIntField_gt: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -225,12 +208,7 @@ describe("buildWhere", () => {
         const filter = {
           boolField_gt: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -242,12 +220,7 @@ describe("buildWhere", () => {
             value: "12",
           },
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -257,12 +230,7 @@ describe("buildWhere", () => {
         const filter = {
           intField_gt: ["12", "13"],
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -273,12 +241,7 @@ describe("buildWhere", () => {
       const filter = {
         intField_lt: "12",
       };
-      const result = buildWhere(
-        filter,
-        testFilterResource,
-        testIntrospection,
-        options,
-      );
+      const result = buildWhere(filter, filterContext);
 
       // intField is Int
       // intField_lt is String
@@ -296,12 +259,7 @@ describe("buildWhere", () => {
         boolField_equals: "true",
       };
 
-      const result = buildWhere(
-        filter,
-        testFilterResource,
-        testIntrospection,
-        options,
-      );
+      const result = buildWhere(filter, filterContext);
 
       expect(result).toEqual<
         NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -317,12 +275,7 @@ describe("buildWhere", () => {
           stringField_equals: "aBc",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -338,12 +291,7 @@ describe("buildWhere", () => {
           stringField_gt: "aBc",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -359,12 +307,7 @@ describe("buildWhere", () => {
           stringField_gte: "aBc",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -380,12 +323,7 @@ describe("buildWhere", () => {
           stringField_lt: "aBc",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -401,12 +339,7 @@ describe("buildWhere", () => {
           stringField_lte: "aBc",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -422,12 +355,7 @@ describe("buildWhere", () => {
           stringField_contains: "aBc",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -443,12 +371,7 @@ describe("buildWhere", () => {
           stringField_startsWith: "aBc",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -464,12 +387,7 @@ describe("buildWhere", () => {
           stringField_endsWith: "aBc",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -487,12 +405,7 @@ describe("buildWhere", () => {
           intField_equals: "12",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -506,12 +419,7 @@ describe("buildWhere", () => {
         const filter = {
           intField_gt: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -525,12 +433,7 @@ describe("buildWhere", () => {
         const filter = {
           intField_gte: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -544,12 +447,7 @@ describe("buildWhere", () => {
         const filter = {
           intField_lt: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -563,12 +461,7 @@ describe("buildWhere", () => {
         const filter = {
           intField_lte: "12",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -585,12 +478,7 @@ describe("buildWhere", () => {
           floatField_equals: "12.34",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -604,12 +492,7 @@ describe("buildWhere", () => {
         const filter = {
           floatField_gt: "12.34",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -623,12 +506,7 @@ describe("buildWhere", () => {
         const filter = {
           floatField_gte: "12.34",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -642,12 +520,7 @@ describe("buildWhere", () => {
         const filter = {
           floatField_lt: "12.34",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -661,12 +534,7 @@ describe("buildWhere", () => {
         const filter = {
           floatField_lte: "12.34",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -683,12 +551,7 @@ describe("buildWhere", () => {
           dateTimeField_equals: "2020-12-30",
         };
 
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -702,12 +565,7 @@ describe("buildWhere", () => {
         const filter = {
           dateTimeField_gt: "2020-12-30",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -721,12 +579,7 @@ describe("buildWhere", () => {
         const filter = {
           dateTimeField_gte: "2020-12-30",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -740,12 +593,7 @@ describe("buildWhere", () => {
         const filter = {
           dateTimeField_lt: "2020-12-30",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -759,12 +607,7 @@ describe("buildWhere", () => {
         const filter = {
           dateTimeField_lte: "2020-12-30",
         };
-        const result = buildWhere(
-          filter,
-          testFilterResource,
-          testIntrospection,
-          options,
-        );
+        const result = buildWhere(filter, filterContext);
 
         expect(result).toEqual<
           NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -782,12 +625,7 @@ describe("buildWhere", () => {
       floatField: "12.34",
     };
 
-    const result = buildWhere(
-      filter,
-      testFilterResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, filterContext);
 
     expect(result).toEqual<
       NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -803,12 +641,7 @@ describe("buildWhere", () => {
       dateTimeField: "2020-12-30",
     };
 
-    const result = buildWhere(
-      filter,
-      testFilterResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, filterContext);
 
     expect(result).toEqual<
       NexusGenArgTypes["Query"]["filteringTests"]["where"]
@@ -824,12 +657,7 @@ describe("buildWhere", () => {
     const filter = {
       yearOfBirth: 1879,
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       yearOfBirth: {
@@ -842,12 +670,7 @@ describe("buildWhere", () => {
     const filter = {
       wantsNewsletter: true,
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       wantsNewsletter: {
@@ -860,12 +683,7 @@ describe("buildWhere", () => {
     const filter = {
       yearOfBirth: [1879, 1920],
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       OR: [
         {
@@ -908,12 +726,7 @@ describe("buildWhere", () => {
         },
       ],
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       AND: [
@@ -968,12 +781,7 @@ describe("buildWhere", () => {
         },
       ],
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       AND: [
@@ -1020,12 +828,7 @@ describe("buildWhere", () => {
       yearOfBirth: [1879, 1920],
       firstName: ["albert", "niels"],
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       AND: [
         {
@@ -1067,12 +870,7 @@ describe("buildWhere", () => {
       gender: "MALE",
     };
 
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       gender: {
@@ -1086,12 +884,7 @@ describe("buildWhere", () => {
       gender: ["MALE", "FEMALE"],
     };
 
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       OR: [
@@ -1113,12 +906,7 @@ describe("buildWhere", () => {
     const filter = {
       userSocialMedia: "foo",
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       userSocialMedia: {
@@ -1134,12 +922,7 @@ describe("buildWhere", () => {
       userSocialMedia: ["foo", "bar"],
     };
 
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       userSocialMedia: {
@@ -1154,12 +937,7 @@ describe("buildWhere", () => {
     const filter = {
       author: "einstein-id",
     };
-    const result = buildWhere(
-      filter,
-      testBlogPostResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, blogPostContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
       author: {
@@ -1175,12 +953,7 @@ describe("buildWhere", () => {
       author: ["einstein-id", "oppenheimer-id"],
     };
 
-    const result = buildWhere(
-      filter,
-      testBlogPostResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, blogPostContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["blogPosts"]["where"]>({
       author: {
@@ -1196,12 +969,7 @@ describe("buildWhere", () => {
       roles: "admin",
     };
 
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       roles: {
@@ -1219,12 +987,7 @@ describe("buildWhere", () => {
       roles: ["admin", "member"],
     };
 
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       roles: {
@@ -1246,12 +1009,7 @@ describe("buildWhere", () => {
       },
     };
 
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       roles: {
@@ -1277,12 +1035,7 @@ describe("buildWhere", () => {
       },
     };
 
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       roles: {
@@ -1307,12 +1060,7 @@ describe("buildWhere", () => {
       },
     };
 
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       yearOfBirth: {
@@ -1337,12 +1085,7 @@ describe("buildWhere", () => {
         },
       ],
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       OR: [
@@ -1372,12 +1115,7 @@ describe("buildWhere", () => {
         },
       ],
     };
-    const result = buildWhere(
-      filter,
-      testUserResource,
-      testIntrospection,
-      options,
-    );
+    const result = buildWhere(filter, userContext);
 
     expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
       NOT: [
@@ -1395,12 +1133,7 @@ describe("buildWhere", () => {
       const filter = {
         q: "stein",
       };
-      const result = buildWhere(
-        filter,
-        testUserResource,
-        testIntrospection,
-        options,
-      );
+      const result = buildWhere(filter, userContext);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
         AND: [
@@ -1433,12 +1166,7 @@ describe("buildWhere", () => {
       const filter = {
         q: "albert stein",
       };
-      const result = buildWhere(
-        filter,
-        testUserResource,
-        testIntrospection,
-        options,
-      );
+      const result = buildWhere(filter, userContext);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
         AND: [
@@ -1493,12 +1221,7 @@ describe("buildWhere", () => {
       const filter = {
         q: "albert 1879",
       };
-      const result = buildWhere(
-        filter,
-        testUserResource,
-        testIntrospection,
-        options,
-      );
+      const result = buildWhere(filter, userContext);
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
         AND: [
@@ -1558,7 +1281,7 @@ describe("buildWhere", () => {
 
   describe("custom filters", () => {
     it("supports custom filters", () => {
-      const options: OurOptions = {
+      const customOptions: OurOptions = {
         filters: {
           millenials: (millenials?: boolean) =>
             millenials === true
@@ -1594,13 +1317,17 @@ describe("buildWhere", () => {
               : undefined,
         },
       };
+
+      const context: BuildVariablesContext = {
+        ...userContext,
+        options: customOptions,
+      };
+
       const result = buildWhere(
         {
           millenials: true,
         },
-        testUserResource,
-        testIntrospection,
-        options,
+        context,
       );
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
@@ -1621,9 +1348,7 @@ describe("buildWhere", () => {
         {
           millenials: false,
         },
-        testUserResource,
-        testIntrospection,
-        options,
+        context,
       );
 
       expect(result2).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
@@ -1644,15 +1369,13 @@ describe("buildWhere", () => {
         {
           millenials: null,
         },
-        testUserResource,
-        testIntrospection,
-        options,
+        context,
       );
 
       expect(result3).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({});
     });
     it("custom filters work alongside other filters", () => {
-      const options: OurOptions = {
+      const customOptions: OurOptions = {
         filters: {
           millenials: (millenials?: boolean) =>
             millenials === true
@@ -1688,14 +1411,17 @@ describe("buildWhere", () => {
               : undefined,
         },
       };
+
+      const context: BuildVariablesContext = {
+        ...userContext,
+        options: customOptions,
+      };
       const result = buildWhere(
         {
           millenials: true,
           firstName: "Albert",
         },
-        testUserResource,
-        testIntrospection,
-        options,
+        context,
       );
 
       expect(result).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
@@ -1727,9 +1453,7 @@ describe("buildWhere", () => {
           millenials: false,
           firstName: "Albert",
         },
-        testUserResource,
-        testIntrospection,
-        options,
+        context,
       );
 
       expect(result2).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({
@@ -1761,9 +1485,7 @@ describe("buildWhere", () => {
           millenials: null,
           firstName: "Albert",
         },
-        testUserResource,
-        testIntrospection,
-        options,
+        context,
       );
 
       expect(result3).toEqual<NexusGenArgTypes["Query"]["users"]["where"]>({

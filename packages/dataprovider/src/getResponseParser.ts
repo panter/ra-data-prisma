@@ -5,11 +5,7 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 import { FetchType, QueryDialect } from "./types";
 
 const sanitizeResource =
-  (
-    introspectionResults: IntrospectionResult,
-    resource: Resource,
-    shouldSanitizeLinkedResources: boolean = true,
-  ) =>
+  (introspectionResults: IntrospectionResult, resource: Resource) =>
   (data: { [key: string]: any } = {}): any => {
     return Object.keys(data).reduce((acc, key) => {
       if (key.startsWith("_")) {
@@ -24,25 +20,23 @@ const sanitizeResource =
       if (type.kind !== TypeKind.OBJECT) {
         return { ...acc, [field.name]: data[field.name] };
       }
-
-      // FIXME: We might have to handle linked types which are not resources but will have to be careful about endless circular dependencies
-      const linkedResource = introspectionResults.resources.find(
-        (r) => r.type.name === type.name,
-      );
-
-      if (shouldSanitizeLinkedResources && linkedResource) {
-        const linkedResourceData = data[field.name];
-
-        if (Array.isArray(linkedResourceData)) {
-          return {
-            ...acc,
-            [field.name]: data[field.name].map((obj) => obj.id),
-          };
-        }
-
+      // if the field contains an array of object with ids, we add a field field_ids to the data
+      if (
+        Array.isArray(data[field.name]) &&
+        data[field.name]?.every((c) => c.id)
+      ) {
         return {
           ...acc,
-          [field.name]: data[field.name]?.id,
+          [field.name]: data[field.name],
+          [`${field.name}_ids`]: data[field.name].map((c) => c.id),
+        };
+      }
+      // similarly if its an object with id
+      if (data[field.name]?.id) {
+        return {
+          ...acc,
+          [field.name]: data[field.name],
+          [`${field.name}_id`]: data[field.name].id,
         };
       }
 
@@ -52,18 +46,11 @@ const sanitizeResource =
 
 export default (
     introspectionResults: IntrospectionResult,
-    {
-      shouldSanitizeLinkedResources = true,
-      queryDialect,
-    }: { shouldSanitizeLinkedResources?: boolean; queryDialect: QueryDialect },
+    { queryDialect }: { queryDialect: QueryDialect },
   ) =>
   (aorFetchType: FetchType, resource: Resource) =>
   (response: { [key: string]: any }) => {
-    const sanitize = sanitizeResource(
-      introspectionResults,
-      resource,
-      shouldSanitizeLinkedResources,
-    );
+    const sanitize = sanitizeResource(introspectionResults, resource);
     const data = response.data;
 
     const getTotal = () => {

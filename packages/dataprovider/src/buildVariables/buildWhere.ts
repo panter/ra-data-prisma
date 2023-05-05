@@ -2,16 +2,16 @@ import {
   IntrospectionInputObjectType,
   IntrospectionInputTypeRef,
 } from "graphql";
-import upperFirst from "lodash/upperFirst";
-import isObject from "lodash/isObject";
 import isArray from "lodash/isArray";
 import isEmpty from "lodash/isEmpty";
+import isObject from "lodash/isObject";
+import upperFirst from "lodash/upperFirst";
 import {
   CheckComparisonQueryResult,
   IntrospectionResult,
-  Resource,
-} from "./constants/interfaces";
-import { OurOptions } from "./types";
+} from "../constants/interfaces";
+import { sanitizeKey } from "../utils/sanitizeKey";
+import { BuildVariablesContext } from "./types";
 
 const getStringFilter = (
   key: string,
@@ -246,22 +246,21 @@ const getFilters = (
   _key: string,
   value: any,
   whereType: IntrospectionInputObjectType,
-  introspectionResults: IntrospectionResult,
-  options: OurOptions,
+  context: BuildVariablesContext,
 ) => {
-  const hasCaseInsensitive = supportsCaseInsensitive(introspectionResults);
+  const hasCaseInsensitive = supportsCaseInsensitive(
+    context.introspectionResults,
+  );
   const { originalKey, key, comparator } = processKey(_key);
-  if (options.filters?.[originalKey]) {
-    return options.filters[originalKey](value) ?? {}; // null values are transformed to empty objects
+  if (context.options.filters?.[originalKey]) {
+    return context.options.filters[originalKey](value) ?? {}; // null values are transformed to empty objects
   }
   if (key === "NOT" || key === "OR" || key === "AND") {
     return {
       [key]:
         value === null
           ? null
-          : value.map((f) =>
-              buildWhereWithType(f, introspectionResults, options, whereType),
-            ),
+          : value.map((f) => buildWhereWithType(f, whereType, context)),
     };
   }
 
@@ -271,7 +270,7 @@ const getFilters = (
     value,
     comparator,
     whereType,
-    introspectionResults,
+    context.introspectionResults,
   );
   if (comparisonPossible) {
     if (isBooleanFilter(comparisonFieldType)) {
@@ -408,12 +407,11 @@ const getFilters = (
 
   if (fieldType.kind === "INPUT_OBJECT") {
     // we asume for the moment that this is always a relation
-    const inputObjectType = introspectionResults.types.find(
+    const inputObjectType = context.introspectionResults.types.find(
       (t) => t.name === fieldType.name,
     ) as IntrospectionInputObjectType;
 
     if (!isObject(value)) {
-      //console.log({ inputObjectType });
       const hasSomeFilter = inputObjectType.inputFields.some(
         (s) => s.name === "some",
       );
@@ -462,12 +460,7 @@ const getFilters = (
     } else {
       // its something nested
 
-      const where = buildWhereWithType(
-        value,
-        introspectionResults,
-        options,
-        inputObjectType,
-      );
+      const where = buildWhereWithType(value, inputObjectType, context);
       return { [originalKey]: where };
     }
   }
@@ -484,37 +477,26 @@ type Filter = {
 
 const buildWhereWithType = (
   filter: Filter,
-  introspectionResults: IntrospectionResult,
-  options: OurOptions,
   whereType: IntrospectionInputObjectType,
+  context: BuildVariablesContext,
 ) => {
   const hasAnd = whereType.inputFields.some((i) => i.name === "AND");
   const where = hasAnd
     ? Object.keys(filter ?? {}).reduce(
-        (acc, key) => {
+        (acc, keyRaw) => {
+          const value = filter[keyRaw];
+          const key = sanitizeKey(keyRaw);
           // defaults to AND
-          const filters = getFilters(
-            key,
-            filter[key],
-            whereType,
-
-            introspectionResults,
-            options,
-          );
+          const filters = getFilters(key, value, whereType, context);
 
           return { ...acc, AND: [...acc.AND, filters] };
         },
         { AND: [] },
       )
-    : Object.keys(filter ?? {}).reduce((acc, key) => {
-        const filters = getFilters(
-          key,
-          filter[key],
-          whereType,
-
-          introspectionResults,
-          options,
-        );
+    : Object.keys(filter ?? {}).reduce((acc, keyRaw) => {
+        const value = filter[keyRaw];
+        const key = sanitizeKey(keyRaw);
+        const filters = getFilters(key, value, whereType, context);
 
         return { ...acc, ...filters };
       }, {});
@@ -532,15 +514,10 @@ const buildWhereWithType = (
   }
   return where;
 };
-export const buildWhere = (
-  filter: Filter,
-  resource: Resource,
-  introspectionResults: IntrospectionResult,
-  options: OurOptions,
-) => {
-  const whereType = introspectionResults.types.find(
-    (t) => t.name === `${resource.type.name}WhereInput`,
+export const buildWhere = (filter: Filter, context: BuildVariablesContext) => {
+  const whereType = context.introspectionResults.types.find(
+    (t) => t.name === `${context.resource.type.name}WhereInput`,
   ) as IntrospectionInputObjectType;
 
-  return buildWhereWithType(filter, introspectionResults, options, whereType);
+  return buildWhereWithType(filter, whereType, context);
 };

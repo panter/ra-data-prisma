@@ -1,15 +1,14 @@
-import { buildQueryFactory } from "./buildQuery";
-import gql from "plain-tag";
 import gqlReal from "graphql-tag";
+import gql from "plain-tag";
+import { defaultOurOptions } from "./buildDataProvider";
+import { buildQueryFactory } from "./buildQuery";
 import { GetListParams } from "./buildVariables";
 import { IntrospectionResult, Resource } from "./constants/interfaces";
 import {
   getTestIntrospectionNexus,
   getTestIntrospectionTypeGraphql,
 } from "./testUtils/getTestIntrospection";
-
 import "./testUtils/testTypes";
-import { defaultOurOptions } from "./buildDataProvider";
 
 describe("buildQueryFactory", () => {
   let testIntrospectionNexus: IntrospectionResult;
@@ -54,7 +53,9 @@ describe("buildQueryFactory", () => {
           resourceViews: {
             AirplaneWithManufacturer: {
               resource: "Airplane",
-              fragment: gqlReal`
+              fragment: {
+                type: "document",
+                doc: gqlReal`
                 fragment AirplaneWithManufacturer on Airplane {
                   id
                   manufacturer {
@@ -62,6 +63,7 @@ describe("buildQueryFactory", () => {
                   }
                 }
               `,
+              },
             },
           },
         })("GET_LIST", "AirplaneWithManufacturer", {} as any),
@@ -183,7 +185,139 @@ describe("buildQueryFactory", () => {
       `);
     });
 
-    it("allows to use a single custom virtual view resources for one and many", () => {
+    it("allows to use a custom fragment (document) for one and many", () => {
+      const buildQuery = buildQueryFactory(testIntrospectionNexus, {
+        ...defaultOurOptions,
+        resourceViews: {
+          UserWithTwitter: {
+            resource: "User",
+            fragment: {
+              type: "document",
+              doc: gqlReal`
+              fragment UserWithTwitter on User {
+                id
+                userSocialMedia {
+                  twitter
+                }
+              }
+            `,
+            },
+          },
+        },
+      });
+
+      const { query } = buildQuery("GET_LIST", "UserWithTwitter", {
+        pagination: {
+          page: 1,
+          perPage: 50,
+        },
+        filter: {},
+        sort: {},
+      } as GetListParams);
+
+      expect(query).toEqualGraphql(gql`
+        query users(
+          $where: UserWhereInput
+          $orderBy: [UserOrderByWithRelationInput!]
+          $take: Int
+          $skip: Int
+        ) {
+          items: users(
+            where: $where
+            orderBy: $orderBy
+            take: $take
+            skip: $skip
+          ) {
+            id
+            userSocialMedia {
+              twitter
+            }
+          }
+          total: usersCount(where: $where)
+        }
+      `);
+    });
+
+    it("allows to use a custom fragment (document) that extends the default", () => {
+      const buildQuery = buildQueryFactory(testIntrospectionNexus, {
+        ...defaultOurOptions,
+        resourceViews: {
+          UserWithTwitter: {
+            resource: "User",
+            fragment: {
+              type: "document",
+              mode: "extend",
+              doc: gqlReal`
+              fragment UserWithTwitter on User {
+                userSocialMedia {
+                  twitter
+                }
+              }
+            `,
+            },
+          },
+        },
+      });
+
+      const { query } = buildQuery("GET_LIST", "UserWithTwitter", {
+        pagination: {
+          page: 1,
+          perPage: 50,
+        },
+        filter: {},
+        sort: {},
+      } as GetListParams);
+
+      expect(query).toEqualGraphql(gql`
+        query users(
+          $where: UserWhereInput
+          $orderBy: [UserOrderByWithRelationInput!]
+          $take: Int
+          $skip: Int
+        ) {
+          items: users(
+            where: $where
+            orderBy: $orderBy
+            take: $take
+            skip: $skip
+          ) {
+            id
+            email
+            firstName
+            lastName
+            yearOfBirth
+            roles {
+              id
+            }
+            gender
+            wantsNewsletter
+
+            blogPosts {
+              id
+            }
+            comments {
+              id
+            }
+            companies {
+              id
+            }
+            interests
+            weddingDate
+            address {
+              street
+              city
+              countryCode
+            }
+            userSocialMedia {
+              twitter
+            }
+          }
+          total: usersCount(where: $where)
+        }
+      `);
+    });
+
+    it("allows to use a document directly without type, but this is deprecated (legacy)", () => {
       const buildQuery = buildQueryFactory(testIntrospectionNexus, {
         ...defaultOurOptions,
         resourceViews: {
@@ -192,7 +326,7 @@ describe("buildQueryFactory", () => {
             fragment: gqlReal`
               fragment UserWithTwitter on User {
                 id
-                socialMedia {
+                userSocialMedia {
                   twitter
                 }
               }
@@ -224,7 +358,7 @@ describe("buildQueryFactory", () => {
             skip: $skip
           ) {
             id
-            socialMedia {
+            userSocialMedia {
               twitter
             }
           }
@@ -233,7 +367,7 @@ describe("buildQueryFactory", () => {
       `);
     });
 
-    describe("allows to use different custom virtual view resources", () => {
+    describe("allows to use different fragments for one and many", () => {
       it("for get one fetch", () => {
         const buildQuery = buildQueryFactory(testIntrospectionNexus, {
           ...defaultOurOptions,
@@ -241,7 +375,9 @@ describe("buildQueryFactory", () => {
             UserWithTwitter: {
               resource: "User",
               fragment: {
-                one: gqlReal`
+                one: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
                     userSocialMedia {
@@ -249,7 +385,10 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
-                many: gqlReal`
+                },
+                many: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment ManyUsersWithTwitter on User {
                     id
                     email
@@ -259,6 +398,7 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
+                },
               },
             },
           },
@@ -284,7 +424,9 @@ describe("buildQueryFactory", () => {
             UserWithTwitter: {
               resource: "User",
               fragment: {
-                one: gqlReal`
+                one: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
                     userSocialMedia {
@@ -292,7 +434,10 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
-                many: gqlReal`
+                },
+                many: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment ManyUsersWithTwitter on User {
                     id
                     email
@@ -302,6 +447,7 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
+                },
               },
             },
           },
@@ -347,7 +493,9 @@ describe("buildQueryFactory", () => {
             UserWithTwitter: {
               resource: "User",
               fragment: {
-                one: gqlReal`
+                one: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
                     userSocialMedia {
@@ -355,7 +503,10 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
-                many: gqlReal`
+                },
+                many: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment ManyUsersWithTwitter on User {
                     id
                     email
@@ -365,6 +516,7 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
+                },
               },
             },
           },
@@ -414,7 +566,9 @@ describe("buildQueryFactory", () => {
             CompanyWithUser: {
               resource: "Company",
               fragment: {
-                one: gqlReal`
+                one: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment OneCompanyWithUser on Company {
                     id
                     user {
@@ -423,7 +577,10 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
-                many: gqlReal`
+                },
+                many: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment ManyCompaniesWithUser on Company {
                     id
                     user {
@@ -432,6 +589,7 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
+                },
               },
             },
           },
@@ -481,7 +639,9 @@ describe("buildQueryFactory", () => {
             UserWithTwitter: {
               resource: "User",
               fragment: {
-                one: gqlReal`
+                one: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
                     userSocialMedia {
@@ -489,7 +649,10 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
-                many: gqlReal`
+                },
+                many: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment ManyUsersWithTwitter on User {
                     id
                     email
@@ -499,6 +662,7 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
+                },
               },
             },
           },
@@ -539,7 +703,9 @@ describe("buildQueryFactory", () => {
             UserWithTwitter: {
               resource: "User",
               fragment: {
-                one: gqlReal`
+                one: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
                     userSocialMedia {
@@ -547,7 +713,10 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
-                many: gqlReal`
+                },
+                many: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment ManyUsersWithTwitter on User {
                     id
                     email
@@ -557,6 +726,7 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
+                },
               },
             },
           },
@@ -587,7 +757,9 @@ describe("buildQueryFactory", () => {
             UserWithTwitter: {
               resource: "User",
               fragment: {
-                one: gqlReal`
+                one: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment OneUserWithTwitter on User {
                     id
                     userSocialMedia {
@@ -595,7 +767,10 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
-                many: gqlReal`
+                },
+                many: {
+                  type: "document",
+                  doc: gqlReal`
                   fragment ManyUsersWithTwitter on User {
                     id
                     email
@@ -605,6 +780,7 @@ describe("buildQueryFactory", () => {
                     }
                   }
                 `,
+                },
               },
             },
           },
@@ -652,7 +828,9 @@ describe("buildQueryFactory", () => {
                 resource: "User",
                 // @ts-ignore
                 fragment: {
-                  one: gqlReal`
+                  one: {
+                    type: "document",
+                    doc: gqlReal`
                     fragment OneUserWithTwitter on User {
                       id
                       userSocialMedia {
@@ -660,6 +838,7 @@ describe("buildQueryFactory", () => {
                       }
                     }
                   `,
+                  },
                 },
               },
             },

@@ -43,10 +43,10 @@ describe("buildGqlQuery", () => {
 
     testUserResourceNexus = testIntrospectionNexus.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
     testUserResourceTypeGraphql = testIntrospectionTypeGraphql.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
   });
 
   describe("getArgType", () => {
@@ -639,7 +639,7 @@ describe("buildGqlQuery", () => {
         });
         testUserResourceNexus = testIntrospectionNexus.resources.find(
           (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-        );
+        ) as Resource;
       });
 
       it("allows to prefix all queries with a prefix", () => {

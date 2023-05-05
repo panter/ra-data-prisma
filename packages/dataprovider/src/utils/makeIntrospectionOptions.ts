@@ -27,6 +27,7 @@ export const makeIntrospectionOptions = (options: OurOptions) => {
       [UPDATE]: (resource: Resource) => prefix(`update${resource.name}`),
       [DELETE]: (resource: Resource) => prefix(`delete${resource.name}`),
     },
+    ...options.mutationOperationNames,
   };
 
   return {

@@ -1,4 +1,3 @@
-import { debug } from "console";
 import {
   IntrospectionInputObjectType,
   IntrospectionInputTypeRef,
@@ -8,12 +7,14 @@ import {
   IntrospectionNonNullTypeRef,
   IntrospectionTypeRef,
 } from "graphql";
+import { uniq } from "lodash";
 import isEqual from "lodash/isEqual";
 import isNil from "lodash/isNil";
 import isObject from "lodash/isObject";
-import { IntrospectionResult } from "../constants/interfaces";
 import exhaust from "../utils/exhaust";
 import getFinalType from "../utils/getFinalType";
+import { getSanitizedFieldData, hasFieldData } from "./sanitizeData";
+import { BuildVariablesContext } from "./types";
 
 enum ModifiersParams {
   connect = "connect",
@@ -50,7 +51,7 @@ export type UpdateManyInput = {
 
 const getCreateInputDataTypeForList = (
   createModifier: IntrospectionInputValue,
-  introspectionResults: IntrospectionResult,
+  context: BuildVariablesContext,
 ) => {
   const createListModifierType =
     createModifier.type as IntrospectionListTypeRef<
@@ -60,14 +61,14 @@ const getCreateInputDataTypeForList = (
     createListModifierType.ofType.kind === "NON_NULL"
       ? createListModifierType.ofType.ofType
       : createListModifierType.ofType;
-  return introspectionResults.types.find(
+  return context.introspectionResults.types.find(
     // what about a nullable type?
     (t) => t.name === createInputFieldType.name,
   ) as IntrospectionInputObjectType;
 };
 const getUpdateInputDataTypeForList = (
   updateModifier: IntrospectionInputValue,
-  introspectionResults: IntrospectionResult,
+  context: BuildVariablesContext,
 ) => {
   const updateListModifierType =
     updateModifier.type as IntrospectionListTypeRef<
@@ -75,7 +76,7 @@ const getUpdateInputDataTypeForList = (
     >;
   const updateInputFieldType = getFinalType(updateListModifierType.ofType);
   const updateListInputDataType = (
-    introspectionResults.types.find(
+    context.introspectionResults.types.find(
       (introdspectionType) =>
         introdspectionType.name === updateInputFieldType.name,
     ) as IntrospectionInputObjectType
@@ -88,7 +89,7 @@ const getUpdateInputDataTypeForList = (
       : updateListInputDataType) as IntrospectionNamedTypeRef
   ).name;
 
-  return introspectionResults.types.find(
+  return context.introspectionResults.types.find(
     (introdspectionType) => introdspectionType.name === updateListInputDataName,
   ) as IntrospectionInputObjectType;
 };
@@ -97,14 +98,19 @@ type ThingWithId = {
   id: string;
 };
 function isObjectWithId(data: any): data is ThingWithId {
-  return Boolean(data?.id);
+  if (!data) return false;
+  if (!isObject(data)) return false;
+  return "id" in data;
 }
+
+const isNullReferenceObject = (data: any) =>
+  isObjectWithId(data) && (data.id === null || data.id === "");
 const buildNewInputValue = (
   fieldData: any,
   previousFieldData: any,
   fieldName: string,
   fieldType: IntrospectionInputTypeRef,
-  introspectionResults: IntrospectionResult,
+  context: BuildVariablesContext,
 ) => {
   const kind = fieldType.kind;
 
@@ -125,7 +131,7 @@ const buildNewInputValue = (
     case "INPUT_OBJECT": {
       const fieldObjectType = fieldType as IntrospectionInputObjectType;
 
-      const fullFieldObjectType = introspectionResults.types.find(
+      const fullFieldObjectType = context.introspectionResults.types.find(
         (t) => t.name === fieldObjectType.name,
       ) as IntrospectionInputObjectType;
 
@@ -144,6 +150,12 @@ const buildNewInputValue = (
       const deleteModifier = fullFieldObjectType?.inputFields.find(
         (i) => i.name === ModifiersParams.delete,
       );
+
+      const removeRelationMode = disconnectModifier
+        ? "disconnect"
+        : deleteModifier
+        ? "delete"
+        : null;
 
       if (
         setModifier &&
@@ -184,14 +196,11 @@ const buildNewInputValue = (
           if (Array.isArray(fieldData)) {
             const createListInputType = getCreateInputDataTypeForList(
               createModifier,
-              introspectionResults,
+              context,
             );
 
             const updateListInputType = updateModifier
-              ? getUpdateInputDataTypeForList(
-                  updateModifier,
-                  introspectionResults,
-                )
+              ? getUpdateInputDataTypeForList(updateModifier, context)
               : null;
 
             const variables = fieldData.reduce<UpdateManyInput>(
@@ -223,7 +232,7 @@ const buildNewInputValue = (
                             },
                           ),
                         },
-                        introspectionResults,
+                        context,
                       );
                       if (Object.keys(data).length) {
                         inputs.update = [
@@ -239,7 +248,7 @@ const buildNewInputValue = (
                       {
                         data: referencedField,
                       },
-                      introspectionResults,
+                      context,
                     );
                     inputs.create = [...(inputs.create || []), data];
                   }
@@ -284,9 +293,9 @@ const buildNewInputValue = (
                 return inputs;
               }, []);
               if (removableRelations.length) {
-                if (disconnectModifier) {
+                if (removeRelationMode === "disconnect") {
                   variables.disconnect = removableRelations;
-                } else if (deleteModifier) {
+                } else if (removeRelationMode === "delete") {
                   variables.delete = removableRelations;
                 }
               }
@@ -296,16 +305,19 @@ const buildNewInputValue = (
             throw new Error(`${fieldName} should be an array`);
           }
         } else {
-          if (!fieldData) {
-            if (disconnectModifier) {
+          // disconnect if field data is empty or if its a {id: null} or {id: ""} object
+          if (!fieldData || isNullReferenceObject(fieldData)) {
+            if (removeRelationMode === "disconnect") {
               return {
                 disconnect: true,
               };
-            } else if (deleteModifier) {
+            } else if (removeRelationMode === "delete") {
               return {
                 delete: true,
               };
             }
+            // else skip it
+            return;
           }
 
           if (isObject(fieldData)) {
@@ -317,9 +329,10 @@ const buildNewInputValue = (
               const createObjectModifierType = getFinalType(
                 createModifier.type,
               );
-              const createObjectInputType = introspectionResults.types.find(
-                (t) => t.name === createObjectModifierType.name,
-              ) as IntrospectionInputObjectType;
+              const createObjectInputType =
+                context.introspectionResults.types.find(
+                  (t) => t.name === createObjectModifierType.name,
+                ) as IntrospectionInputObjectType;
 
               // create
               const data = buildData(
@@ -327,7 +340,7 @@ const buildNewInputValue = (
                 {
                   data: fieldData,
                 },
-                introspectionResults,
+                context,
               );
               return { create: data };
             } else {
@@ -338,9 +351,10 @@ const buildNewInputValue = (
                 const updateObjectModifierType = getFinalType(
                   updateModifier.type,
                 );
-                const updateObjectInputType = introspectionResults.types.find(
-                  (t) => t.name === updateObjectModifierType.name,
-                ) as IntrospectionInputObjectType;
+                const updateObjectInputType =
+                  context.introspectionResults.types.find(
+                    (t) => t.name === updateObjectModifierType.name,
+                  ) as IntrospectionInputObjectType;
 
                 // update
                 const data = buildData(
@@ -350,7 +364,7 @@ const buildNewInputValue = (
                     data: fieldData,
                     previousData: previousFieldData,
                   },
-                  introspectionResults,
+                  context,
                 );
                 return { update: data };
               } else if (connectModifier) {
@@ -378,34 +392,61 @@ const buildNewInputValue = (
 export const buildData = (
   inputType: IntrospectionInputObjectType,
   params: UpdateParams | CreateParams,
-  introspectionResults: IntrospectionResult,
+  context: BuildVariablesContext,
 ) => {
   if (!inputType) {
     return {};
   }
+  const data = params.data;
+  const previousData = "previousData" in params ? params.previousData : null;
+
+  const allKeys = uniq([
+    ...Object.keys(data),
+    ...Object.keys(previousData ?? {}),
+  ]);
+
+  // we only deal with the changedData set
+  const changedData = Object.fromEntries(
+    allKeys
+      .filter((key) => {
+        if (!previousData) {
+          return true;
+        }
+        const value = data[key];
+        const previousValue = previousData[key];
+        if (isEqual(value, previousValue)) {
+          return false; // remove
+        }
+        if (isNil(value) && isNil(previousValue)) {
+          return false;
+        }
+        return true;
+      })
+      .map((key) => [key, data[key]]),
+  );
   return inputType.inputFields.reduce((acc, field) => {
-    const key = field.name;
-    const fieldType =
-      field.type.kind === "NON_NULL" ? field.type.ofType : field.type;
-    const fieldData = params.data[key];
-    //console.log(key, fieldData, fieldType);
-    const previousFieldData =
-      (params as UpdateParams)?.previousData?.[key] ?? null;
-    // TODO in case the content of the array has changed but not the array itself?
-    if (
-      isEqual(fieldData, previousFieldData) ||
-      (isNil(previousFieldData) && isNil(fieldData))
-    ) {
+    // ignore unchanged field
+    if (!hasFieldData(changedData, field)) {
       return acc;
     }
+    const fieldType =
+      field.type.kind === "NON_NULL" ? field.type.ofType : field.type;
+    // we have to handle the convenience convention that adds _id(s)  to the data
+    // the sanitize function merges that with other data
+    const { fieldData, previousFieldData } = getSanitizedFieldData(
+      changedData,
+      previousData,
+      field,
+    );
 
     const newVaue = buildNewInputValue(
-      params.data[key],
+      fieldData,
       previousFieldData,
       field.name,
       fieldType,
-      introspectionResults,
+      context,
     );
+    const key = field.name;
 
     return {
       ...acc,

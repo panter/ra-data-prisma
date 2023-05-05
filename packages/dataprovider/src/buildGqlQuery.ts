@@ -15,7 +15,7 @@ import { IntrospectionResult, Resource } from "./constants/interfaces";
 import {
   BlackListFragment,
   FetchType,
-  isDocumentNodeFragment,
+  isDeprecatedDocumentNodeFragment,
   ResourceFragment,
   WhiteListFragment,
 } from "./types";
@@ -213,6 +213,43 @@ const filterFields = (
   });
 };
 
+const buildFieldsForFragment = (
+  resource: Resource,
+  aorFetchType: FetchType,
+  fragment: ResourceFragment,
+  buildDefaultFields: () => FieldNode[],
+) => {
+  if (isDeprecatedDocumentNodeFragment(fragment)) {
+    console.warn(
+      "defining document fragment directly is deprecated, use `type: 'document', doc: gql`...`` instead",
+    );
+    return buildFieldsFromFragment(fragment, resource.type.name, aorFetchType);
+  }
+
+  if (fragment.type === "document") {
+    const fragmentFields = buildFieldsFromFragment(
+      fragment.doc,
+      resource.type.name,
+      aorFetchType,
+    );
+    if (fragment.mode === "extend") {
+      const defaultFields = buildDefaultFields();
+
+      const filteredDefaultFields = defaultFields.filter(
+        (field) =>
+          !fragmentFields.some(
+            (ff) => ff.kind === "Field" && ff.name.value === field.name.value,
+          ),
+      );
+      return [...filteredDefaultFields, ...fragmentFields];
+    }
+    return fragmentFields; // replace
+  }
+
+  /** blaclist or whitelist**/
+  return filterFields(buildDefaultFields(), fragment);
+};
+
 export default (
     introspectionResults: IntrospectionResult,
     options = defaultOurOptions,
@@ -221,7 +258,7 @@ export default (
     resource: Resource,
     aorFetchType: FetchType,
     variables: { [key: string]: any },
-    fragment: ResourceFragment,
+    fragment?: ResourceFragment | null,
   ) => {
     const queryType = resource[aorFetchType];
     const { queryDialect = "nexus-prisma" } = options;
@@ -237,14 +274,17 @@ export default (
     const args = buildArgs(queryType, variables);
     const countArgs = buildArgs(queryType, countVariables);
 
-    const buildRawFields = () =>
+    const buildDefaultFields = () =>
       buildFields(introspectionResults)((resource.type as any).fields);
+
     const fields = fragment
-      ? isDocumentNodeFragment(fragment) // its a document node
-        ? buildFieldsFromFragment(fragment, resource.type.name, aorFetchType)
-        : /** blaclist or whitelist**/
-          filterFields(buildRawFields(), fragment)
-      : buildRawFields();
+      ? buildFieldsForFragment(
+          resource,
+          aorFetchType,
+          fragment,
+          buildDefaultFields,
+        )
+      : buildDefaultFields();
 
     const totals = {
       "nexus-prisma": (): FieldNode => {

@@ -1,4 +1,3 @@
-import { TypeKind } from "graphql";
 import {
   GET_LIST,
   GET_MANY,
@@ -23,7 +22,7 @@ const testListTypes = (type: FetchType) => {
       await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
 
     const response = {
       data: {
@@ -31,20 +30,12 @@ const testListTypes = (type: FetchType) => {
           {
             id: "user1",
             firstName: "firstName1",
-            roles: [
-              {
-                id: "admin",
-              },
-            ],
+            roles: [{ id: "admin" }],
           },
           {
             id: "post2",
             firstName: "firstName2",
-            roles: [
-              {
-                id: "admin",
-              },
-            ],
+            roles: [{ id: "admin" }],
           },
         ],
         total: 100,
@@ -61,12 +52,14 @@ const testListTypes = (type: FetchType) => {
         {
           id: "user1",
           firstName: "firstName1",
-          roles: ["admin"],
+          roles: [{ id: "admin" }],
+          roles_ids: ["admin"],
         },
         {
           id: "post2",
           firstName: "firstName2",
-          roles: ["admin"],
+          roles: [{ id: "admin" }],
+          roles_ids: ["admin"],
         },
       ],
       total: 100,
@@ -78,7 +71,7 @@ const testListTypes = (type: FetchType) => {
       await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
 
     const response = {
       data: {
@@ -86,20 +79,12 @@ const testListTypes = (type: FetchType) => {
           {
             id: "user1",
             firstName: "firstName1",
-            roles: [
-              {
-                id: "admin",
-              },
-            ],
+            roles: [{ id: "admin" }],
           },
           {
             id: "post2",
             firstName: "firstName2",
-            roles: [
-              {
-                id: "admin",
-              },
-            ],
+            roles: [{ id: "admin" }],
           },
         ],
         total: { _count: { _all: 100 } },
@@ -116,12 +101,14 @@ const testListTypes = (type: FetchType) => {
         {
           id: "user1",
           firstName: "firstName1",
-          roles: ["admin"],
+          roles: [{ id: "admin" }],
+          roles_ids: ["admin"],
         },
         {
           id: "post2",
           firstName: "firstName2",
-          roles: ["admin"],
+          roles: [{ id: "admin" }],
+          roles_ids: ["admin"],
         },
       ],
       total: 100,
@@ -135,17 +122,13 @@ const testSingleTypes = (type: FetchType) => {
       await getTestIntrospectionNexus();
     const testUserResource: Resource = testIntrospection.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    ) as Resource;
     const response = {
       data: {
         data: {
           id: "user1",
           firstName: "firstName1",
-          roles: [
-            {
-              id: "admin",
-            },
-          ],
+          roles: [{ id: "admin" }],
         },
       },
     };
@@ -158,7 +141,8 @@ const testSingleTypes = (type: FetchType) => {
       data: {
         id: "user1",
         firstName: "firstName1",
-        roles: ["admin"],
+        roles: [{ id: "admin" }],
+        roles_ids: ["admin"],
       },
     });
   });

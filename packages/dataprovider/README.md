@@ -126,11 +126,9 @@ const UserFilter = (props) => (
 
 If you have relations, you can use `ReferenceArrayField/Input` or `Referenceinput/Field`. Make sure that the reference Model is also compatible (by calling `addCrudResolvers("MyReferenceModel")` from `@ra-data-prisma/backend` on your backend).
 
-### Sorting by relations
+Make sure to add the suffix `_id` or `_ids` (if its an array field) to the `source` property.
 
-`<List />`s can be sorted by relations. [Enable it in the backend](../backend#enable-sort-by-relation)
-
-#### some examples:
+#### Examples:
 
 _show a list of cities with the country_
 
@@ -140,7 +138,11 @@ export const CityList = (props) => (
     <Datagrid>
       <TextField source="id" />
       <TextField source="name" />
-      <ReferenceField label="Country" source="country" reference="Country">
+      <ReferenceField
+        label="Country"
+        source="country_id" // <-- suffix _id
+        reference="Country"
+      >
         <TextField source="name" />
       </ReferenceField>
       <EditButton />
@@ -160,7 +162,7 @@ export const UserList = (props) => (
       <ReferenceArrayField
         alwaysOn
         label="Roles"
-        source="roles"
+        source="roles_ids" // <-- suffix _ids because it is an array field
         reference="UserRole"
       >
         <SingleFieldList>
@@ -182,7 +184,7 @@ export const UserEdit = (props) => (
       <TextInput source="userName" />
       <ReferenceArrayInput
         label="Roles"
-        source="roles"
+        source="roles_ids" // <-- suffix _ids because it is an array field
         reference="UserRole"
         allowEmpty
         fullWidth
@@ -193,6 +195,10 @@ export const UserEdit = (props) => (
   </Edit>
 );
 ```
+
+### Sorting by relations
+
+`<List />`s can be sorted by relations. [Enable it in the backend](../backend#enable-sort-by-relation)
 
 ### Customize fetching & virtual Resources
 
@@ -291,12 +297,14 @@ buildGraphQLProvider({
 });
 ```
 
-#### Fragment type DocumentNode
+#### Fragment type "document"
 
 You can use graphql Fragments (DocumentNode) to presicely select fields.
 This is more verbose than using blacklists / whitelists,
 but enables you to deeply select fields. Additionaly your IDE can typecheck the fragment
 (e.g. when using the apollo extension in vscode).
+
+By default, the fragment replaces the default fields.
 
 ```ts
 import gql from "graphql-tag";
@@ -307,21 +315,55 @@ buildGraphQLProvider({
     Users: {
       resource: "Users",
       fragment: {
-        many: gql`
-          fragment OneUserWithTwitter on User {
-            id
-            firstName
-            lastName
-            userSocialMedia {
-              twitter
+        many: {
+          type: "document",
+          // mode: "replace" <--- that is the default
+          doc: gql`
+            fragment OneUserWithTwitter on User {
+              id
+              firstName
+              lastName
+              userSocialMedia {
+                twitter
+              }
             }
-          }
-        `,
+          `,
+        },
       },
     },
   },
 });
 ```
+
+If you want to extend the default fields with a fragment, use `mode: "extend"` instead:
+
+```ts
+import gql from "graphql-tag";
+
+buildGraphQLProvider({
+  clientOptions: { uri: "/api/graphql" } as any,
+  resourceViews: {
+    Users: {
+      resource: "Users",
+      fragment: {
+        many: {
+          type: "document",
+          mode: "extend" // <---
+          doc: gql`
+            fragment OneUserWithTwitter on User {
+              userSocialMedia {
+                twitter
+              }
+            }
+          `,
+        },
+      },
+    },
+  },
+});
+```
+
+this will fetch all default fields plus the fields of the fragment. If the fragment declares a field with the same name as a default field, the fragment's field replaces the default one.
 
 #### Virtual Resources
 
@@ -335,52 +377,58 @@ buildGraphQLProvider({
     ParticipantsToInvoice: {
       resource: "ChallengeParticipation",
       fragment: {
-        one: gql`
-          fragment OneBilling on ChallengeParticipation {
-            challenge {
-              title
-            }
-            user {
-              email
-              firstname
-              lastname
-              school {
-                name
-                address
-                city {
+        one: {
+          type: "document",
+          doc: gql`
+            fragment OneBilling on ChallengeParticipation {
+              challenge {
+                title
+              }
+              user {
+                email
+                firstname
+                lastname
+                school {
                   name
-                  zipCode
-                  canton {
-                    id
+                  address
+                  city {
+                    name
+                    zipCode
+                    canton {
+                      id
+                    }
                   }
                 }
               }
-            }
-            teamsCount
-            teams {
-              name
-            }
-          }
-        `,
-        many: gql`
-          fragment ManyBillings on ChallengeParticipation {
-            challenge {
-              title
-            }
-            user {
-              email
-              firstname
-              lastname
-              school {
+              teamsCount
+              teams {
                 name
-                address
               }
             }
-            teams {
-              name
+          `,
+        },
+        many: {
+          type: "document",
+          doc: gql`
+            fragment ManyBillings on ChallengeParticipation {
+              challenge {
+                title
+              }
+              user {
+                email
+                firstname
+                lastname
+                school {
+                  name
+                  address
+                }
+              }
+              teams {
+                name
+              }
             }
-          }
-        `,
+          `,
+        },
       },
     },
   },
@@ -497,4 +545,47 @@ const dataProvider = useDataProvider({
     clientOptions: { uri: "/graphql" }
     queryDialect: "typegraphql" // 👈
 })
+```
+
+### override mutation operation names due to prisma versions breaking changes
+
+You can override operation names depending on the version of typegraphql-prisma you are using:
+
+```ts
+import { CREATE, UPDATE, DELETE } from "react-admin";
+import { Options } from "@ra-data-prisma/dataprovider";
+
+const options: Options = {
+  queryDialect: "typegraphql",
+  mutationOperationNames: {
+    typegraphql: {
+      [CREATE]: (resource) => `createOne${resource.name}`,
+      [UPDATE]: (resource) => `updateOne${resource.name}`,
+      [DELETE]: (resource) => `deleteOne${resource.name}`,
+    },
+  },
+};
+```
+
+If you are using an alias prefix, be sure to include it in your custom operation names:
+
+```ts
+import { CREATE, UPDATE, DELETE } from "react-admin";
+import { Options, makePrefixedFullName } from "@ra-data-prisma/dataprovider";
+
+const aliasPrefix = "admin";
+
+const prefix = (s: string) => makePrefixedFullName(s, aliasPrefix);
+
+const options: Options = {
+  aliasPrefix,
+  queryDialect: "typegraphql",
+  mutationOperationNames: {
+    typegraphql: {
+      [CREATE]: (resource) => prefix(`createOne${resource.name}`),
+      [UPDATE]: (resource) => prefix(`updateOne${resource.name}`),
+      [DELETE]: (resource) => prefix(`deleteOne${resource.name}`),
+    },
+  },
+};
 ```

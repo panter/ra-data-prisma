@@ -19,7 +19,9 @@ const typegenPath = (p: string) => {
   return process.env.PWD && join(process.env.PWD, p);
 };
 
-export const testSchemaNexus = (options: CommonOptions) => {
+export const testSchemaNexus = <Prefix extends string>(
+  options: CommonOptions<Prefix>,
+) => {
   const User = objectType({
     name: "User",
     definition(t) {

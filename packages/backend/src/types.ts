@@ -1,40 +1,67 @@
 import * as Helpers from "nexus-plugin-prisma/src/typegen/helpers";
-import { GetNexusPrisma } from "nexus-plugin-prisma/src/typegen/static";
+import { BaseRelationOptions } from "nexus-plugin-prisma/typegen";
 
-type Arg0<T extends (...args: any) => any> = Parameters<T>[0];
-type CustomizeOpt<T extends (...args: any) => any> = (
-  config: Exclude<Arg0<T>, undefined>,
-) => Arg0<T>;
+type Prefix<What extends string, Prefix extends string> = Prefix extends ``
+  ? Uncapitalize<What>
+  : `${Prefix}${Capitalize<What>}`;
 
-type QueryCrud = GetNexusPrisma<"Query", "crud">;
-type MutationCrud = GetNexusPrisma<"Mutation", "crud">;
+type MutationConfig<
+  MutationName extends string,
+  AliasPrefix extends string,
+  ModelName extends keyof Helpers.GetGen<"outputs"> & string,
+> = BaseRelationOptions<
+  "Mutation",
+  Prefix<ModelName, MutationName>,
+  Prefix<Prefix<ModelName, MutationName>, AliasPrefix>,
+  ModelName
+>;
 
 export type Customize<
+  AliasPrefix extends string,
   ModelName extends keyof Helpers.GetGen<"outputs"> & string,
-  ModelNamePlural = `${Uncapitalize<ModelName>}s`,
+  ModelNamePlural extends string = `${Uncapitalize<ModelName>}s`,
+  One = BaseRelationOptions<
+    "Query",
+    Uncapitalize<ModelName>,
+    Prefix<ModelName, AliasPrefix>,
+    ModelName
+  >,
+  Many = BaseRelationOptions<
+    "Query",
+    Uncapitalize<ModelNamePlural>,
+    Prefix<ModelNamePlural, AliasPrefix>,
+    ModelName
+  >,
+  CreateOne = MutationConfig<"createOne", AliasPrefix, ModelName>,
+  UpdateOne = MutationConfig<"updateOne", AliasPrefix, ModelName>,
+  UpdateMany = MutationConfig<"updateMany", AliasPrefix, ModelName>,
+  UpsertOne = MutationConfig<"upsertOne", AliasPrefix, ModelName>,
+  DeleteOne = MutationConfig<"deleteOne", AliasPrefix, ModelName>,
+  DeleteMany = MutationConfig<"deleteMany", AliasPrefix, ModelName>,
 > = {
-  one?: CustomizeOpt<QueryCrud[Uncapitalize<ModelName>]>;
-  many?: CustomizeOpt<QueryCrud[ModelNamePlural]>;
-  createOne?: CustomizeOpt<MutationCrud[`createOne${Capitalize<ModelName>}`]>;
-  updateOne?: CustomizeOpt<MutationCrud[`updateOne${Capitalize<ModelName>}`]>;
-  updateMany?: CustomizeOpt<MutationCrud[`updateMany${Capitalize<ModelName>}`]>;
-  upsertOne?: CustomizeOpt<MutationCrud[`upsertOne${Capitalize<ModelName>}`]>;
-  deleteOne?: CustomizeOpt<MutationCrud[`deleteOne${Capitalize<ModelName>}`]>;
-  deleteMany?: CustomizeOpt<MutationCrud[`deleteMany${Capitalize<ModelName>}`]>;
+  one?: (config: One) => One;
+  many?: (config: Many) => Many;
+  createOne?: (config: CreateOne) => CreateOne;
+  updateOne?: (config: UpdateOne) => UpdateOne;
+  updateMany?: (config: UpdateMany) => UpdateMany;
+  upsertOne?: (config: UpsertOne) => UpsertOne;
+  deleteOne?: (config: DeleteOne) => DeleteOne;
+  deleteMany?: (config: DeleteMany) => DeleteMany;
 };
 
-export type CommonOptions = {
-  aliasPrefix?: string;
+export type CommonOptions<AliasPrefix extends string> = {
+  aliasPrefix?: AliasPrefix;
   enableOrderByRelation?: boolean;
 };
 export type ResourceOptions<
+  AliasPrefix extends string,
   ModelName extends keyof Helpers.GetGen<"outputs"> & string,
 > = {
   /**
    * whether to display a warning to secure the mutations and resolvers (defaults to true)
    */
   printSecurityWarning?: boolean;
-  aliasPrefix?: string;
-  customize?: Customize<ModelName>;
+  aliasPrefix?: AliasPrefix;
+  customize?: Customize<AliasPrefix, ModelName>;
   enableOrderByRelation?: boolean;
 };

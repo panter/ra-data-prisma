@@ -2,11 +2,12 @@ import { IntrospectionInputObjectType } from "graphql";
 import set from "lodash/set";
 import type { GetListParams } from ".";
 import { IntrospectionResult, Resource } from "../constants/interfaces";
+import { BuildVariablesContext } from "./types";
 
-function getOrderType(
-  introspectionResults: IntrospectionResult,
-  resource: Resource,
-): IntrospectionInputObjectType {
+function getOrderType({
+  resource,
+  introspectionResults,
+}: BuildVariablesContext): IntrospectionInputObjectType {
   const withoutRelation = `${resource.type.name}OrderByInput`;
   const withRelation = `${resource.type.name}OrderByWithRelationInput`;
 
@@ -16,14 +17,13 @@ function getOrderType(
 }
 
 export const buildOrderBy = (
-  introspectionResults: IntrospectionResult,
-  resource: Resource,
   sort: GetListParams["sort"],
+  context: BuildVariablesContext,
 ) => {
   if (!sort) return null;
   const { field } = sort;
 
-  const orderType = getOrderType(introspectionResults, resource);
+  const orderType = getOrderType(context);
   const fieldParts = field?.split(".");
   if (!orderType || !fieldParts) {
     return null;
