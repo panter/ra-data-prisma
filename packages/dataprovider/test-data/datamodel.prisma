@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["orderByRelation"]
+  provider = "prisma-client-js"
 }
 
 generator typegraphql {
@@ -15,7 +14,7 @@ datasource db {
 model UserRole {
   id    String @id @default(uuid())
   name  String
-  users User[] @relation(references: [id])
+  users User[]
 }
 
 model Company {
@@ -69,7 +68,7 @@ enum Gender {
 model User {
   id              String            @id @default(uuid())
   email           String            @unique
-  roles           UserRole[]        @relation(references: [id])
+  roles           UserRole[]
   firstName       String?
   lastName        String?
   gender          Gender?

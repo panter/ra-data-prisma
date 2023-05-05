@@ -17,7 +17,7 @@ const setupCrudResolvers = <
     printSecurityWarning = true,
     customize,
     aliasPrefix,
-    enableOrderByRelation = false,
+    enableOrderByRelation = true,
   }: ResourceOptions<ModelName> & CommonOptions = {},
 ) => {
   const typeName = upperFirst(resourceName);

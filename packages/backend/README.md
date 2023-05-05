@@ -59,8 +59,8 @@ use `addCrudResolvers` for every Model that you want to manage in react-admin. A
 
 You can sort by relations. It's currently a preview feature in prisma: https://www.prisma.io/docs/concepts/components/prisma-client/filtering-and-sorting#sort-by-relation-preview
 
-1. enable it in prisma: in your prisma schema, add `previewFeatures = ["orderByRelation"]`
-2. enable it in `addCrudResolvers`: `addCrudResolvers(modelName, {enableOrderByRelation: true})
+1. make sure you use a more resent prisma version. notice: nexus-plugin-prisma will complain about incompatibility, but it still works with most versions
+2. its enabled by default now ~enable it in `addCrudResolvers`: `addCrudResolvers(modelName, {enableOrderByRelation: true})`~
 3. in react-admin edit the `<ReferenceField />` for this column:
 
 ```

@@ -145,7 +145,12 @@ const buildNewInputValue = (
         (i) => i.name === ModifiersParams.delete,
       );
 
-      if (setModifier && !connectModifier && !disconnectModifier && !deleteModifier) {
+      if (
+        setModifier &&
+        !connectModifier &&
+        !disconnectModifier &&
+        !deleteModifier
+      ) {
         // if its a date, convert it to a date
         if (
           setModifier.type.kind === "SCALAR" &&
