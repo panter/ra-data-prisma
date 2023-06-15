@@ -41,13 +41,34 @@ export const makeIntrospectionOptions = (options: OurOptions) => {
         prefix(`${pluralize(camelCase(resource.name))}`),
     },
     typegraphql: {
-      [GET_LIST]: (resource: Resource) =>
-        prefix(`${pluralize(camelCase(resource.name))}`),
-      [GET_ONE]: (resource: Resource) => prefix(`${camelCase(resource.name)}`),
-      [GET_MANY]: (resource: Resource) =>
-        prefix(`${pluralize(camelCase(resource.name))}`),
-      [GET_MANY_REFERENCE]: (resource: Resource) =>
-        prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_LIST]: (resource: Resource) => {
+        const pluralName = pluralize(resource.name);
+        if (resource.name === pluralName) {
+          return prefix(`findMany${resource.name}`);
+        }
+        return prefix(`${pluralize(camelCase(resource.name))}`);
+      },
+      [GET_ONE]: (resource: Resource) => {
+        const pluralName = pluralize(resource.name);
+        if (resource.name === pluralName) {
+          return prefix(`findUnique${resource.name}`);
+        }
+        return prefix(`${camelCase(resource.name)}`);
+      },
+      [GET_MANY]: (resource: Resource) => {
+        const pluralName = pluralize(resource.name);
+        if (resource.name === pluralName) {
+          return prefix(`findMany${resource.name}`);
+        }
+        return prefix(`${pluralize(camelCase(resource.name))}`);
+      },
+      [GET_MANY_REFERENCE]: (resource: Resource) => {
+        const pluralName = pluralize(resource.name);
+        if (resource.name === pluralName) {
+          return prefix(`findMany${resource.name}`);
+        }
+        return prefix(`${pluralize(camelCase(resource.name))}`);
+      },
     },
     ...options.queryOperationNames,
   };
