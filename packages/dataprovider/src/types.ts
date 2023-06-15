@@ -95,6 +95,7 @@ export type ConfigOptions = {
   customizeInputData?: CustomizeInputData;
   introspection?: IntrospectionOptions;
   mutationOperationNames?: MutationOperationNames;
+  queryOperationNames?: QueryOperationNames;
 };
 
 export type QueryFetchType =
@@ -102,6 +103,14 @@ export type QueryFetchType =
   | typeof GET_MANY
   | typeof GET_MANY_REFERENCE
   | typeof GET_ONE;
+
+export type QueryOperationNameMap = {
+  [K in QueryFetchType]: (resource: Resource) => string;
+};
+
+export type QueryOperationNames = Partial<
+  Record<QueryDialect, QueryOperationNameMap>
+>;
 
 export type FetchType = QueryFetchType | MutationFetchType;
 
