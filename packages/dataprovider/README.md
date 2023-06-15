@@ -547,13 +547,15 @@ const dataProvider = useDataProvider({
 })
 ```
 
-### override mutation operation names due to prisma versions breaking changes
+### override mutation or query operation names due to prisma versions breaking changes
 
 You can override operation names depending on the version of typegraphql-prisma you are using:
 
 ```ts
-import { CREATE, UPDATE, DELETE } from "react-admin";
+import { CREATE, UPDATE, DELETE, GET_LIST, GET_MANY, GET_MANY_REFERENCE, GET_ONE } from "react-admin";
 import { Options } from "@ra-data-prisma/dataprovider";
+import camelCase from "lodash/camelCase";
+import pluralize from "pluralize";
 
 const options: Options = {
   queryDialect: "typegraphql",
@@ -564,6 +566,14 @@ const options: Options = {
       [DELETE]: (resource) => `deleteOne${resource.name}`,
     },
   },
+  queryOperationNames: {
+    typegraphql: {
+      [GET_LIST]: (resource) => `${pluralize(camelCase(resource.name))}`,
+      [GET_MANY]: (resource) => `${pluralize(camelCase(resource.name))}`,
+      [GET_MANY_REFERENCE]: (resource) => `${pluralize(camelCase(resource.name))}`,
+      [GET_ONE]: (resource) => `${camelCase(resource.name)}`,
+    },
+  }
 };
 ```
 
@@ -587,5 +597,13 @@ const options: Options = {
       [DELETE]: (resource) => prefix(`deleteOne${resource.name}`),
     },
   },
+  queryOperationNames: {
+    typegraphql: {
+      [GET_LIST]: (resource) => prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_MANY]: (resource) => prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_MANY_REFERENCE]: (resource) => prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_ONE]: (resource) => prefix(`${camelCase(resource.name)}`),
+    },
+  }
 };
 ```

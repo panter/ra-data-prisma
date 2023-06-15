@@ -30,8 +30,8 @@ export const makeIntrospectionOptions = (options: OurOptions) => {
     ...options.mutationOperationNames,
   };
 
-  return {
-    operationNames: {
+  const queryOperationNames: Record<QueryDialect, object> = {
+    "nexus-prisma": {
       [GET_LIST]: (resource: Resource) =>
         prefix(`${pluralize(camelCase(resource.name))}`),
       [GET_ONE]: (resource: Resource) => prefix(`${camelCase(resource.name)}`),
@@ -39,7 +39,22 @@ export const makeIntrospectionOptions = (options: OurOptions) => {
         prefix(`${pluralize(camelCase(resource.name))}`),
       [GET_MANY_REFERENCE]: (resource: Resource) =>
         prefix(`${pluralize(camelCase(resource.name))}`),
+    },
+    typegraphql: {
+      [GET_LIST]: (resource: Resource) =>
+        prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_ONE]: (resource: Resource) => prefix(`${camelCase(resource.name)}`),
+      [GET_MANY]: (resource: Resource) =>
+        prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_MANY_REFERENCE]: (resource: Resource) =>
+        prefix(`${pluralize(camelCase(resource.name))}`),
+    },
+    ...options.queryOperationNames,
+  };
 
+  return {
+    operationNames: {
+      ...queryOperationNames[options.queryDialect],
       ...mutationOperationNames[options.queryDialect],
     },
     exclude: undefined,
