@@ -1,7 +1,6 @@
 import { IntrospectionInputObjectType } from "graphql";
 import set from "lodash/set";
 import type { GetListParams } from ".";
-import { IntrospectionResult, Resource } from "../constants/interfaces";
 import { BuildVariablesContext } from "./types";
 
 function getOrderType({
@@ -29,10 +28,38 @@ export const buildOrderBy = (
     return null;
   }
 
-  if (!orderType.inputFields.some((f) => f.name === fieldParts[0])) {
+  const inputTypefield = orderType.inputFields.find(
+    (f) => f.name === fieldParts[0],
+  );
+  if (!inputTypefield) {
     return null;
   }
+
+  const theType = inputTypefield.type;
+
+  let directSortOrder = false;
+  if (theType.kind === "INPUT_OBJECT") {
+    const inputObjectType = context.introspectionResults.types.find(
+      (t) => t.name === theType.name,
+    );
+
+    if (inputObjectType.kind === "INPUT_OBJECT") {
+      const theField = inputObjectType?.inputFields.find(
+        (f) => f.name === fieldParts[1],
+      );
+
+      // would be cleaner to really follow the full chain if its always an input object
+      if (theField?.type.kind === "ENUM") {
+        directSortOrder = true;
+      }
+    } else {
+      directSortOrder = true;
+    }
+  } else {
+    directSortOrder = true;
+  }
   const selector = {};
-  set(selector, field, sort.order === "ASC" ? "asc" : "desc");
+  const sortOrder = sort.order === "ASC" ? "asc" : "desc";
+  set(selector, field, directSortOrder ? sortOrder : { sort: sortOrder });
   return [selector];
 };

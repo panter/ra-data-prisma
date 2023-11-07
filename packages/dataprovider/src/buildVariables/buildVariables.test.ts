@@ -147,7 +147,9 @@ describe("buildVariables", () => {
           {
             post: {
               author: {
-                firstName: "desc",
+                firstName: {
+                  sort: "desc",
+                },
               },
             },
           },
@@ -665,7 +667,7 @@ describe("buildVariables", () => {
         where: { id: "einstein" },
         data: {
           userSocialMedia: {
-            disconnect: true,
+            disconnect: {},
           },
         },
       });
@@ -687,7 +689,7 @@ describe("buildVariables", () => {
         where: { id: "einstein" },
         data: {
           userSocialMedia: {
-            disconnect: true,
+            disconnect: {},
           },
         },
       });
@@ -710,7 +712,7 @@ describe("buildVariables", () => {
         where: { id: "einstein" },
         data: {
           userSocialMedia: {
-            disconnect: true,
+            disconnect: {},
           },
         },
       });
@@ -781,11 +783,13 @@ describe("buildVariables", () => {
         data: {
           userSocialMedia: {
             update: {
-              twitter: {
-                set: "another-twitter",
-              },
-              instagram: {
-                set: "another-instagram",
+              data: {
+                twitter: {
+                  set: "another-twitter",
+                },
+                instagram: {
+                  set: "another-instagram",
+                },
               },
             },
           },
@@ -839,7 +843,7 @@ describe("buildVariables", () => {
         where: { id: "einstein" },
         data: {
           userSocialMedia: {
-            disconnect: true,
+            disconnect: {},
           },
         },
       });
@@ -861,7 +865,7 @@ describe("buildVariables", () => {
         where: { id: "einstein" },
         data: {
           site: {
-            delete: true,
+            delete: {},
           },
         },
       });
