@@ -309,11 +309,11 @@ const buildNewInputValue = (
           if (!fieldData || isNullReferenceObject(fieldData)) {
             if (removeRelationMode === "disconnect") {
               return {
-                disconnect: true,
+                disconnect: {},
               };
             } else if (removeRelationMode === "delete") {
               return {
-                delete: true,
+                delete: {},
               };
             }
             // else skip it
@@ -358,7 +358,9 @@ const buildNewInputValue = (
 
                 // update
                 const data = buildData(
-                  updateObjectInputType,
+                  updateObjectInputType.inputFields.find(
+                    (f) => f.name === "data",
+                  )?.type ?? updateObjectInputType, // fallback for typegraphql
                   {
                     id: fieldData.id,
                     data: fieldData,
@@ -366,7 +368,7 @@ const buildNewInputValue = (
                   },
                   context,
                 );
-                return { update: data };
+                return { update: { data } };
               } else if (connectModifier) {
                 return { connect: { id: fieldData.id } };
               }
@@ -390,7 +392,7 @@ const buildNewInputValue = (
 };
 
 export const buildData = (
-  inputType: IntrospectionInputObjectType,
+  inputType: IntrospectionInputObjectType | IntrospectionInputTypeRef,
   params: UpdateParams | CreateParams,
   context: BuildVariablesContext,
 ) => {
@@ -424,7 +426,27 @@ export const buildData = (
       })
       .map((key) => [key, data[key]]),
   );
-  return inputType.inputFields.reduce((acc, field) => {
+
+  const getInputFields = () => {
+    if ("inputFields" in inputType) {
+      return inputType.inputFields;
+    }
+    if (
+      inputType.kind === "NON_NULL" &&
+      inputType.ofType.kind === "INPUT_OBJECT"
+    ) {
+      const name = inputType.ofType.name;
+      const referencedType = context.introspectionResults.types.find(
+        (t) => t.name === name,
+      );
+      if ("inputFields" in referencedType) {
+        return referencedType.inputFields;
+      }
+    }
+    return [];
+  };
+
+  return getInputFields().reduce((acc, field) => {
     // ignore unchanged field
     if (!hasFieldData(changedData, field)) {
       return acc;

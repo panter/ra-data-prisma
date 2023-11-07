@@ -6,7 +6,7 @@ import {
   nonNull,
 } from "nexus";
 import path, { join } from "path";
-import { nexusSchemaPrisma } from "nexus-plugin-prisma/schema";
+import { nexusSchemaPrisma } from "@morgothulhu/nexus-plugin-prisma/schema";
 import { addCrudResolvers } from "../../backend/src";
 import "../generated/nexus";
 import "../generated/nexus-prisma";
@@ -147,7 +147,7 @@ export const testSchemaNexus = <Prefix extends string>(
   });
 
   const BlogPostUpdateManyWithoutAuthorInput = prismaInputObjectType(
-    "BlogPostUpdateManyWithoutAuthorInput",
+    "BlogPostUpdateManyWithoutAuthorNestedInput",
     {
       // @ts-ignore
       filteredFields: ["disconnect"],
@@ -155,7 +155,7 @@ export const testSchemaNexus = <Prefix extends string>(
   );
 
   const SiteUpdateOneWithoutOwnerInput = prismaInputObjectType(
-    "SiteUpdateOneWithoutOwnerInput",
+    "SiteUpdateOneWithoutOwnerNestedInput",
     {
       // @ts-ignore
       filteredFields: ["disconnect"],

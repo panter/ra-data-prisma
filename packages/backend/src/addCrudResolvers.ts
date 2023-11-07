@@ -1,7 +1,7 @@
 import { ResourceOptions, CommonOptions } from "./types";
 import setupCrudResolvers from "./setupCrudResolvers";
 import { extendType, arg, intArg } from "nexus";
-import * as Helpers from "nexus-plugin-prisma/src/typegen/helpers";
+import * as Helpers from "@morgothulhu/nexus-plugin-prisma/src/typegen/helpers";
 
 const addCrudResolvers = <
   AliasPrefix extends string,

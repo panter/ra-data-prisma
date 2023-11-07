@@ -29,10 +29,11 @@
     "pluralize": "^7.0.0"
   },
   "peerDependencies": {
-    "nexus": ">=1.0.0"
+    "nexus": ">=1.0.0",
+    "@morgothulhu/nexus-plugin-prisma": "*"
   },
   "devDependencies": {
     "rimraf": "^3.0.2",
-    "typescript": "^4.4.3"
+    "typescript": "^5.2.2"
   }
 }

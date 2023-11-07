@@ -20,7 +20,7 @@ describe("buildQueryFactory", () => {
     testIntrospectionTypeGraphql = await getTestIntrospectionTypeGraphql();
     testUserResource = testIntrospectionNexus.resources.find(
       (r) => r.type.kind === "OBJECT" && r.type.name === "User",
-    );
+    )!;
   });
 
   it("throws an error if resource is unknown", () => {
