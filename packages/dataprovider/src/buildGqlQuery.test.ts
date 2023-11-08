@@ -217,49 +217,47 @@ describe("buildGqlQuery", () => {
           { where },
           null,
         ),
-      ).toEqualGraphql(
-        gql`
-          query users($where: UserWhereInput) {
-            items: users(where: $where) {
+      ).toEqualGraphql(gql`
+        query users($where: UserWhereInput) {
+          items: users(where: $where) {
+            id
+            email
+            firstName
+            lastName
+            yearOfBirth
+            roles {
               id
-              email
-              firstName
-              lastName
-              yearOfBirth
-              roles {
+            }
+            gender
+            wantsNewsletter
+            userSocialMedia {
+              id
+              instagram
+              twitter
+              user {
                 id
-              }
-              gender
-              wantsNewsletter
-              userSocialMedia {
-                id
-                instagram
-                twitter
-                user {
-                  id
-                }
-              }
-              blogPosts {
-                id
-              }
-              comments {
-                id
-              }
-              companies {
-                id
-              }
-              interests
-              weddingDate
-              address {
-                street
-                city
-                countryCode
               }
             }
-            total: usersCount(where: $where)
+            blogPosts {
+              id
+            }
+            comments {
+              id
+            }
+            companies {
+              id
+            }
+            interests
+            weddingDate
+            address {
+              street
+              city
+              countryCode
+            }
           }
-        `,
-      );
+          total: usersCount(where: $where)
+        }
+      `);
     });
 
     it("returns the correct query for GET_LIST with typegraphql count query", () => {
@@ -268,59 +266,57 @@ describe("buildGqlQuery", () => {
           ...defaultOurOptions,
           queryDialect: "typegraphql",
         })(testUserResourceTypeGraphql, GET_LIST, { where }, null),
-      ).toEqualGraphql(
-        gql`
-          query users($where: UserWhereInput) {
-            items: users(where: $where) {
-              id
-              email
-              firstName
-              lastName
-              gender
-              yearOfBirth
+      ).toEqualGraphql(gql`
+        query users($where: UserWhereInput) {
+          items: users(where: $where) {
+            id
+            email
+            firstName
+            lastName
+            gender
+            yearOfBirth
 
-              wantsNewsletter
-              interests
-              weddingDate
-              _count {
-                roles
-                blogPosts
-                comments
-                companies
-              }
-              roles {
-                id
-              }
-              userSocialMedia {
-                id
-                instagram
-                twitter
-                userId
-              }
-
-              blogPosts {
-                id
-              }
-              comments {
-                id
-              }
-              companies {
-                id
-              }
-              address {
-                street
-                city
-                countryCode
-              }
+            wantsNewsletter
+            interests
+            weddingDate
+            _count {
+              roles
+              blogPosts
+              comments
+              companies
             }
-            total: aggregateUser(where: $where) {
-              _count {
-                _all
-              }
+            roles {
+              id
+            }
+            userSocialMedia {
+              id
+              instagram
+              twitter
+              userId
+            }
+
+            blogPosts {
+              id
+            }
+            comments {
+              id
+            }
+            companies {
+              id
+            }
+            address {
+              street
+              city
+              countryCode
             }
           }
-        `,
-      );
+          total: aggregateUser(where: $where) {
+            _count {
+              _all
+            }
+          }
+        }
+      `);
     });
 
     it("returns the correct query for GET_LIST when defining a fragment", () => {
@@ -338,19 +334,17 @@ describe("buildGqlQuery", () => {
             }
           `,
         ),
-      ).toEqualGraphql(
-        gql`
-          query users($where: UserWhereInput) {
-            items: users(where: $where) {
-              id
-              socialMedia {
-                twitter
-              }
+      ).toEqualGraphql(gql`
+        query users($where: UserWhereInput) {
+          items: users(where: $where) {
+            id
+            socialMedia {
+              twitter
             }
-            total: usersCount(where: $where)
           }
-        `,
-      );
+          total: usersCount(where: $where)
+        }
+      `);
     });
     it("returns the correct query for GET_MANY", () => {
       expect(
@@ -360,49 +354,47 @@ describe("buildGqlQuery", () => {
           { where },
           null,
         ),
-      ).toEqualGraphql(
-        gql`
-          query users($where: UserWhereInput) {
-            items: users(where: $where) {
+      ).toEqualGraphql(gql`
+        query users($where: UserWhereInput) {
+          items: users(where: $where) {
+            id
+            email
+            firstName
+            lastName
+            yearOfBirth
+            roles {
               id
-              email
-              firstName
-              lastName
-              yearOfBirth
-              roles {
+            }
+            gender
+            wantsNewsletter
+            userSocialMedia {
+              id
+              instagram
+              twitter
+              user {
                 id
-              }
-              gender
-              wantsNewsletter
-              userSocialMedia {
-                id
-                instagram
-                twitter
-                user {
-                  id
-                }
-              }
-              blogPosts {
-                id
-              }
-              comments {
-                id
-              }
-              companies {
-                id
-              }
-              interests
-              weddingDate
-              address {
-                street
-                city
-                countryCode
               }
             }
-            total: usersCount(where: $where)
+            blogPosts {
+              id
+            }
+            comments {
+              id
+            }
+            companies {
+              id
+            }
+            interests
+            weddingDate
+            address {
+              street
+              city
+              countryCode
+            }
           }
-        `,
-      );
+          total: usersCount(where: $where)
+        }
+      `);
     });
     it("returns the correct query for GET_MANY_REFERENCE", () => {
       expect(
@@ -412,49 +404,47 @@ describe("buildGqlQuery", () => {
           { where },
           null,
         ),
-      ).toEqualGraphql(
-        gql`
-          query users($where: UserWhereInput) {
-            items: users(where: $where) {
+      ).toEqualGraphql(gql`
+        query users($where: UserWhereInput) {
+          items: users(where: $where) {
+            id
+            email
+            firstName
+            lastName
+            yearOfBirth
+            roles {
               id
-              email
-              firstName
-              lastName
-              yearOfBirth
-              roles {
+            }
+            gender
+            wantsNewsletter
+            userSocialMedia {
+              id
+              instagram
+              twitter
+              user {
                 id
-              }
-              gender
-              wantsNewsletter
-              userSocialMedia {
-                id
-                instagram
-                twitter
-                user {
-                  id
-                }
-              }
-              blogPosts {
-                id
-              }
-              comments {
-                id
-              }
-              companies {
-                id
-              }
-              interests
-              weddingDate
-              address {
-                street
-                city
-                countryCode
               }
             }
-            total: usersCount(where: $where)
+            blogPosts {
+              id
+            }
+            comments {
+              id
+            }
+            companies {
+              id
+            }
+            interests
+            weddingDate
+            address {
+              street
+              city
+              countryCode
+            }
           }
-        `,
-      );
+          total: usersCount(where: $where)
+        }
+      `);
     });
     it("returns the correct query for GET_ONE", () => {
       expect(
@@ -465,48 +455,46 @@ describe("buildGqlQuery", () => {
           { where },
           null,
         ),
-      ).toEqualGraphql(
-        gql`
-          query user($where: UserWhereUniqueInput!) {
-            data: user(where: $where) {
+      ).toEqualGraphql(gql`
+        query user($where: UserWhereUniqueInput!) {
+          data: user(where: $where) {
+            id
+            email
+            firstName
+            lastName
+            yearOfBirth
+            roles {
               id
-              email
-              firstName
-              lastName
-              yearOfBirth
-              roles {
+            }
+            gender
+            wantsNewsletter
+            userSocialMedia {
+              id
+              instagram
+              twitter
+              user {
                 id
-              }
-              gender
-              wantsNewsletter
-              userSocialMedia {
-                id
-                instagram
-                twitter
-                user {
-                  id
-                }
-              }
-              blogPosts {
-                id
-              }
-              comments {
-                id
-              }
-              companies {
-                id
-              }
-              interests
-              weddingDate
-              address {
-                street
-                city
-                countryCode
               }
             }
+            blogPosts {
+              id
+            }
+            comments {
+              id
+            }
+            companies {
+              id
+            }
+            interests
+            weddingDate
+            address {
+              street
+              city
+              countryCode
+            }
           }
-        `,
-      );
+        }
+      `);
     });
     it("returns the correct query for UPDATE", () => {
       expect(
@@ -516,51 +504,49 @@ describe("buildGqlQuery", () => {
           { where, data: {} },
           null,
         ),
-      ).toEqualGraphql(
-        gql`
-          mutation updateOneUser(
-            $data: UserUpdateInput!
-            $where: UserWhereUniqueInput!
-          ) {
-            data: updateOneUser(data: $data, where: $where) {
+      ).toEqualGraphql(gql`
+        mutation updateOneUser(
+          $data: UserUpdateInput!
+          $where: UserWhereUniqueInput!
+        ) {
+          data: updateOneUser(data: $data, where: $where) {
+            id
+            email
+            firstName
+            lastName
+            yearOfBirth
+            roles {
               id
-              email
-              firstName
-              lastName
-              yearOfBirth
-              roles {
+            }
+            gender
+            wantsNewsletter
+            userSocialMedia {
+              id
+              instagram
+              twitter
+              user {
                 id
-              }
-              gender
-              wantsNewsletter
-              userSocialMedia {
-                id
-                instagram
-                twitter
-                user {
-                  id
-                }
-              }
-              blogPosts {
-                id
-              }
-              comments {
-                id
-              }
-              companies {
-                id
-              }
-              interests
-              weddingDate
-              address {
-                street
-                city
-                countryCode
               }
             }
+            blogPosts {
+              id
+            }
+            comments {
+              id
+            }
+            companies {
+              id
+            }
+            interests
+            weddingDate
+            address {
+              street
+              city
+              countryCode
+            }
           }
-        `,
-      );
+        }
+      `);
     });
     it("returns the correct query for CREATE", () => {
       expect(
@@ -570,48 +556,46 @@ describe("buildGqlQuery", () => {
           { data: {} },
           null,
         ),
-      ).toEqualGraphql(
-        gql`
-          mutation createOneUser($data: UserCreateInput!) {
-            data: createOneUser(data: $data) {
+      ).toEqualGraphql(gql`
+        mutation createOneUser($data: UserCreateInput!) {
+          data: createOneUser(data: $data) {
+            id
+            email
+            firstName
+            lastName
+            yearOfBirth
+            roles {
               id
-              email
-              firstName
-              lastName
-              yearOfBirth
-              roles {
+            }
+            gender
+            wantsNewsletter
+            userSocialMedia {
+              id
+              instagram
+              twitter
+              user {
                 id
-              }
-              gender
-              wantsNewsletter
-              userSocialMedia {
-                id
-                instagram
-                twitter
-                user {
-                  id
-                }
-              }
-              blogPosts {
-                id
-              }
-              comments {
-                id
-              }
-              companies {
-                id
-              }
-              interests
-              weddingDate
-              address {
-                street
-                city
-                countryCode
               }
             }
+            blogPosts {
+              id
+            }
+            comments {
+              id
+            }
+            companies {
+              id
+            }
+            interests
+            weddingDate
+            address {
+              street
+              city
+              countryCode
+            }
           }
-        `,
-      );
+        }
+      `);
     });
     it("returns the correct query for DELETE", () => {
       expect(
@@ -621,15 +605,13 @@ describe("buildGqlQuery", () => {
           { where },
           null,
         ),
-      ).toEqualGraphql(
-        gql`
-          mutation deleteOneUser($where: UserWhereUniqueInput!) {
-            data: deleteOneUser(where: $where) {
-              id
-            }
+      ).toEqualGraphql(gql`
+        mutation deleteOneUser($where: UserWhereUniqueInput!) {
+          data: deleteOneUser(where: $where) {
+            id
           }
-        `,
-      );
+        }
+      `);
     });
 
     describe("with prefixed introspections", () => {
@@ -650,49 +632,47 @@ describe("buildGqlQuery", () => {
             { where },
             null,
           ),
-        ).toEqualGraphql(
-          gql`
-            query adminUsers($where: UserWhereInput) {
-              items: adminUsers(where: $where) {
+        ).toEqualGraphql(gql`
+          query adminUsers($where: UserWhereInput) {
+            items: adminUsers(where: $where) {
+              id
+              email
+              firstName
+              lastName
+              yearOfBirth
+              roles {
                 id
-                email
-                firstName
-                lastName
-                yearOfBirth
-                roles {
+              }
+              gender
+              wantsNewsletter
+              userSocialMedia {
+                id
+                instagram
+                twitter
+                user {
                   id
-                }
-                gender
-                wantsNewsletter
-                userSocialMedia {
-                  id
-                  instagram
-                  twitter
-                  user {
-                    id
-                  }
-                }
-                blogPosts {
-                  id
-                }
-                comments {
-                  id
-                }
-                companies {
-                  id
-                }
-                interests
-                weddingDate
-                address {
-                  street
-                  city
-                  countryCode
                 }
               }
-              total: adminUsersCount(where: $where)
+              blogPosts {
+                id
+              }
+              comments {
+                id
+              }
+              companies {
+                id
+              }
+              interests
+              weddingDate
+              address {
+                street
+                city
+                countryCode
+              }
             }
-          `,
-        );
+            total: adminUsersCount(where: $where)
+          }
+        `);
       });
       it("allows to prefix all mutations with a prefix", () => {
         expect(
@@ -702,15 +682,13 @@ describe("buildGqlQuery", () => {
             { where },
             null,
           ),
-        ).toEqualGraphql(
-          gql`
-            mutation adminDeleteOneUser($where: UserWhereUniqueInput!) {
-              data: adminDeleteOneUser(where: $where) {
-                id
-              }
+        ).toEqualGraphql(gql`
+          mutation adminDeleteOneUser($where: UserWhereUniqueInput!) {
+            data: adminDeleteOneUser(where: $where) {
+              id
             }
-          `,
-        );
+          }
+        `);
       });
     });
   });

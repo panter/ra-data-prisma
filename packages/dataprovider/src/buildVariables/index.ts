@@ -12,8 +12,8 @@ import {
   UPDATE,
 } from "react-admin";
 import { buildWhere } from "./buildWhere";
-import { IntrospectionResult, Resource } from "../constants/interfaces";
-import { FetchType, OurOptions } from "../types";
+import { Resource } from "../constants/interfaces";
+import { FetchType } from "../types";
 import { buildData, CreateParams } from "./buildData";
 import { buildOrderBy } from "./buildOrderBy";
 import { BuildVariablesContext } from "./types";
@@ -89,7 +89,7 @@ const buildUpdateVariables =
     const id = getId(context, params); // TODO: do we still need params.data.id?
     delete params.data.id;
     delete params.previousData?.id;
-    let data = buildData(inputType, params, context);
+    const data = buildData(inputType, params, context);
 
     return {
       where: {
