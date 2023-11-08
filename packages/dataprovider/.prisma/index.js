@@ -209,7 +209,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Volumes/Projects/ra-data-prisma/packages/dataprovider/.prisma",
+      "value": "/Users/macrozone/git/panter/ra-data-prisma/packages/dataprovider/.prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -247,7 +247,7 @@ const PrismaClient = getPrismaClient(config)
 exports.PrismaClient = PrismaClient
 Object.assign(exports, Prisma)
 
-path.join(__dirname, "libquery_engine-darwin.dylib.node");
-path.join(process.cwd(), ".prisma/libquery_engine-darwin.dylib.node")
+path.join(__dirname, "libquery_engine-darwin-arm64.dylib.node");
+path.join(process.cwd(), ".prisma/libquery_engine-darwin-arm64.dylib.node")
 path.join(__dirname, "schema.prisma");
 path.join(process.cwd(), ".prisma/schema.prisma")
