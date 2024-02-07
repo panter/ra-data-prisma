@@ -65,7 +65,7 @@ export type MutationOperationNames = Partial<
   Record<QueryDialect, MutationOperationNameMap>
 >;
 
-export type QueryDialect = "nexus-prisma" | "typegraphql";
+export type QueryDialect = "nexus-prisma" | "typegraphql" | "pothos-prisma";
 
 type Filter = Record<string, unknown>;
 

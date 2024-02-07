@@ -88,6 +88,51 @@ describe("buildVariables", () => {
       });
     });
 
+    it("returns first, where, skip and orderBy for pothos-prisma", async () => {
+      //
+
+      const params = {
+        pagination: { page: 10, perPage: 10 },
+        sort: { field: "email", order: "ASC" },
+        filter: {
+          yearOfBirth: 1879,
+          firstName: "fooBar",
+        },
+      };
+      const result = buildVariables({
+        ...userContext,
+        options: {
+          ...userContext.options,
+          queryDialect: "pothos-prisma",
+        },
+      })(GET_LIST, params);
+
+      expect(result).toEqual({
+        where: {
+          AND: [
+            {
+              yearOfBirth: {
+                equals: 1879,
+              },
+            },
+            {
+              firstName: {
+                contains: "fooBar",
+                mode: "insensitive",
+              },
+            },
+          ],
+        },
+        take: 10,
+        orderBy: [
+          {
+            email: "Asc",
+          },
+        ],
+        skip: 90,
+      });
+    });
+
     it("allows sorting by direct properties", async () => {
       //
 

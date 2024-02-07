@@ -302,6 +302,21 @@ export default (
           arguments: supportsCountArgs ? countArgs : undefined,
         });
       },
+      "pothos-prisma": (): FieldNode => {
+        const countName = `${queryType.name}Count`;
+
+        const supportsCountArgs =
+          (
+            introspectionResults.queries.find(
+              (query) => query.name === countName,
+            ) as any
+          )?.args.length > 0;
+
+        return gqlTypes.field(gqlTypes.name(countName), {
+          alias: gqlTypes.name("total"),
+          arguments: supportsCountArgs ? countArgs : undefined,
+        });
+      },
       typegraphql: (): FieldNode => {
         const resourceName = upperFirst(resource.type.name);
 
