@@ -216,7 +216,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/macrozone/git/panter/ra-data-prisma/packages/dataprovider/.prisma",
+      "value": "/Users/jay/Work/Panter/Projekte/ra-data-prisma/packages/dataprovider/.prisma",
       "fromEnvVar": null
     },
     "config": {

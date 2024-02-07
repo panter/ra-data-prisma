@@ -59,7 +59,12 @@ export const buildOrderBy = (
     directSortOrder = true;
   }
   const selector = {};
-  const sortOrder = sort.order === "ASC" ? "asc" : "desc";
-  set(selector, field, directSortOrder ? sortOrder : { sort: sortOrder });
+
+  if (context.options.queryDialect === "pothos-prisma") {
+    set(selector, field, sort.order === "ASC" ? "Asc" : "Desc");
+  } else {
+    set(selector, field, sort.order === "ASC" ? "asc" : "desc");
+  }
+
   return [selector];
 };
