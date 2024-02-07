@@ -552,7 +552,15 @@ const dataProvider = useDataProvider({
 You can override operation names depending on the version of typegraphql-prisma you are using:
 
 ```ts
-import { CREATE, UPDATE, DELETE, GET_LIST, GET_MANY, GET_MANY_REFERENCE, GET_ONE } from "react-admin";
+import {
+  CREATE,
+  UPDATE,
+  DELETE,
+  GET_LIST,
+  GET_MANY,
+  GET_MANY_REFERENCE,
+  GET_ONE,
+} from "react-admin";
 import { Options } from "@ra-data-prisma/dataprovider";
 import camelCase from "lodash/camelCase";
 import pluralize from "pluralize";
@@ -570,10 +578,11 @@ const options: Options = {
     typegraphql: {
       [GET_LIST]: (resource) => `${pluralize(camelCase(resource.name))}`,
       [GET_MANY]: (resource) => `${pluralize(camelCase(resource.name))}`,
-      [GET_MANY_REFERENCE]: (resource) => `${pluralize(camelCase(resource.name))}`,
+      [GET_MANY_REFERENCE]: (resource) =>
+        `${pluralize(camelCase(resource.name))}`,
       [GET_ONE]: (resource) => `${camelCase(resource.name)}`,
     },
-  }
+  },
 };
 ```
 
@@ -599,11 +608,28 @@ const options: Options = {
   },
   queryOperationNames: {
     typegraphql: {
-      [GET_LIST]: (resource) => prefix(`${pluralize(camelCase(resource.name))}`),
-      [GET_MANY]: (resource) => prefix(`${pluralize(camelCase(resource.name))}`),
-      [GET_MANY_REFERENCE]: (resource) => prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_LIST]: (resource) =>
+        prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_MANY]: (resource) =>
+        prefix(`${pluralize(camelCase(resource.name))}`),
+      [GET_MANY_REFERENCE]: (resource) =>
+        prefix(`${pluralize(camelCase(resource.name))}`),
       [GET_ONE]: (resource) => prefix(`${camelCase(resource.name)}`),
     },
-  }
+  },
 };
+```
+
+## Usage with pothos-prisma
+
+(beta)
+
+You can use the dataprovider to connect to a backend that was created using https://www.npmjs.com/package/@pothos/plugin-prisma-utils.
+It has slightly different OrderBy values. Pass the following option to the dataprovider:
+
+```ts
+const dataProvider = useDataProvider({
+    clientOptions: { uri: "/graphql" }
+    queryDialect: "pothos-prisma" // 👈
+})
 ```

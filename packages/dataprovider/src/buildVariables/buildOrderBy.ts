@@ -1,7 +1,6 @@
 import { IntrospectionInputObjectType } from "graphql";
 import set from "lodash/set";
 import type { GetListParams } from ".";
-import { IntrospectionResult, Resource } from "../constants/interfaces";
 import { BuildVariablesContext } from "./types";
 
 function getOrderType({
@@ -33,6 +32,12 @@ export const buildOrderBy = (
     return null;
   }
   const selector = {};
-  set(selector, field, sort.order === "ASC" ? "asc" : "desc");
+
+  if (context.options.queryDialect === "pothos-prisma") {
+    set(selector, field, sort.order === "ASC" ? "Asc" : "Desc");
+  } else {
+    set(selector, field, sort.order === "ASC" ? "asc" : "desc");
+  }
+
   return [selector];
 };
