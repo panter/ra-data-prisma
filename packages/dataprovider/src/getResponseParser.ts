@@ -55,10 +55,12 @@ export default (
 
     const getTotal = () => {
       switch (queryDialect) {
-        case "nexus-prisma":
-          return response.data.total;
         case "typegraphql":
           return (response.data.total._count ?? response.data.total.count)._all;
+        case "nexus-prisma":
+        case "pothos-prisma":
+        default:
+          return response.data.total;
       }
     };
 
