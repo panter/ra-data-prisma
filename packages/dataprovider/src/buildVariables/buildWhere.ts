@@ -235,7 +235,9 @@ const processComparisonQuery = (
       // and has the comparison field
       if (!isObject(value) && !isArray(value)) {
         // all comparison fields (equals, lt, lte, gt, gte, contains, startsWith, endsWith) use a Scalar value so it can't be object or array
-        return { comparisonPossible: true, comparisonFieldType: filter };
+        if(value.type.kind==="SCALAR"){
+          return { comparisonPossible: true, comparisonFieldType: filter };
+        } 
       }
     }
   }
@@ -427,6 +429,39 @@ const getFilters = (
           },
         };
       }
+
+      const hasIsFilter = inputObjectType.inputFields.some(
+        (s) => s.name === "is",
+      );
+
+      if(hasIsFilter){
+        return {
+          [originalKey]: {
+            is: {
+              id: {
+                equals: value,
+              },
+            },
+          },
+        };
+      }
+
+      const hasIsNotFilter = inputObjectType.inputFields.some(
+        (s) => s.name === "isNot",
+      );
+
+      if(hasIsNotFilter){
+        return {
+          [originalKey]: {
+            isNot: {
+              id: {
+                equals: value,
+              },
+            },
+          },
+        };
+      }
+
       return {
         [originalKey]: {
           id: {
@@ -435,6 +470,7 @@ const getFilters = (
         },
       };
     }
+
     if (isArray(value)) {
       const hasSomeFilter = inputObjectType.inputFields.some(
         (s) => s.name === "some",
@@ -450,6 +486,39 @@ const getFilters = (
           },
         };
       }
+      
+      const hasIsFilter = inputObjectType.inputFields.some(
+        (s) => s.name === "is",
+      );
+
+      if(hasIsFilter){
+        return {
+          [originalKey]: {
+            is: {
+              id: {
+                equals: value,
+              },
+            },
+          },
+        };
+      }
+
+      const hasIsNotFilter = inputObjectType.inputFields.some(
+        (s) => s.name === "isNot",
+      );
+
+      if(hasIsNotFilter){
+        return {
+          [originalKey]: {
+            isNot: {
+              id: {
+                equals: value,
+              },
+            },
+          },
+        };
+      }
+      
       return {
         [originalKey]: {
           id: {
