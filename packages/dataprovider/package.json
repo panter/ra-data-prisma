@@ -29,25 +29,24 @@
     "generate:test:nexus": "yarn ts-node --project ../../tsconfig-test.json  --transpile-only test-data/buildTestSchemaNexus.ts"
   },
   "devDependencies": {
-    "prisma": "^3.15.2",
+    "prisma": "^5.10.2",
     "@types/pluralize": "^0.0.29",
     "rimraf": "^3.0.2",
     "ts-node": "~8.9.1",
     "type-graphql": "^1.1.1",
-    "typegraphql-prisma": "^0.25.0",
+    "typegraphql-prisma": "^0.27.1",
     "typescript": "^4.4.3",
-    "@prisma/client": "^3.15.2",
-    "nexus-plugin-prisma": "^0.35.0"
+    "@prisma/client": "^5.10.2"
   },
   "dependencies": {
     "lodash": "^4.17.15",
     "pluralize": "^8.0.0",
-    "ra-data-graphql": "3.11.4"
+    "ra-data-graphql": "4.16.11"
   },
   "peerDependencies": {
-    "@prisma/client": "*",
     "graphql": ">=14.0.0",
-    "react": "*",
+    "react": "^18",
+    "react-dom": "^18",
     "react-admin": "*"
   }
 }

@@ -1,4 +1,4 @@
-import * as Typegen from 'nexus-plugin-prisma/typegen'
+import * as Typegen from '@morgothulhu/nexus-plugin-prisma/typegen'
 import * as Prisma from '../.prisma';
 
 // Pagination type
@@ -31,43 +31,79 @@ interface NexusPrismaInputs {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'users'
       ordering: 'id' | 'name' | 'users'
     }
+    groupByUserRole: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'users'
+      ordering: 'id' | 'name' | '_count' | '_max' | '_min'
+    }
     companies: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'user' | 'userId'
-      ordering: 'id' | 'name' | 'user' | 'userId'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'userId' | 'user'
+      ordering: 'id' | 'name' | 'userId' | 'user'
+    }
+    groupByCompany: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'userId' | 'user'
+      ordering: 'id' | 'name' | 'userId' | '_count' | '_max' | '_min'
     }
     userSocialMedias: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'instagram' | 'twitter' | 'user' | 'userId'
-      ordering: 'id' | 'instagram' | 'twitter' | 'user' | 'userId'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'instagram' | 'twitter' | 'userId' | 'user'
+      ordering: 'id' | 'instagram' | 'twitter' | 'userId' | 'user'
+    }
+    groupByUserSocialMedia: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'instagram' | 'twitter' | 'userId' | 'user'
+      ordering: 'id' | 'instagram' | 'twitter' | 'userId' | '_count' | '_max' | '_min'
     }
     blogPosts: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'authorId' | 'author' | 'comments'
+      ordering: 'id' | 'title' | 'text' | 'authorId' | 'author' | 'comments'
+    }
+    groupByBlogPost: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'authorId' | 'author' | 'comments'
+      ordering: 'id' | 'title' | 'text' | 'authorId' | '_count' | '_max' | '_min'
     }
     blogPostComments: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'postId' | 'authorId' | 'post' | 'author'
+      ordering: 'id' | 'text' | 'postId' | 'authorId' | 'post' | 'author'
+    }
+    groupByBlogPostComment: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'postId' | 'authorId' | 'post' | 'author'
+      ordering: 'id' | 'text' | 'postId' | 'authorId' | '_count' | '_max' | '_min'
     }
     sites: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'url' | 'owner' | 'userId'
-      ordering: 'id' | 'name' | 'url' | 'owner' | 'userId'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'url' | 'userId' | 'owner'
+      ordering: 'id' | 'name' | 'url' | 'userId' | 'owner'
+    }
+    groupBySite: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'url' | 'userId' | 'owner'
+      ordering: 'id' | 'name' | 'url' | 'userId' | '_count' | '_max' | '_min'
     }
     users: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate' | 'site'
-      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate' | 'site'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'address' | 'weddingDate' | 'roles' | 'userSocialMedia' | 'blogPosts' | 'comments' | 'companies' | 'site'
+      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'address' | 'weddingDate' | 'roles' | 'userSocialMedia' | 'blogPosts' | 'comments' | 'companies' | 'site'
+    }
+    groupByUser: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'address' | 'weddingDate' | 'roles' | 'userSocialMedia' | 'blogPosts' | 'comments' | 'companies' | 'site'
+      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'address' | 'weddingDate' | '_count' | '_avg' | '_max' | '_min' | '_sum'
     }
     filteringTests: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
       ordering: 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
     }
+    groupByFilteringTest: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt'
+      ordering: 'id' | 'intField' | 'floatField' | 'stringField' | 'dateTimeField' | 'boolField' | 'intField_lt' | 'intField_bt' | 'snake_field' | 'snake_field_bt' | '_count' | '_avg' | '_max' | '_min' | '_sum'
+    }
     somePublicRecordWithIntIds: {
       filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title'
       ordering: 'id' | 'title'
     }
+    groupBySomePublicRecordWithIntId: {
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title'
+      ordering: 'id' | 'title' | '_count' | '_avg' | '_max' | '_min' | '_sum'
+    }
   },
   UserRole: {
     users: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate' | 'site'
-      ordering: 'id' | 'email' | 'roles' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'userSocialMedia' | 'address' | 'blogPosts' | 'comments' | 'companies' | 'weddingDate' | 'site'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'address' | 'weddingDate' | 'roles' | 'userSocialMedia' | 'blogPosts' | 'comments' | 'companies' | 'site'
+      ordering: 'id' | 'email' | 'firstName' | 'lastName' | 'gender' | 'yearOfBirth' | 'wantsNewsletter' | 'interests' | 'address' | 'weddingDate' | 'roles' | 'userSocialMedia' | 'blogPosts' | 'comments' | 'companies' | 'site'
     }
   }
   Company: {
@@ -78,8 +114,8 @@ interface NexusPrismaInputs {
   }
   BlogPost: {
     comments: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'postId' | 'authorId' | 'post' | 'author'
+      ordering: 'id' | 'text' | 'postId' | 'authorId' | 'post' | 'author'
     }
   }
   BlogPostComment: {
@@ -94,16 +130,16 @@ interface NexusPrismaInputs {
       ordering: 'id' | 'name' | 'users'
     }
     blogPosts: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
-      ordering: 'id' | 'title' | 'text' | 'author' | 'authorId' | 'comments'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'title' | 'text' | 'authorId' | 'author' | 'comments'
+      ordering: 'id' | 'title' | 'text' | 'authorId' | 'author' | 'comments'
     }
     comments: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
-      ordering: 'id' | 'text' | 'post' | 'postId' | 'author' | 'authorId'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'text' | 'postId' | 'authorId' | 'post' | 'author'
+      ordering: 'id' | 'text' | 'postId' | 'authorId' | 'post' | 'author'
     }
     companies: {
-      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'user' | 'userId'
-      ordering: 'id' | 'name' | 'user' | 'userId'
+      filtering: 'AND' | 'OR' | 'NOT' | 'id' | 'name' | 'userId' | 'user'
+      ordering: 'id' | 'name' | 'userId' | 'user'
     }
   }
   FilteringTest: {
@@ -117,79 +153,106 @@ interface NexusPrismaInputs {
 // Prisma output types metadata
 interface NexusPrismaOutputs {
   Query: {
-    userRole: 'UserRole'
+    aggregateUserRole: 'AggregateUserRole'
     userRoles: 'UserRole'
-    company: 'Company'
+    userRole: 'UserRole'
+    groupByUserRole: 'UserRoleGroupByOutputType'
+    aggregateCompany: 'AggregateCompany'
     companies: 'Company'
-    userSocialMedia: 'UserSocialMedia'
+    company: 'Company'
+    groupByCompany: 'CompanyGroupByOutputType'
+    aggregateUserSocialMedia: 'AggregateUserSocialMedia'
     userSocialMedias: 'UserSocialMedia'
-    blogPost: 'BlogPost'
+    userSocialMedia: 'UserSocialMedia'
+    groupByUserSocialMedia: 'UserSocialMediaGroupByOutputType'
+    aggregateBlogPost: 'AggregateBlogPost'
     blogPosts: 'BlogPost'
-    blogPostComment: 'BlogPostComment'
+    blogPost: 'BlogPost'
+    groupByBlogPost: 'BlogPostGroupByOutputType'
+    aggregateBlogPostComment: 'AggregateBlogPostComment'
     blogPostComments: 'BlogPostComment'
-    site: 'Site'
+    blogPostComment: 'BlogPostComment'
+    groupByBlogPostComment: 'BlogPostCommentGroupByOutputType'
+    aggregateSite: 'AggregateSite'
     sites: 'Site'
-    user: 'User'
+    site: 'Site'
+    groupBySite: 'SiteGroupByOutputType'
+    aggregateUser: 'AggregateUser'
     users: 'User'
-    filteringTest: 'FilteringTest'
+    user: 'User'
+    groupByUser: 'UserGroupByOutputType'
+    aggregateFilteringTest: 'AggregateFilteringTest'
     filteringTests: 'FilteringTest'
-    somePublicRecordWithIntId: 'SomePublicRecordWithIntId'
+    filteringTest: 'FilteringTest'
+    groupByFilteringTest: 'FilteringTestGroupByOutputType'
+    aggregateSomePublicRecordWithIntId: 'AggregateSomePublicRecordWithIntId'
     somePublicRecordWithIntIds: 'SomePublicRecordWithIntId'
+    somePublicRecordWithIntId: 'SomePublicRecordWithIntId'
+    groupBySomePublicRecordWithIntId: 'SomePublicRecordWithIntIdGroupByOutputType'
   },
   Mutation: {
     createOneUserRole: 'UserRole'
-    updateOneUserRole: 'UserRole'
-    updateManyUserRole: 'AffectedRowsOutput'
+    createManyUserRole: 'AffectedRowsOutput'
     deleteOneUserRole: 'UserRole'
     deleteManyUserRole: 'AffectedRowsOutput'
+    updateOneUserRole: 'UserRole'
+    updateManyUserRole: 'AffectedRowsOutput'
     upsertOneUserRole: 'UserRole'
     createOneCompany: 'Company'
-    updateOneCompany: 'Company'
-    updateManyCompany: 'AffectedRowsOutput'
+    createManyCompany: 'AffectedRowsOutput'
     deleteOneCompany: 'Company'
     deleteManyCompany: 'AffectedRowsOutput'
+    updateOneCompany: 'Company'
+    updateManyCompany: 'AffectedRowsOutput'
     upsertOneCompany: 'Company'
     createOneUserSocialMedia: 'UserSocialMedia'
-    updateOneUserSocialMedia: 'UserSocialMedia'
-    updateManyUserSocialMedia: 'AffectedRowsOutput'
+    createManyUserSocialMedia: 'AffectedRowsOutput'
     deleteOneUserSocialMedia: 'UserSocialMedia'
     deleteManyUserSocialMedia: 'AffectedRowsOutput'
+    updateOneUserSocialMedia: 'UserSocialMedia'
+    updateManyUserSocialMedia: 'AffectedRowsOutput'
     upsertOneUserSocialMedia: 'UserSocialMedia'
     createOneBlogPost: 'BlogPost'
-    updateOneBlogPost: 'BlogPost'
-    updateManyBlogPost: 'AffectedRowsOutput'
+    createManyBlogPost: 'AffectedRowsOutput'
     deleteOneBlogPost: 'BlogPost'
     deleteManyBlogPost: 'AffectedRowsOutput'
+    updateOneBlogPost: 'BlogPost'
+    updateManyBlogPost: 'AffectedRowsOutput'
     upsertOneBlogPost: 'BlogPost'
     createOneBlogPostComment: 'BlogPostComment'
-    updateOneBlogPostComment: 'BlogPostComment'
-    updateManyBlogPostComment: 'AffectedRowsOutput'
+    createManyBlogPostComment: 'AffectedRowsOutput'
     deleteOneBlogPostComment: 'BlogPostComment'
     deleteManyBlogPostComment: 'AffectedRowsOutput'
+    updateOneBlogPostComment: 'BlogPostComment'
+    updateManyBlogPostComment: 'AffectedRowsOutput'
     upsertOneBlogPostComment: 'BlogPostComment'
     createOneSite: 'Site'
-    updateOneSite: 'Site'
-    updateManySite: 'AffectedRowsOutput'
+    createManySite: 'AffectedRowsOutput'
     deleteOneSite: 'Site'
     deleteManySite: 'AffectedRowsOutput'
+    updateOneSite: 'Site'
+    updateManySite: 'AffectedRowsOutput'
     upsertOneSite: 'Site'
     createOneUser: 'User'
-    updateOneUser: 'User'
-    updateManyUser: 'AffectedRowsOutput'
+    createManyUser: 'AffectedRowsOutput'
     deleteOneUser: 'User'
     deleteManyUser: 'AffectedRowsOutput'
+    updateOneUser: 'User'
+    updateManyUser: 'AffectedRowsOutput'
     upsertOneUser: 'User'
     createOneFilteringTest: 'FilteringTest'
-    updateOneFilteringTest: 'FilteringTest'
-    updateManyFilteringTest: 'AffectedRowsOutput'
+    createManyFilteringTest: 'AffectedRowsOutput'
     deleteOneFilteringTest: 'FilteringTest'
     deleteManyFilteringTest: 'AffectedRowsOutput'
+    updateOneFilteringTest: 'FilteringTest'
+    updateManyFilteringTest: 'AffectedRowsOutput'
     upsertOneFilteringTest: 'FilteringTest'
     createOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-    updateOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
-    updateManySomePublicRecordWithIntId: 'AffectedRowsOutput'
+    createManySomePublicRecordWithIntId: 'AffectedRowsOutput'
     deleteOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
     deleteManySomePublicRecordWithIntId: 'AffectedRowsOutput'
+    updateOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
+    updateManySomePublicRecordWithIntId: 'AffectedRowsOutput'
     upsertOneSomePublicRecordWithIntId: 'SomePublicRecordWithIntId'
   },
   UserRole: {

@@ -104,10 +104,10 @@ input BlogPostCommentOrderByRelationAggregateInput {
 
 input BlogPostCommentOrderByWithRelationInput {
   author: UserOrderByWithRelationInput
-  authorId: SortOrder
+  authorId: SortOrderInput
   id: SortOrder
   post: BlogPostOrderByWithRelationInput
-  postId: SortOrder
+  postId: SortOrderInput
   text: SortOrder
 }
 
@@ -122,9 +122,9 @@ input BlogPostCommentScalarWhereInput {
 }
 
 input BlogPostCommentUpdateInput {
-  author: UserUpdateOneWithoutCommentsInput
+  author: UserUpdateOneWithoutCommentsNestedInput
   id: StringFieldUpdateOperationsInput
-  post: BlogPostUpdateOneWithoutCommentsInput
+  post: BlogPostUpdateOneWithoutCommentsNestedInput
   text: StringFieldUpdateOperationsInput
 }
 
@@ -143,7 +143,7 @@ input BlogPostCommentUpdateManyWithWhereWithoutPostInput {
   where: BlogPostCommentScalarWhereInput!
 }
 
-input BlogPostCommentUpdateManyWithoutAuthorInput {
+input BlogPostCommentUpdateManyWithoutAuthorNestedInput {
   connect: [BlogPostCommentWhereUniqueInput!]
   connectOrCreate: [BlogPostCommentCreateOrConnectWithoutAuthorInput!]
   create: [BlogPostCommentCreateWithoutAuthorInput!]
@@ -157,7 +157,7 @@ input BlogPostCommentUpdateManyWithoutAuthorInput {
   upsert: [BlogPostCommentUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
-input BlogPostCommentUpdateManyWithoutPostInput {
+input BlogPostCommentUpdateManyWithoutPostNestedInput {
   connect: [BlogPostCommentWhereUniqueInput!]
   connectOrCreate: [BlogPostCommentCreateOrConnectWithoutPostInput!]
   create: [BlogPostCommentCreateWithoutPostInput!]
@@ -183,12 +183,12 @@ input BlogPostCommentUpdateWithWhereUniqueWithoutPostInput {
 
 input BlogPostCommentUpdateWithoutAuthorInput {
   id: StringFieldUpdateOperationsInput
-  post: BlogPostUpdateOneWithoutCommentsInput
+  post: BlogPostUpdateOneWithoutCommentsNestedInput
   text: StringFieldUpdateOperationsInput
 }
 
 input BlogPostCommentUpdateWithoutPostInput {
-  author: UserUpdateOneWithoutCommentsInput
+  author: UserUpdateOneWithoutCommentsNestedInput
   id: StringFieldUpdateOperationsInput
   text: StringFieldUpdateOperationsInput
 }
@@ -218,7 +218,15 @@ input BlogPostCommentWhereInput {
 }
 
 input BlogPostCommentWhereUniqueInput {
+  AND: [BlogPostCommentWhereInput!]
+  NOT: [BlogPostCommentWhereInput!]
+  OR: [BlogPostCommentWhereInput!]
+  author: UserWhereInput
+  authorId: StringNullableFilter
   id: String
+  post: BlogPostWhereInput
+  postId: StringNullableFilter
+  text: StringFilter
 }
 
 input BlogPostCreateInput {
@@ -289,7 +297,7 @@ input BlogPostOrderByRelationAggregateInput {
 
 input BlogPostOrderByWithRelationInput {
   author: UserOrderByWithRelationInput
-  authorId: SortOrder
+  authorId: SortOrderInput
   comments: BlogPostCommentOrderByRelationAggregateInput
   id: SortOrder
   text: SortOrder
@@ -307,8 +315,8 @@ input BlogPostScalarWhereInput {
 }
 
 input BlogPostUpdateInput {
-  author: UserUpdateOneWithoutBlogPostsInput
-  comments: BlogPostCommentUpdateManyWithoutPostInput
+  author: UserUpdateOneWithoutBlogPostsNestedInput
+  comments: BlogPostCommentUpdateManyWithoutPostNestedInput
   id: StringFieldUpdateOperationsInput
   text: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
@@ -325,7 +333,7 @@ input BlogPostUpdateManyWithWhereWithoutAuthorInput {
   where: BlogPostScalarWhereInput
 }
 
-input BlogPostUpdateManyWithoutAuthorInput {
+input BlogPostUpdateManyWithoutAuthorNestedInput {
   connect: [BlogPostWhereUniqueInput]
   connectOrCreate: [BlogPostCreateOrConnectWithoutAuthorInput]
   create: [BlogPostCreateWithoutAuthorInput]
@@ -338,14 +346,19 @@ input BlogPostUpdateManyWithoutAuthorInput {
   upsert: [BlogPostUpsertWithWhereUniqueWithoutAuthorInput]
 }
 
-input BlogPostUpdateOneWithoutCommentsInput {
+input BlogPostUpdateOneWithoutCommentsNestedInput {
   connect: BlogPostWhereUniqueInput
   connectOrCreate: BlogPostCreateOrConnectWithoutCommentsInput
   create: BlogPostCreateWithoutCommentsInput
-  delete: Boolean
-  disconnect: Boolean
-  update: BlogPostUpdateWithoutCommentsInput
+  delete: BlogPostWhereInput
+  disconnect: BlogPostWhereInput
+  update: BlogPostUpdateToOneWithWhereWithoutCommentsInput
   upsert: BlogPostUpsertWithoutCommentsInput
+}
+
+input BlogPostUpdateToOneWithWhereWithoutCommentsInput {
+  data: BlogPostUpdateWithoutCommentsInput!
+  where: BlogPostWhereInput
 }
 
 input BlogPostUpdateWithWhereUniqueWithoutAuthorInput {
@@ -354,14 +367,14 @@ input BlogPostUpdateWithWhereUniqueWithoutAuthorInput {
 }
 
 input BlogPostUpdateWithoutAuthorInput {
-  comments: BlogPostCommentUpdateManyWithoutPostInput
+  comments: BlogPostCommentUpdateManyWithoutPostNestedInput
   id: StringFieldUpdateOperationsInput
   text: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
 }
 
 input BlogPostUpdateWithoutCommentsInput {
-  author: UserUpdateOneWithoutBlogPostsInput
+  author: UserUpdateOneWithoutBlogPostsNestedInput
   id: StringFieldUpdateOperationsInput
   text: StringFieldUpdateOperationsInput
   title: StringFieldUpdateOperationsInput
@@ -376,6 +389,7 @@ input BlogPostUpsertWithWhereUniqueWithoutAuthorInput {
 input BlogPostUpsertWithoutCommentsInput {
   create: BlogPostCreateWithoutCommentsInput!
   update: BlogPostUpdateWithoutCommentsInput!
+  where: BlogPostWhereInput
 }
 
 input BlogPostWhereInput {
@@ -391,7 +405,15 @@ input BlogPostWhereInput {
 }
 
 input BlogPostWhereUniqueInput {
+  AND: [BlogPostWhereInput!]
+  NOT: [BlogPostWhereInput!]
+  OR: [BlogPostWhereInput!]
+  author: UserWhereInput
+  authorId: StringNullableFilter
+  comments: BlogPostCommentListRelationFilter
   id: String
+  text: StringFilter
+  title: StringFilter
 }
 
 input BoolFieldUpdateOperationsInput {
@@ -470,7 +492,7 @@ input CompanyScalarWhereInput {
 input CompanyUpdateInput {
   id: StringFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
-  user: UserUpdateOneRequiredWithoutCompaniesInput
+  user: UserUpdateOneRequiredWithoutCompaniesNestedInput
 }
 
 input CompanyUpdateManyMutationInput {
@@ -483,7 +505,7 @@ input CompanyUpdateManyWithWhereWithoutUserInput {
   where: CompanyScalarWhereInput!
 }
 
-input CompanyUpdateManyWithoutUserInput {
+input CompanyUpdateManyWithoutUserNestedInput {
   connect: [CompanyWhereUniqueInput!]
   connectOrCreate: [CompanyCreateOrConnectWithoutUserInput!]
   create: [CompanyCreateWithoutUserInput!]
@@ -524,7 +546,13 @@ input CompanyWhereInput {
 }
 
 input CompanyWhereUniqueInput {
+  AND: [CompanyWhereInput!]
+  NOT: [CompanyWhereInput!]
+  OR: [CompanyWhereInput!]
   id: String
+  name: StringFilter
+  user: UserWhereInput
+  userId: StringFilter
 }
 
 scalar DateTime
@@ -649,7 +677,19 @@ input FilteringTestWhereInput {
 }
 
 input FilteringTestWhereUniqueInput {
+  AND: [FilteringTestWhereInput!]
+  NOT: [FilteringTestWhereInput!]
+  OR: [FilteringTestWhereInput!]
+  boolField: BoolFilter
+  dateTimeField: DateTimeFilter
+  floatField: FloatFilter
   id: Int
+  intField: IntFilter
+  intField_bt: IntFilter
+  intField_lt: StringFilter
+  snake_field: IntFilter
+  snake_field_bt: IntFilter
+  stringField: StringFilter
 }
 
 input FloatFieldUpdateOperationsInput {
@@ -707,15 +747,22 @@ input IntNullableFilter {
   notIn: [Int!]
 }
 
-enum JsonNullValueFilter {
-  AnyNull
-  DbNull
-  JsonNull
-}
+scalar Json
 
 input JsonNullableFilter {
-  equals: JsonNullValueFilter
-  not: JsonNullValueFilter
+  array_contains: Json
+  array_ends_with: Json
+  array_starts_with: Json
+  equals: Json
+  gt: Json
+  gte: Json
+  lt: Json
+  lte: Json
+  not: Json
+  path: [String!]
+  string_contains: String
+  string_ends_with: String
+  string_starts_with: String
 }
 
 type Mutation {
@@ -874,13 +921,13 @@ input NullableIntFieldUpdateOperationsInput {
   set: Int
 }
 
-enum NullableJsonNullValueInput {
-  DbNull
-  JsonNull
-}
-
 input NullableStringFieldUpdateOperationsInput {
   set: String
+}
+
+enum NullsOrder {
+  first
+  last
 }
 
 type Query {
@@ -934,16 +981,21 @@ input SiteOrderByWithRelationInput {
   name: SortOrder
   owner: UserOrderByWithRelationInput
   url: SortOrder
-  userId: SortOrder
+  userId: SortOrderInput
 }
 
-input SiteUpdateOneWithoutOwnerInput {
+input SiteUpdateOneWithoutOwnerNestedInput {
   connect: SiteWhereUniqueInput
   connectOrCreate: SiteCreateOrConnectWithoutOwnerInput
   create: SiteCreateWithoutOwnerInput
-  delete: Boolean
-  update: SiteUpdateWithoutOwnerInput
+  delete: SiteWhereInput
+  update: SiteUpdateToOneWithWhereWithoutOwnerInput
   upsert: SiteUpsertWithoutOwnerInput
+}
+
+input SiteUpdateToOneWithWhereWithoutOwnerInput {
+  data: SiteUpdateWithoutOwnerInput
+  where: SiteWhereInput
 }
 
 input SiteUpdateWithoutOwnerInput {
@@ -955,6 +1007,7 @@ input SiteUpdateWithoutOwnerInput {
 input SiteUpsertWithoutOwnerInput {
   create: SiteCreateWithoutOwnerInput
   update: SiteUpdateWithoutOwnerInput
+  where: SiteWhereInput
 }
 
 input SiteWhereInput {
@@ -969,7 +1022,13 @@ input SiteWhereInput {
 }
 
 input SiteWhereUniqueInput {
+  AND: [SiteWhereInput!]
+  NOT: [SiteWhereInput!]
+  OR: [SiteWhereInput!]
   id: String
+  name: StringFilter
+  owner: UserWhereInput
+  url: StringFilter
   userId: String
 }
 
@@ -1004,12 +1063,21 @@ input SomePublicRecordWithIntIdWhereInput {
 }
 
 input SomePublicRecordWithIntIdWhereUniqueInput {
+  AND: [SomePublicRecordWithIntIdWhereInput!]
+  NOT: [SomePublicRecordWithIntIdWhereInput!]
+  OR: [SomePublicRecordWithIntIdWhereInput!]
   id: Int
+  title: StringFilter
 }
 
 enum SortOrder {
   asc
   desc
+}
+
+input SortOrderInput {
+  nulls: NullsOrder
+  sort: SortOrder!
 }
 
 input StringFieldUpdateOperationsInput {
@@ -1072,7 +1140,7 @@ type User {
 }
 
 input UserCreateInput {
-  address: NullableJsonNullValueInput
+  address: Json
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
@@ -1139,7 +1207,7 @@ input UserCreateOrConnectWithoutRolesInput {
 }
 
 input UserCreateWithoutBlogPostsInput {
-  address: NullableJsonNullValueInput
+  address: Json
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
   email: String!
@@ -1157,7 +1225,7 @@ input UserCreateWithoutBlogPostsInput {
 }
 
 input UserCreateWithoutCommentsInput {
-  address: NullableJsonNullValueInput
+  address: Json
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
   email: String!
@@ -1175,7 +1243,7 @@ input UserCreateWithoutCommentsInput {
 }
 
 input UserCreateWithoutCompaniesInput {
-  address: NullableJsonNullValueInput
+  address: Json
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   email: String!
@@ -1193,7 +1261,7 @@ input UserCreateWithoutCompaniesInput {
 }
 
 input UserCreateWithoutRolesInput {
-  address: NullableJsonNullValueInput
+  address: Json
   blogPosts: BlogPostCreateNestedManyWithoutAuthorInput
   comments: BlogPostCommentCreateNestedManyWithoutAuthorInput
   companies: CompanyCreateNestedManyWithoutUserInput
@@ -1225,22 +1293,22 @@ input UserOrderByRelationAggregateInput {
 }
 
 input UserOrderByWithRelationInput {
-  address: SortOrder
+  address: SortOrderInput
   blogPosts: BlogPostOrderByRelationAggregateInput
   comments: BlogPostCommentOrderByRelationAggregateInput
   companies: CompanyOrderByRelationAggregateInput
   email: SortOrder
-  firstName: SortOrder
-  gender: SortOrder
+  firstName: SortOrderInput
+  gender: SortOrderInput
   id: SortOrder
   interests: SortOrder
-  lastName: SortOrder
+  lastName: SortOrderInput
   roles: UserRoleOrderByRelationAggregateInput
   site: SiteOrderByWithRelationInput
   userSocialMedia: UserSocialMediaOrderByWithRelationInput
   wantsNewsletter: SortOrder
-  weddingDate: SortOrder
-  yearOfBirth: SortOrder
+  weddingDate: SortOrderInput
+  yearOfBirth: SortOrderInput
 }
 
 type UserRole {
@@ -1297,7 +1365,7 @@ input UserRoleScalarWhereInput {
 input UserRoleUpdateInput {
   id: StringFieldUpdateOperationsInput
   name: StringFieldUpdateOperationsInput
-  users: UserUpdateManyWithoutRolesInput
+  users: UserUpdateManyWithoutRolesNestedInput
 }
 
 input UserRoleUpdateManyMutationInput {
@@ -1310,7 +1378,7 @@ input UserRoleUpdateManyWithWhereWithoutUsersInput {
   where: UserRoleScalarWhereInput!
 }
 
-input UserRoleUpdateManyWithoutUsersInput {
+input UserRoleUpdateManyWithoutUsersNestedInput {
   connect: [UserRoleWhereUniqueInput!]
   connectOrCreate: [UserRoleCreateOrConnectWithoutUsersInput!]
   create: [UserRoleCreateWithoutUsersInput!]
@@ -1349,7 +1417,12 @@ input UserRoleWhereInput {
 }
 
 input UserRoleWhereUniqueInput {
+  AND: [UserRoleWhereInput!]
+  NOT: [UserRoleWhereInput!]
+  OR: [UserRoleWhereInput!]
   id: String
+  name: StringFilter
+  users: UserListRelationFilter
 }
 
 input UserScalarWhereInput {
@@ -1400,14 +1473,19 @@ input UserSocialMediaOrderByWithRelationInput {
   userId: SortOrder
 }
 
-input UserSocialMediaUpdateOneWithoutUserInput {
+input UserSocialMediaUpdateOneWithoutUserNestedInput {
   connect: UserSocialMediaWhereUniqueInput
   connectOrCreate: UserSocialMediaCreateOrConnectWithoutUserInput
   create: UserSocialMediaCreateWithoutUserInput
-  delete: Boolean
-  disconnect: Boolean
-  update: UserSocialMediaUpdateWithoutUserInput
+  delete: UserSocialMediaWhereInput
+  disconnect: UserSocialMediaWhereInput
+  update: UserSocialMediaUpdateToOneWithWhereWithoutUserInput
   upsert: UserSocialMediaUpsertWithoutUserInput
+}
+
+input UserSocialMediaUpdateToOneWithWhereWithoutUserInput {
+  data: UserSocialMediaUpdateWithoutUserInput!
+  where: UserSocialMediaWhereInput
 }
 
 input UserSocialMediaUpdateWithoutUserInput {
@@ -1419,6 +1497,7 @@ input UserSocialMediaUpdateWithoutUserInput {
 input UserSocialMediaUpsertWithoutUserInput {
   create: UserSocialMediaCreateWithoutUserInput!
   update: UserSocialMediaUpdateWithoutUserInput!
+  where: UserSocialMediaWhereInput
 }
 
 input UserSocialMediaWhereInput {
@@ -1433,31 +1512,37 @@ input UserSocialMediaWhereInput {
 }
 
 input UserSocialMediaWhereUniqueInput {
+  AND: [UserSocialMediaWhereInput!]
+  NOT: [UserSocialMediaWhereInput!]
+  OR: [UserSocialMediaWhereInput!]
   id: String
+  instagram: StringFilter
+  twitter: StringFilter
+  user: UserWhereInput
   userId: String
 }
 
 input UserUpdateInput {
-  address: NullableJsonNullValueInput
-  blogPosts: BlogPostUpdateManyWithoutAuthorInput
-  comments: BlogPostCommentUpdateManyWithoutAuthorInput
-  companies: CompanyUpdateManyWithoutUserInput
+  address: Json
+  blogPosts: BlogPostUpdateManyWithoutAuthorNestedInput
+  comments: BlogPostCommentUpdateManyWithoutAuthorNestedInput
+  companies: CompanyUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
-  roles: UserRoleUpdateManyWithoutUsersInput
-  site: SiteUpdateOneWithoutOwnerInput
-  userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
+  roles: UserRoleUpdateManyWithoutUsersNestedInput
+  site: SiteUpdateOneWithoutOwnerNestedInput
+  userSocialMedia: UserSocialMediaUpdateOneWithoutUserNestedInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateManyMutationInput {
-  address: NullableJsonNullValueInput
+  address: Json
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
@@ -1474,7 +1559,7 @@ input UserUpdateManyWithWhereWithoutRolesInput {
   where: UserScalarWhereInput!
 }
 
-input UserUpdateManyWithoutRolesInput {
+input UserUpdateManyWithoutRolesNestedInput {
   connect: [UserWhereUniqueInput!]
   connectOrCreate: [UserCreateOrConnectWithoutRolesInput!]
   create: [UserCreateWithoutRolesInput!]
@@ -1487,32 +1572,47 @@ input UserUpdateManyWithoutRolesInput {
   upsert: [UserUpsertWithWhereUniqueWithoutRolesInput!]
 }
 
-input UserUpdateOneRequiredWithoutCompaniesInput {
+input UserUpdateOneRequiredWithoutCompaniesNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutCompaniesInput
   create: UserCreateWithoutCompaniesInput
-  update: UserUpdateWithoutCompaniesInput
+  update: UserUpdateToOneWithWhereWithoutCompaniesInput
   upsert: UserUpsertWithoutCompaniesInput
 }
 
-input UserUpdateOneWithoutBlogPostsInput {
+input UserUpdateOneWithoutBlogPostsNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutBlogPostsInput
   create: UserCreateWithoutBlogPostsInput
-  delete: Boolean
-  disconnect: Boolean
-  update: UserUpdateWithoutBlogPostsInput
+  delete: UserWhereInput
+  disconnect: UserWhereInput
+  update: UserUpdateToOneWithWhereWithoutBlogPostsInput
   upsert: UserUpsertWithoutBlogPostsInput
 }
 
-input UserUpdateOneWithoutCommentsInput {
+input UserUpdateOneWithoutCommentsNestedInput {
   connect: UserWhereUniqueInput
   connectOrCreate: UserCreateOrConnectWithoutCommentsInput
   create: UserCreateWithoutCommentsInput
-  delete: Boolean
-  disconnect: Boolean
-  update: UserUpdateWithoutCommentsInput
+  delete: UserWhereInput
+  disconnect: UserWhereInput
+  update: UserUpdateToOneWithWhereWithoutCommentsInput
   upsert: UserUpsertWithoutCommentsInput
+}
+
+input UserUpdateToOneWithWhereWithoutBlogPostsInput {
+  data: UserUpdateWithoutBlogPostsInput!
+  where: UserWhereInput
+}
+
+input UserUpdateToOneWithWhereWithoutCommentsInput {
+  data: UserUpdateWithoutCommentsInput!
+  where: UserWhereInput
+}
+
+input UserUpdateToOneWithWhereWithoutCompaniesInput {
+  data: UserUpdateWithoutCompaniesInput!
+  where: UserWhereInput
 }
 
 input UserUpdateWithWhereUniqueWithoutRolesInput {
@@ -1521,72 +1621,72 @@ input UserUpdateWithWhereUniqueWithoutRolesInput {
 }
 
 input UserUpdateWithoutBlogPostsInput {
-  address: NullableJsonNullValueInput
-  comments: BlogPostCommentUpdateManyWithoutAuthorInput
-  companies: CompanyUpdateManyWithoutUserInput
+  address: Json
+  comments: BlogPostCommentUpdateManyWithoutAuthorNestedInput
+  companies: CompanyUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
-  roles: UserRoleUpdateManyWithoutUsersInput
-  site: SiteUpdateOneWithoutOwnerInput
-  userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
+  roles: UserRoleUpdateManyWithoutUsersNestedInput
+  site: SiteUpdateOneWithoutOwnerNestedInput
+  userSocialMedia: UserSocialMediaUpdateOneWithoutUserNestedInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateWithoutCommentsInput {
-  address: NullableJsonNullValueInput
-  blogPosts: BlogPostUpdateManyWithoutAuthorInput
-  companies: CompanyUpdateManyWithoutUserInput
+  address: Json
+  blogPosts: BlogPostUpdateManyWithoutAuthorNestedInput
+  companies: CompanyUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
-  roles: UserRoleUpdateManyWithoutUsersInput
-  site: SiteUpdateOneWithoutOwnerInput
-  userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
+  roles: UserRoleUpdateManyWithoutUsersNestedInput
+  site: SiteUpdateOneWithoutOwnerNestedInput
+  userSocialMedia: UserSocialMediaUpdateOneWithoutUserNestedInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateWithoutCompaniesInput {
-  address: NullableJsonNullValueInput
-  blogPosts: BlogPostUpdateManyWithoutAuthorInput
-  comments: BlogPostCommentUpdateManyWithoutAuthorInput
+  address: Json
+  blogPosts: BlogPostUpdateManyWithoutAuthorNestedInput
+  comments: BlogPostCommentUpdateManyWithoutAuthorNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
-  roles: UserRoleUpdateManyWithoutUsersInput
-  site: SiteUpdateOneWithoutOwnerInput
-  userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
+  roles: UserRoleUpdateManyWithoutUsersNestedInput
+  site: SiteUpdateOneWithoutOwnerNestedInput
+  userSocialMedia: UserSocialMediaUpdateOneWithoutUserNestedInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
 }
 
 input UserUpdateWithoutRolesInput {
-  address: NullableJsonNullValueInput
-  blogPosts: BlogPostUpdateManyWithoutAuthorInput
-  comments: BlogPostCommentUpdateManyWithoutAuthorInput
-  companies: CompanyUpdateManyWithoutUserInput
+  address: Json
+  blogPosts: BlogPostUpdateManyWithoutAuthorNestedInput
+  comments: BlogPostCommentUpdateManyWithoutAuthorNestedInput
+  companies: CompanyUpdateManyWithoutUserNestedInput
   email: StringFieldUpdateOperationsInput
   firstName: NullableStringFieldUpdateOperationsInput
   gender: NullableEnumGenderFieldUpdateOperationsInput
   id: StringFieldUpdateOperationsInput
   interests: UserUpdateinterestsInput
   lastName: NullableStringFieldUpdateOperationsInput
-  site: SiteUpdateOneWithoutOwnerInput
-  userSocialMedia: UserSocialMediaUpdateOneWithoutUserInput
+  site: SiteUpdateOneWithoutOwnerNestedInput
+  userSocialMedia: UserSocialMediaUpdateOneWithoutUserNestedInput
   wantsNewsletter: BoolFieldUpdateOperationsInput
   weddingDate: NullableDateTimeFieldUpdateOperationsInput
   yearOfBirth: NullableIntFieldUpdateOperationsInput
@@ -1606,16 +1706,19 @@ input UserUpsertWithWhereUniqueWithoutRolesInput {
 input UserUpsertWithoutBlogPostsInput {
   create: UserCreateWithoutBlogPostsInput!
   update: UserUpdateWithoutBlogPostsInput!
+  where: UserWhereInput
 }
 
 input UserUpsertWithoutCommentsInput {
   create: UserCreateWithoutCommentsInput!
   update: UserUpdateWithoutCommentsInput!
+  where: UserWhereInput
 }
 
 input UserUpsertWithoutCompaniesInput {
   create: UserCreateWithoutCompaniesInput!
   update: UserUpdateWithoutCompaniesInput!
+  where: UserWhereInput
 }
 
 input UserWhereInput {
@@ -1641,6 +1744,23 @@ input UserWhereInput {
 }
 
 input UserWhereUniqueInput {
+  AND: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  address: JsonNullableFilter
+  blogPosts: BlogPostListRelationFilter
+  comments: BlogPostCommentListRelationFilter
+  companies: CompanyListRelationFilter
   email: String
+  firstName: StringNullableFilter
+  gender: EnumGenderNullableFilter
   id: String
+  interests: EnumTopicNullableListFilter
+  lastName: StringNullableFilter
+  roles: UserRoleListRelationFilter
+  site: SiteWhereInput
+  userSocialMedia: UserSocialMediaWhereInput
+  wantsNewsletter: BoolFilter
+  weddingDate: DateTimeNullableFilter
+  yearOfBirth: IntNullableFilter
 }

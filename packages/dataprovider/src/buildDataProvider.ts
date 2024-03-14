@@ -1,17 +1,9 @@
 import merge from "lodash/merge";
 import buildRaGraphqlDataProvider from "ra-data-graphql";
-import {
-  DataProvider,
-  DELETE,
-  DELETE_MANY,
-  LegacyDataProvider,
-  UPDATE,
-  UPDATE_MANY,
-} from "react-admin";
-import { buildQueryFactory } from "./buildQuery";
-import { Options, OurOptions } from "./types";
-
+import { DataProvider, DeleteManyParams, DeleteParams, RaRecord, UpdateManyParams, UpdateParams } from "react-admin";
 import { makeIntrospectionOptions } from "./utils/makeIntrospectionOptions";
+import { buildQuery } from "./buildQuery";
+import { Options, OurOptions } from "./types";
 
 export const defaultOurOptions: OurOptions = {
   queryDialect: "nexus-prisma",
@@ -22,54 +14,54 @@ export const defaultOptions: Options = {
   ...defaultOurOptions,
 };
 
-const buildDataProvider = (options: Options): Promise<LegacyDataProvider> => {
+const buildDataProvider = (options: Options): Promise<DataProvider> => {
   const fullOptions = merge({}, defaultOptions, options);
-  return buildRaGraphqlDataProvider(
-    merge(
-      {},
-      {
-        buildQuery: buildQueryFactory,
-        introspection: makeIntrospectionOptions(fullOptions),
+  const buildQueryFactory =  buildQuery(fullOptions);
+  const buildOptions = merge(
+    {},
+    {
+      buildQuery: buildQueryFactory.factory,
+      introspection: makeIntrospectionOptions(fullOptions),
+    },
+    fullOptions,
+  );
+  return buildRaGraphqlDataProvider(buildOptions).then( (graphQLDataProvider) => {
+    return {
+      ...graphQLDataProvider,
+      deleteMany: <RecordType extends RaRecord = any>(
+        resource: string,
+        params: DeleteManyParams<RecordType>
+        ) => {
+          const { ids, ...otherParams } = params;
+          return Promise.all(
+            params.ids.map((id: string) =>
+              graphQLDataProvider.delete(resource, {
+                id,
+                ...otherParams,
+              } as DeleteParams<RecordType>),
+            ),
+          ).then((results) => {
+            return { data: results.map(({ data }: any) => data.id) };
+          });
       },
-      fullOptions,
-    ),
-  ).then((graphQLDataProvider) => {
-    return (
-      fetchType: string,
-      resource: string,
-      params: { [key: string]: any },
-    ): Promise<any> => {
-      // Temporary work-around until we make use of updateMany and deleteMany mutations
-      if (fetchType === DELETE_MANY) {
-        const { ids, ...otherParams } = params;
-        return Promise.all(
-          params.ids.map((id: string) =>
-            graphQLDataProvider(DELETE, resource, {
-              id,
-              ...otherParams,
-            }),
-          ),
-        ).then((results) => {
-          return { data: results.map(({ data }: any) => data.id) };
-        });
-      }
-
-      if (fetchType === UPDATE_MANY) {
-        const { ids, ...otherParams } = params;
-        return Promise.all(
-          params.ids.map((id: string) =>
-            graphQLDataProvider(UPDATE, resource, {
-              id,
-              ...otherParams,
-            }),
-          ),
-        ).then((results) => {
-          return { data: results.map(({ data }: any) => data.id) };
-        });
-      }
-      return graphQLDataProvider(fetchType, resource, params);
-    };
+      updateMany: <RecordType extends RaRecord = any>(
+        resource: string,
+        params: UpdateManyParams<RecordType>
+        ) => {
+          const { ids, ...otherParams } = params;
+          return Promise.all(
+            params.ids.map((id: string) =>
+              graphQLDataProvider.update(resource, {
+                id,
+                ...otherParams,
+              } as UpdateParams<RecordType>),
+            ),
+          ).then((results) => {
+            return { data: results.map(({ data }: any) => data.id) };
+          });
+      },
+    }
   });
-};
+}
 
 export default buildDataProvider;

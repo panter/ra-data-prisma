@@ -1,5 +1,5 @@
-import * as Helpers from "nexus-plugin-prisma/src/typegen/helpers";
-import { BaseRelationOptions } from "nexus-plugin-prisma/typegen";
+import * as Helpers from "@morgothulhu/nexus-plugin-prisma/src/typegen/helpers";
+import { BaseRelationOptions } from "@morgothulhu/nexus-plugin-prisma/typegen";
 
 type Prefix<What extends string, Prefix extends string> = Prefix extends ``
   ? Uncapitalize<What>

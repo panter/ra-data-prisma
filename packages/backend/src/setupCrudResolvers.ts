@@ -1,5 +1,5 @@
 import { upperFirst, lowerFirst } from "lodash";
-import * as Helpers from "nexus-plugin-prisma/src/typegen/helpers";
+import * as Helpers from "@morgothulhu/nexus-plugin-prisma/src/typegen/helpers";
 
 import pluralize from "pluralize";
 import { ResourceOptions, CommonOptions } from "./types";
