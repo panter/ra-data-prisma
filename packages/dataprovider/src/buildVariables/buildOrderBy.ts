@@ -50,9 +50,15 @@ export const buildOrderBy = (
     return null;
   }
 
-  if (!orderType.inputFields.some((f) => f.name === fieldParts[0])) {
+  const inputTypefield = orderType.inputFields.find(
+    (f) => f.name === fieldParts[0],
+  );
+  if (!inputTypefield) {
     return null;
   }
+
+  const theType = inputTypefield.type;
+
   const selector = {};
 
   if (context.options.queryDialect === "typegraphql") {
@@ -67,12 +73,33 @@ export const buildOrderBy = (
 
       return [selector];
     }
-  }
-
-  if (context.options.queryDialect === "pothos-prisma") {
+  } else if (context.options.queryDialect === "pothos-prisma") {
     set(selector, field, sort.order === "ASC" ? "Asc" : "Desc");
   } else {
-    set(selector, field, sort.order === "ASC" ? "asc" : "desc");
+    let directSortOrder = false;
+    if (theType.kind === "INPUT_OBJECT") {
+      const inputObjectType = context.introspectionResults.types.find(
+        (t) => t.name === theType.name,
+      );
+
+      if (inputObjectType.kind === "INPUT_OBJECT") {
+        const theField = inputObjectType?.inputFields.find(
+          (f) => f.name === fieldParts[1],
+        );
+
+        // would be cleaner to really follow the full chain if its always an input object
+        if (theField?.type.kind === "ENUM") {
+          directSortOrder = true;
+        }
+      } else {
+        directSortOrder = true;
+      }
+    } else {
+      directSortOrder = true;
+    }
+
+    const sortOrder = sort.order === "ASC" ? "asc" : "desc";
+    set(selector, field, directSortOrder ? sortOrder : { sort: sortOrder });
   }
 
   return [selector];

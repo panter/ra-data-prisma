@@ -7,7 +7,7 @@ import { inputObjectType } from "nexus";
 import {
   InternalDMMF,
   getTransformedDmmf,
-} from "nexus-plugin-prisma/dist/dmmf";
+} from "@morgothulhu/nexus-plugin-prisma/dist/dmmf";
 
 import { NexusGenInputs, NexusGenObjects } from "../generated/nexus";
 import { resolve } from "path";

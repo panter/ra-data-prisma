@@ -253,7 +253,7 @@ const getFilters = (
   );
   const { originalKey, key, comparator } = processKey(_key);
   if (context.options.filters?.[originalKey]) {
-    return context.options.filters[originalKey](value) ?? {}; // null values are transformed to empty objects
+    return context.options.filters[originalKey](value, context) ?? {}; // null values are transformed to empty objects
   }
   if (key === "NOT" || key === "OR" || key === "AND") {
     return {
