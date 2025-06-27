@@ -10,6 +10,7 @@ import {
 
 import { DocumentNode } from "graphql";
 import { Resource } from "./constants/interfaces";
+import { BuildVariablesContext } from "./buildVariables/types";
 
 export type WhiteListFragment = {
   type: "whitelist";
@@ -90,7 +91,10 @@ export type ConfigOptions = {
   };
   aliasPrefix?: string;
   filters?: {
-    [filterName: string]: (value: any) => Filter | void;
+    [filterName: string]: (
+      value: any,
+      context: BuildVariablesContext,
+    ) => Filter | void;
   };
   customizeInputData?: CustomizeInputData;
   introspection?: IntrospectionOptions;
